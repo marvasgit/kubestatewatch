@@ -22,21 +22,21 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/client"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/client"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
-const kubewatchConfigFile = ".kubewatch.yaml"
+const diffwatcherConfigFile = ".diffwatcher.yaml"
 
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "modify kubewatch configuration",
+	Short: "modify diffwatcher configuration",
 	Long: `
-config command allows configuration of ~/.kubewatch.yaml for running kubewatch`,
+config command allows configuration of ~/.diffwatcher.yaml for running diffwatcher`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
@@ -44,9 +44,9 @@ config command allows configuration of ~/.kubewatch.yaml for running kubewatch`,
 
 var configAddCmd = &cobra.Command{
 	Use:   "add",
-	Short: "add webhook config to ~/.kubewatch.yaml",
+	Short: "add webhook config to ~/.diffwatcher.yaml",
 	Long: `
-Adds webhook config to ~/.kubewatch.yaml`,
+Adds webhook config to ~/.diffwatcher.yaml`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
@@ -54,11 +54,11 @@ Adds webhook config to ~/.kubewatch.yaml`,
 
 var configTestCmd = &cobra.Command{
 	Use:   "test",
-	Short: "test handler config present in ~/.kubewatch.yaml",
+	Short: "test handler config present in ~/.diffwatcher.yaml",
 	Long: `
-Tests handler configs present in ~/.kubewatch.yaml by sending test messages`,
+Tests handler configs present in ~/.diffwatcher.yaml by sending test messages`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Testing Handler configs from .kubewatch.yaml")
+		fmt.Println("Testing Handler configs from .diffwatcher.yaml")
 		conf, err := config.New()
 		if err != nil {
 			logrus.Fatal(err)
@@ -81,7 +81,7 @@ var configSampleCmd = &cobra.Command{
 	Use:   "sample",
 	Short: "Show a sample config file",
 	Long: `
-Print a sample config file which can be put in ~/.kubewatch.yaml`,
+Print a sample config file which can be put in ~/.diffwatcher.yaml`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Print(config.ConfigSample)
 	},
@@ -89,12 +89,12 @@ Print a sample config file which can be put in ~/.kubewatch.yaml`,
 
 var configViewCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view ~/.kubewatch.yaml",
+	Short: "view ~/.diffwatcher.yaml",
 	Long: `
-Display the contents of the contents of ~/.kubewatch.yaml`,
+Display the contents of the contents of ~/.diffwatcher.yaml`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintln(os.Stderr, "Contents of ~/.kubewatch.yaml")
-		configFile, err := ioutil.ReadFile(filepath.Join(os.Getenv("HOME"), kubewatchConfigFile))
+		fmt.Fprintln(os.Stderr, "Contents of ~/.diffwatcher.yaml")
+		configFile, err := ioutil.ReadFile(filepath.Join(os.Getenv("HOME"), diffwatcherConfigFile))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			os.Exit(1)

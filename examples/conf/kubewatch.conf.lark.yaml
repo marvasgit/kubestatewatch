@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kubewatch
+  name: diffwatcher
 data:
-  .kubewatch.yaml: |
+  .diffwatcher.yaml: |
     namespace:
     handler:
       lark:

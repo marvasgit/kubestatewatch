@@ -18,16 +18,17 @@ package flock
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
+
+	"github.com/sirupsen/logrus"
 
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 )
 
 var flockColors = map[string]string{
@@ -109,8 +110,8 @@ func checkMissingFlockVars(s *Flock) error {
 
 func prepareFlockMessage(e event.Event, f *Flock) *FlockMessage {
 	return &FlockMessage{
-		Text:         "Kubewatch Alert",
-		Notification: "Kubewatch Alert",
+		Text:         "diffwatcher Alert",
+		Notification: "diffwatcher Alert",
 		Attachements: []FlockMessageAttachement{
 			{
 				Title: e.Message(),

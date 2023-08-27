@@ -20,17 +20,18 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
+
+	"github.com/sirupsen/logrus"
 
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 )
 
 var webhookErrMsg = `

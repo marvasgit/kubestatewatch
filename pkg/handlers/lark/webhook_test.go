@@ -18,9 +18,10 @@ package lark
 
 import (
 	"fmt"
-	"github.com/bitnami-labs/kubewatch/config"
 	"reflect"
 	"testing"
+
+	"github.com/marvasgit/diffwatcher/config"
 )
 
 func TestWebhookInit(t *testing.T) {

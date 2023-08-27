@@ -39,14 +39,15 @@ package slackwebhook
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/slack-go/slack"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 )
 
 var webhookErrMsg = `

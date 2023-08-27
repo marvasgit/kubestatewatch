@@ -18,15 +18,16 @@ package hipchat
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
+
+	"github.com/sirupsen/logrus"
 
 	hipchat "github.com/tbruyelle/hipchat-go/hipchat"
 
 	"net/url"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 )
 
 var hipchatColors = map[string]hipchat.Color{
@@ -116,7 +117,7 @@ func prepareHipchatNotification(e event.Event) hipchat.NotificationRequest {
 	notification := hipchat.NotificationRequest{
 		Message: e.Message(),
 		Notify:  true,
-		From:    "kubewatch",
+		From:    "diffwatcher",
 	}
 
 	if color, ok := hipchatColors[e.Status]; ok {

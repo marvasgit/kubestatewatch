@@ -1,21 +1,21 @@
-<!--- app-name: Kubewatch -->
+<!--- app-name: diffwatcher -->
 
-# Kubewatch packaged by Bitnami
+# diffwatcher packaged by Bitnami
 
-Kubewatch is a Kubernetes watcher that currently publishes notification to Slack. Run it in your k8s cluster, and you will get event notifications in a slack channel.
+diffwatcher is a Kubernetes watcher that currently publishes notification to Slack. Run it in your k8s cluster, and you will get event notifications in a slack channel.
 
-[Overview of Kubewatch](https://github.com/bitnami-labs/kubewatch)
+[Overview of diffwatcher](https://github.com/marvasgit/diffwatcher)
 
 ## TL;DR
 
 ```console
 $ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm install my-release bitnami/kubewatch
+$ helm install my-release bitnami/diffwatcher
 ```
 
 ## Introduction
 
-This chart bootstraps a kubewatch deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps a diffwatcher deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
 
@@ -27,10 +27,10 @@ This chart bootstraps a kubewatch deployment on a [Kubernetes](https://kubernete
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm install my-release bitnami/kubewatch
+$ helm install my-release bitnami/diffwatcher
 ```
 
-The command deploys kubewatch on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+The command deploys diffwatcher on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
 ## Uninstalling the Chart
 
@@ -67,14 +67,14 @@ The command removes all the Kubernetes components associated with the chart and 
 | `extraDeploy`            | Array of extra objects to deploy with the release                                       | `[]`           |
 
 
-### Kubewatch parameters
+### diffwatcher parameters
 
 | Name                                     | Description                                                                      | Value                  |
 | ---------------------------------------- | -------------------------------------------------------------------------------- | ---------------------- |
-| `image.registry`                         | Kubewatch image registry                                                         | `docker.io`            |
-| `image.repository`                       | Kubewatch image repository                                                       | `bitnami/kubewatch`    |
-| `image.tag`                              | Kubewatch image tag (immutable tags are recommended)                             | `0.1.0-debian-10-r513` |
-| `image.pullPolicy`                       | Kubewatch image pull policy                                                      | `IfNotPresent`         |
+| `image.registry`                         | diffwatcher image registry                                                         | `docker.io`            |
+| `image.repository`                       | diffwatcher image repository                                                       | `bitnami/diffwatcher`    |
+| `image.tag`                              | diffwatcher image tag (immutable tags are recommended)                             | `0.1.0-debian-10-r513` |
+| `image.pullPolicy`                       | diffwatcher image pull policy                                                      | `IfNotPresent`         |
 | `image.pullSecrets`                      | Specify docker-registry secret names as an array                                 | `[]`                   |
 | `hostAliases`                            | Add deployment host aliases                                                      | `[]`                   |
 | `slack.enabled`                          | Enable Slack notifications                                                       | `true`                 |
@@ -116,24 +116,24 @@ The command removes all the Kubernetes components associated with the chart and 
 | `resourcesToWatch.persistentvolume`      | Watch changes to PersistentVolumes                                               | `false`                |
 | `command`                                | Override default container command (useful when using custom images)             | `[]`                   |
 | `args`                                   | Override default container args (useful when using custom images)                | `[]`                   |
-| `lifecycleHooks`                         | for the Kubewatch container(s) to automate configuration before or after startup | `{}`                   |
-| `extraEnvVars`                           | Extra environment variables to be set on Kubewatch container                     | `[]`                   |
+| `lifecycleHooks`                         | for the diffwatcher container(s) to automate configuration before or after startup | `{}`                   |
+| `extraEnvVars`                           | Extra environment variables to be set on diffwatcher container                     | `[]`                   |
 | `extraEnvVarsCM`                         | Name of existing ConfigMap containing extra env vars                             | `""`                   |
 | `extraEnvVarsSecret`                     | Name of existing Secret containing extra env vars                                | `""`                   |
 
 
-### Kubewatch deployment parameters
+### diffwatcher deployment parameters
 
 | Name                                    | Description                                                                               | Value           |
 | --------------------------------------- | ----------------------------------------------------------------------------------------- | --------------- |
-| `replicaCount`                          | Number of Kubewatch replicas to deploy                                                    | `1`             |
-| `podSecurityContext.enabled`            | Enable Kubewatch containers' SecurityContext                                              | `false`         |
-| `podSecurityContext.fsGroup`            | Set Kubewatch containers' SecurityContext fsGroup                                         | `""`            |
-| `containerSecurityContext.enabled`      | Enable Kubewatch pods' Security Context                                                   | `false`         |
-| `containerSecurityContext.runAsUser`    | Set Kubewatch pods' SecurityContext runAsUser                                             | `""`            |
-| `containerSecurityContext.runAsNonRoot` | Set Kubewatch pods' SecurityContext runAsNonRoot                                          | `""`            |
-| `resources.limits`                      | The resources limits for the Kubewatch container                                          | `{}`            |
-| `resources.requests`                    | The requested resources for the Kubewatch container                                       | `{}`            |
+| `replicaCount`                          | Number of diffwatcher replicas to deploy                                                    | `1`             |
+| `podSecurityContext.enabled`            | Enable diffwatcher containers' SecurityContext                                              | `false`         |
+| `podSecurityContext.fsGroup`            | Set diffwatcher containers' SecurityContext fsGroup                                         | `""`            |
+| `containerSecurityContext.enabled`      | Enable diffwatcher pods' Security Context                                                   | `false`         |
+| `containerSecurityContext.runAsUser`    | Set diffwatcher pods' SecurityContext runAsUser                                             | `""`            |
+| `containerSecurityContext.runAsNonRoot` | Set diffwatcher pods' SecurityContext runAsNonRoot                                          | `""`            |
+| `resources.limits`                      | The resources limits for the diffwatcher container                                          | `{}`            |
+| `resources.requests`                    | The requested resources for the diffwatcher container                                       | `{}`            |
 | `startupProbe.enabled`                  | Enable startupProbe                                                                       | `false`         |
 | `startupProbe.initialDelaySeconds`      | Initial delay seconds for startupProbe                                                    | `10`            |
 | `startupProbe.periodSeconds`            | Period seconds for startupProbe                                                           | `10`            |
@@ -166,13 +166,13 @@ The command removes all the Kubernetes components associated with the chart and 
 | `priorityClassName`                     | Controller priorityClassName                                                              | `""`            |
 | `schedulerName`                         | Name of the k8s scheduler (other than default)                                            | `""`            |
 | `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment                                            | `[]`            |
-| `podLabels`                             | Extra labels for Kubewatch pods                                                           | `{}`            |
-| `podAnnotations`                        | Annotations for Kubewatch pods                                                            | `{}`            |
-| `extraVolumes`                          | Optionally specify extra list of additional volumes for Kubewatch pods                    | `[]`            |
-| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for Kubewatch container(s)       | `[]`            |
+| `podLabels`                             | Extra labels for diffwatcher pods                                                           | `{}`            |
+| `podAnnotations`                        | Annotations for diffwatcher pods                                                            | `{}`            |
+| `extraVolumes`                          | Optionally specify extra list of additional volumes for diffwatcher pods                    | `[]`            |
+| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for diffwatcher container(s)       | `[]`            |
 | `updateStrategy.type`                   | Deployment strategy type.                                                                 | `RollingUpdate` |
-| `initContainers`                        | Add additional init containers to the Kubewatch pods                                      | `[]`            |
-| `sidecars`                              | Add additional sidecar containers to the Kubewatch pods                                   | `[]`            |
+| `initContainers`                        | Add additional init containers to the diffwatcher pods                                      | `[]`            |
+| `sidecars`                              | Add additional sidecar containers to the diffwatcher pods                                   | `[]`            |
 
 
 ### RBAC parameters
@@ -189,14 +189,14 @@ The command removes all the Kubernetes components associated with the chart and 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```console
-$ helm install my-release bitnami/kubewatch \
+$ helm install my-release bitnami/diffwatcher \
   --set=slack.channel="#bots",slack.token="XXXX-XXXX-XXXX"
 ```
 
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install my-release -f values.yaml bitnami/kubewatch
+$ helm install my-release -f values.yaml bitnami/diffwatcher
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -230,7 +230,7 @@ Alternatively, you can use a ConfigMap or a Secret with the environment variable
 
 ### Sidecars and Init Containers
 
-If you have a need for additional containers to run within the same pod as the Kubewatch app (e.g. an additional metrics or logging exporter), you can do so via the `sidecars` config parameter. Simply define your container according to the Kubernetes container spec.
+If you have a need for additional containers to run within the same pod as the diffwatcher app (e.g. an additional metrics or logging exporter), you can do so via the `sidecars` config parameter. Simply define your container according to the Kubernetes container spec.
 
 ```yaml
 sidecars:
@@ -277,7 +277,7 @@ Find more information about how to deal with common errors related to Bitnami's 
 
 Consequences:
 
-- Backwards compatibility is not guaranteed. To upgrade to `3.0.0`, install a new release of the Kubewatch chart.
+- Backwards compatibility is not guaranteed. To upgrade to `3.0.0`, install a new release of the diffwatcher chart.
 
 ### To 2.0.0
 

@@ -1,11 +1,11 @@
 .PHONY: default build docker-image test stop clean-images clean
 
-BINARY = kubewatch
+BINARY = diffwatcher
 
 VERSION=
 BUILD=
 
-PKG            = github.com/bitnami-labs/kubewatch
+PKG            = github.com/marvasgit/diffwatcher
 TRAVIS_COMMIT ?= `git describe --tags`
 GOCMD          = go
 BUILD_DATE     = `date +%FT%T%z`

@@ -17,8 +17,8 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/message"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/message"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

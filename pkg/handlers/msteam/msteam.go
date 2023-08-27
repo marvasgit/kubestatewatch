@@ -24,9 +24,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
-	"github.com/bitnami-labs/kubewatch/pkg/message"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
+	"github.com/marvasgit/diffwatcher/pkg/message"
 	"github.com/sirupsen/logrus"
 )
 

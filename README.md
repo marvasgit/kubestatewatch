@@ -1,16 +1,16 @@
 <div align="center">
 
-**This is the official Kubewatch project, [originally by Bitnami](https://github.com/bitnami-labs/kubewatch/), now maintained by [Robusta.dev](https://home.robusta.dev/).**
+**This is the official diffwatcher project, [originally by Bitnami](https://github.com/marvasgit/diffwatcher/), now maintained by [Robusta.dev](https://home.robusta.dev/).**
 
 **Feel free to open issues, raise PRs or talk with us on [Slack](https://bit.ly/robusta-slack)!**
 
-**kubewatch** is a Kubernetes watcher that publishes notification to available collaboration hubs/notification channels. Run it in your k8s cluster, and you will get event notifications through webhooks.
+**diffwatcher** is a Kubernetes watcher that publishes notification to available collaboration hubs/notification channels. Run it in your k8s cluster, and you will get event notifications through webhooks.
 
-[See the blog post on KubeWatch 2.0 to learn more about how KubeWatch is used.](https://home.robusta.dev/blog/kubewatch-2-0-released)
+[See the blog post on diffwatcher 2.0 to learn more about how diffwatcher is used.](https://home.robusta.dev/blog/diffwatcher-2-0-released)
 
-<img src="./docs/kubewatch-logo.jpeg">
+<img src="./docs/diffwatcher-logo.jpeg">
 
-[![GoDoc](https://godoc.org/github.com/bitnami-labs/kubewatch?status.svg)](https://godoc.org/github.com/bitnami-labs/kubewatch) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/bitnami-labs/kubewatch/blob/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/marvasgit/diffwatcher?status.svg)](https://godoc.org/github.com/marvasgit/diffwatcher) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/marvasgit/diffwatcher/blob/master/LICENSE)
 [![slack robusta](https://img.shields.io/badge/Slack-Join-4A154B?style=flat-square&logo=slack&logoColor=white)](https://bit.ly/robusta-slack)
 
 </div>
@@ -18,16 +18,16 @@
 # Latest image
 
 ```
-us-central1-docker.pkg.dev/genuine-flight-317411/devel/kubewatch:v2.5
+us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher:v2.5
 ```
 
 # Usage
 ```
-$ kubewatch -h
+$ diffwatcher -h
 
-Kubewatch: A watcher for Kubernetes
+diffwatcher: A watcher for Kubernetes
 
-kubewatch is a Kubernetes watcher that publishes notifications
+diffwatcher is a Kubernetes watcher that publishes notifications
 to Slack/hipchat/mattermost/flock channels. It watches the cluster
 for resource changes and notifies them through webhooks.
 
@@ -43,18 +43,18 @@ supported webhooks:
  - smtp
 
 Usage:
-  kubewatch [flags]
-  kubewatch [command]
+  diffwatcher [flags]
+  diffwatcher [command]
 
 Available Commands:
-  config      modify kubewatch configuration
+  config      modify diffwatcher configuration
   resource    manage resources to be watched
   version     print version
 
 Flags:
-  -h, --help   help for kubewatch
+  -h, --help   help for diffwatcher
 
-Use "kubewatch [command] --help" for more information about a command.
+Use "diffwatcher [command] --help" for more information about a command.
 
 ```
 
@@ -67,7 +67,7 @@ When you have helm installed in your cluster, use the following setup:
 
 ```console
 helm repo add robusta https://robusta-charts.storage.googleapis.com && helm repo update
-helm install kubewatch robusta/kubewatch --set='rbac.create=true,slack.channel=#YOUR_CHANNEL,slack.token=xoxb-YOUR_TOKEN,resourcesToWatch.pod=true,resourcesToWatch.daemonset=true'
+helm install diffwatcher robusta/diffwatcher --set='rbac.create=true,slack.channel=#YOUR_CHANNEL,slack.token=xoxb-YOUR_TOKEN,resourcesToWatch.pod=true,resourcesToWatch.daemonset=true'
 ```
 
 You may also provide a values file instead:
@@ -102,34 +102,34 @@ slack:
 And use that:
 
 ```console
-$ helm upgrade --install kubewatch robusta/kubewatch --values=values-file.yml
+$ helm upgrade --install diffwatcher robusta/diffwatcher --values=values-file.yml
 ```
 
 #### Using kubectl:
 
-In order to run kubewatch in a Kubernetes cluster quickly, the easiest way is for you to create a [ConfigMap](https://github.com/robusta-dev/kubewatch/blob/master/kubewatch-configmap.yaml) to hold kubewatch configuration.
+In order to run diffwatcher in a Kubernetes cluster quickly, the easiest way is for you to create a [ConfigMap](https://github.com/robusta-dev/diffwatcher/blob/master/diffwatcher-configmap.yaml) to hold diffwatcher configuration.
 
-An example is provided at [`kubewatch-configmap.yaml`](https://github.com/robusta-dev/kubewatch/blob/master/kubewatch-configmap.yaml), do not forget to update your own slack channel and token parameters. Alternatively, you could use secrets.
+An example is provided at [`diffwatcher-configmap.yaml`](https://github.com/robusta-dev/diffwatcher/blob/master/diffwatcher-configmap.yaml), do not forget to update your own slack channel and token parameters. Alternatively, you could use secrets.
 
 Create k8s configmap:
 
 ```console
-$ kubectl create -f kubewatch-configmap.yaml
+$ kubectl create -f diffwatcher-configmap.yaml
 ```
 
-Create the [Pod](https://github.com/robusta-dev/kubewatch/blob/master/kubewatch.yaml) directly, or create your own deployment:
+Create the [Pod](https://github.com/robusta-dev/diffwatcher/blob/master/diffwatcher.yaml) directly, or create your own deployment:
 
 ```console
-$ kubectl create -f kubewatch.yaml
+$ kubectl create -f diffwatcher.yaml
 ```
 
-A `kubewatch` container will be created along with `kubectl` sidecar container in order to reach the API server.
+A `diffwatcher` container will be created along with `kubectl` sidecar container in order to reach the API server.
 
 Once the Pod is running, you will start seeing Kubernetes events in your configured Slack channel. Here is a screenshot:
 
 ![slack](./docs/slack.png)
 
-To modify what notifications you get, update the `kubewatch` ConfigMap and turn on and off (true/false) resources:
+To modify what notifications you get, update the `diffwatcher` ConfigMap and turn on and off (true/false) resources:
 
 ```
 resource:
@@ -158,7 +158,7 @@ resource:
 Kubernetes Engine clusters running versions 1.6 or higher introduced Role-Based Access Control (RBAC). We can create `ServiceAccount` for it to work with RBAC.
 
 ```console
-$ kubectl create -f kubewatch-service-account.yaml
+$ kubectl create -f diffwatcher-service-account.yaml
 ```
 
 If you do not have permission to create it, you need to become an admin first. For example, in GKE you would run:
@@ -167,97 +167,97 @@ If you do not have permission to create it, you need to become an admin first. F
 $ kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=REPLACE_EMAIL_HERE
 ```
 
-Edit `kubewatch.yaml`, and create a new field under `spec` with `serviceAccountName: kubewatch`, you can achieve this by running:
+Edit `diffwatcher.yaml`, and create a new field under `spec` with `serviceAccountName: diffwatcher`, you can achieve this by running:
 
 ```console
-$ sed -i '/spec:/a\ \ serviceAccountName: kubewatch' kubewatch.yaml
+$ sed -i '/spec:/a\ \ serviceAccountName: diffwatcher' diffwatcher.yaml
 ```
 
 Then just create `pod` as usual with:
 
 ```console
-$ kubectl create -f kubewatch.yaml
+$ kubectl create -f diffwatcher.yaml
 ```
 
 ### Local Installation
 #### Using go package installer:
 
 ```console
-# Download and install kubewatch
-$ go get -u github.com/robusta-dev/kubewatch
+# Download and install diffwatcher
+$ go get -u github.com/robusta-dev/diffwatcher
 
 # Configure the notification channel
-$ kubewatch config add slack --channel <slack_channel> --token <slack_token>
+$ diffwatcher config add slack --channel <slack_channel> --token <slack_token>
 
 # Add resources to be watched
-$ kubewatch resource add --po --svc
+$ diffwatcher resource add --po --svc
 INFO[0000] resource svc configured
 INFO[0000] resource po configured
 
-# start kubewatch server
-$ kubewatch
-INFO[0000] Starting kubewatch controller                 pkg=kubewatch-service
-INFO[0000] Starting kubewatch controller                 pkg=kubewatch-pod
-INFO[0000] Processing add to service: default/kubernetes  pkg=kubewatch-service
-INFO[0000] Processing add to service: kube-system/tiller-deploy  pkg=kubewatch-service
-INFO[0000] Processing add to pod: kube-system/tiller-deploy-69ffbf64bc-h8zxm  pkg=kubewatch-pod
-INFO[0000] Kubewatch controller synced and ready         pkg=kubewatch-service
-INFO[0000] Kubewatch controller synced and ready         pkg=kubewatch-pod
+# start diffwatcher server
+$ diffwatcher
+INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-service
+INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-pod
+INFO[0000] Processing add to service: default/kubernetes  pkg=diffwatcher-service
+INFO[0000] Processing add to service: kube-system/tiller-deploy  pkg=diffwatcher-service
+INFO[0000] Processing add to pod: kube-system/tiller-deploy-69ffbf64bc-h8zxm  pkg=diffwatcher-pod
+INFO[0000] diffwatcher controller synced and ready         pkg=diffwatcher-service
+INFO[0000] diffwatcher controller synced and ready         pkg=diffwatcher-pod
 
 ```
 #### Using Docker:
 
-To Run Kubewatch Container interactively, place the config file in `$HOME/.kubewatch.yaml` location and use the following command.
+To Run diffwatcher Container interactively, place the config file in `$HOME/.diffwatcher.yaml` location and use the following command.
 
 ```
-docker run --rm -it --network host -v $HOME/.kubewatch.yaml:/root/.kubewatch.yaml -v $HOME/.kube/config:/opt/bitnami/kubewatch/.kube/config --name <container-name> us-central1-docker.pkg.dev/genuine-flight-317411/devel/kubewatch
+docker run --rm -it --network host -v $HOME/.diffwatcher.yaml:/root/.diffwatcher.yaml -v $HOME/.kube/config:/opt/bitnami/diffwatcher/.kube/config --name <container-name> us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher
 ```
 
 Example:
 
 ```
-$ docker run --rm -it --network host -v $HOME/.kubewatch.yaml:/root/.kubewatch.yaml -v $HOME/.kube/config:/opt/bitnami/kubewatch/.kube/config --name kubewatch-app us-central1-docker.pkg.dev/genuine-flight-317411/devel/kubewatch
+$ docker run --rm -it --network host -v $HOME/.diffwatcher.yaml:/root/.diffwatcher.yaml -v $HOME/.kube/config:/opt/bitnami/diffwatcher/.kube/config --name diffwatcher-app us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher
 
 ==> Writing config file...
-INFO[0000] Starting kubewatch controller                 pkg=kubewatch-service
-INFO[0000] Starting kubewatch controller                 pkg=kubewatch-pod
-INFO[0000] Starting kubewatch controller                 pkg=kubewatch-deployment
-INFO[0000] Starting kubewatch controller                 pkg=kubewatch-namespace
-INFO[0000] Processing add to namespace: kube-node-lease  pkg=kubewatch-namespace
-INFO[0000] Processing add to namespace: kube-public      pkg=kubewatch-namespace
-INFO[0000] Processing add to namespace: kube-system      pkg=kubewatch-namespace
-INFO[0000] Processing add to namespace: default          pkg=kubewatch-namespace
+INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-service
+INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-pod
+INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-deployment
+INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-namespace
+INFO[0000] Processing add to namespace: kube-node-lease  pkg=diffwatcher-namespace
+INFO[0000] Processing add to namespace: kube-public      pkg=diffwatcher-namespace
+INFO[0000] Processing add to namespace: kube-system      pkg=diffwatcher-namespace
+INFO[0000] Processing add to namespace: default          pkg=diffwatcher-namespace
 ....
 ```
 
-To Demonise Kubewatch container use
+To Demonise diffwatcher container use
 
 ```
-$ docker run --rm -d --network host -v $HOME/.kubewatch.yaml:/root/.kubewatch.yaml -v $HOME/.kube/config:/opt/bitnami/kubewatch/.kube/config --name kubewatch-app us-central1-docker.pkg.dev/genuine-flight-317411/devel/kubewatch
+$ docker run --rm -d --network host -v $HOME/.diffwatcher.yaml:/root/.diffwatcher.yaml -v $HOME/.kube/config:/opt/bitnami/diffwatcher/.kube/config --name diffwatcher-app us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher
 ```
 
 # Configure
 
-Kubewatch supports `config` command for configuration. Config file will be saved at `$HOME/.kubewatch.yaml`
+diffwatcher supports `config` command for configuration. Config file will be saved at `$HOME/.diffwatcher.yaml`
 
 ```
-$ kubewatch config -h
+$ diffwatcher config -h
 
-config command allows admin setup his own configuration for running kubewatch
+config command allows admin setup his own configuration for running diffwatcher
 
 Usage:
-  kubewatch config [flags]
-  kubewatch config [command]
+  diffwatcher config [flags]
+  diffwatcher config [command]
 
 Available Commands:
-  add         add webhook config to .kubewatch.yaml
-  test        test handler config present in .kubewatch.yaml
-  view        view .kubewatch.yaml
+  add         add webhook config to .diffwatcher.yaml
+  test        test handler config present in .diffwatcher.yaml
+  view        view .diffwatcher.yaml
 
 Flags:
   -h, --help   help for config
 
-Use "kubewatch config [command] --help" for more information about a command.
+Use "diffwatcher config [command] --help" for more information about a command.
 ```
 ### Example:
 
@@ -269,10 +269,10 @@ Use "kubewatch config [command] --help" for more information about a command.
 
 - Invite the Bot into your channel by typing: `/invite @name_of_your_bot` in the Slack message area.
 
-- Add Api token to kubewatch config using the following steps
+- Add Api token to diffwatcher config using the following steps
 
   ```console
-  $ kubewatch config add slack --channel <slack_channel> --token <slack_token>
+  $ diffwatcher config add slack --channel <slack_channel> --token <slack_token>
   ```
   You have an altenative choice to set your SLACK token, channel via environment variables:
 
@@ -292,10 +292,10 @@ Use "kubewatch config [command] --help" for more information about a command.
 - Pick a channel that the app will post to, and then click to Authorize your app. You will get back your webhook URL.  
   The Slack Webhook URL will look like: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
 
-- Add slack webhook url to kubewatch config using the following steps
+- Add slack webhook url to diffwatcher config using the following steps
 
   ```console
-  $ kubewatch config add slackwebhookurl --username <slack_username> --emoji <slack_emoji> --channel <slack_channel> --slackwebhookurl <slack_webhook_url>
+  $ diffwatcher config add slackwebhookurl --username <slack_username> --emoji <slack_emoji> --channel <slack_channel> --slackwebhookurl <slack_webhook_url>
   ```
   Or, you have an altenative choice to set your SLACK channel, username, emoji and webhook URL via environment variables:
 
@@ -309,18 +309,18 @@ Use "kubewatch config [command] --help" for more information about a command.
  - Example apply done in a bash script:  
   
  ```console
- $ cat kubewatch-configmap-slackwebhook.yaml | sed "s|<slackchannel>|"\"$SlackChannel"\"|g;s|<slackusername>|"\"$SlackUsesrName"\"|g;s|<slackemoji>|"\"$SlackEmoji"\"|g;s|<SlackWebhookUrl>|"\"$WebhookUrl"\"|g" | kubectl create -f -
+ $ cat diffwatcher-configmap-slackwebhook.yaml | sed "s|<slackchannel>|"\"$SlackChannel"\"|g;s|<slackusername>|"\"$SlackUsesrName"\"|g;s|<slackemoji>|"\"$SlackEmoji"\"|g;s|<SlackWebhookUrl>|"\"$WebhookUrl"\"|g" | kubectl create -f -
  ```
  
- - An example kubewatch-configmap-slackwebhook.yaml YAML File:  
+ - An example diffwatcher-configmap-slackwebhook.yaml YAML File:  
   
  ```yaml
  apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kubewatch
+  name: diffwatcher
 data:
-  .kubewatch.yaml: |
+  .diffwatcher.yaml: |
     namespace: ""
     handler:
       slackwebhook:
@@ -355,7 +355,7 @@ data:
 
 - Add flock webhook url to config using the following command.
   ```console
-  $ kubewatch config add flock --url <flock_webhook_url>
+  $ diffwatcher config add flock --url <flock_webhook_url>
   ```
   You have an altenative choice to set your FLOCK URL
 
@@ -367,12 +367,12 @@ data:
 
 To test the handler config by send test messages use the following command.
 ```
-$ kubewatch config test -h
+$ diffwatcher config test -h
 
-Tests handler configs present in .kubewatch.yaml by sending test messages
+Tests handler configs present in .diffwatcher.yaml by sending test messages
 
 Usage:
-  kubewatch config test [flags]
+  diffwatcher config test [flags]
 
 Flags:
   -h, --help   help for test
@@ -381,17 +381,17 @@ Flags:
 #### Example:
 
 ```
-$ kubewatch config test
+$ diffwatcher config test
 
-Testing Handler configs from .kubewatch.yaml
+Testing Handler configs from .diffwatcher.yaml
 2019/06/03 12:29:23 Message successfully sent to channel ABCD at 1559545162.000100
 ```
 
 ## Viewing config
-To view the entire config file `$HOME/.kubewatch.yaml` use the following command.
+To view the entire config file `$HOME/.diffwatcher.yaml` use the following command.
 ```
-$ kubewatch config view
-Contents of .kubewatch.yaml
+$ diffwatcher config view
+Contents of .diffwatcher.yaml
 
 handler:
   slack:
@@ -437,16 +437,16 @@ namespace: ""
 
 ## Resources
 
-To manage the resources being watched, use the following command, changes will be saved to `$HOME/.kubewatch.yaml`.
+To manage the resources being watched, use the following command, changes will be saved to `$HOME/.diffwatcher.yaml`.
 
 ```
-$ kubewatch resource -h
+$ diffwatcher resource -h
 
 manage resources to be watched
 
 Usage:
-  kubewatch resource [flags]
-  kubewatch resource [command]
+  diffwatcher resource [flags]
+  diffwatcher resource [command]
 
 Available Commands:
   add         adds specific resources to be watched
@@ -473,18 +473,18 @@ Flags:
       --svc                     watch for services
       --coreevent               watch for events from the kubernetes core api. (Old events api, replaced in kubernetes 1.19)
 
-Use "kubewatch resource [command] --help" for more information about a command.
+Use "diffwatcher resource [command] --help" for more information about a command.
 
 ```
 
 ### Add/Remove resource:
 ```
-$ kubewatch resource add -h
+$ diffwatcher resource add -h
 
 adds specific resources to be watched
 
 Usage:
-  kubewatch resource add [flags]
+  diffwatcher resource add [flags]
 
 Flags:
   -h, --help   help for add
@@ -514,10 +514,10 @@ Global Flags:
 
 ```console
 # rc, po and svc will be watched
-$ kubewatch resource add --rc --po --svc
+$ diffwatcher resource add --rc --po --svc
 
 # rc, po and svc will be stopped from being watched
-$ kubewatch resource remove --rc --po --svc
+$ diffwatcher resource remove --rc --po --svc
 ```
 
 ### Changing log level
@@ -546,8 +546,8 @@ env:
 
 Clone the repository anywhere:
 ```console
-$ git clone https://github.com/bitnami-labs/kubewatch.git
-$ cd kubewatch
+$ git clone https://github.com/marvasgit/diffwatcher.git
+$ cd diffwatcher
 $ go build
 ```
 or
@@ -569,7 +569,7 @@ $ make build
 $ make docker-image
 $ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
-kubewatch           latest              919896d3cd90        3 minutes ago       27.9MB
+diffwatcher           latest              919896d3cd90        3 minutes ago       27.9MB
 ```
 #### Prerequisites
 

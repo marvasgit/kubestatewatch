@@ -24,9 +24,9 @@ import (
 
 	"github.com/slack-go/slack"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
-	"github.com/bitnami-labs/kubewatch/pkg/message"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
+	"github.com/marvasgit/diffwatcher/pkg/message"
 )
 
 var slackColors = map[string]string{

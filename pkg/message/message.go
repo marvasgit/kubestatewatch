@@ -19,7 +19,7 @@ limitations under the License.
 import (
 	"os"
 
-	"github.com/bitnami-labs/kubewatch/config"
+	"github.com/marvasgit/diffwatcher/config"
 	"github.com/spf13/cobra"
 )
 
@@ -40,7 +40,7 @@ func GetTitle(configName string, envVariableName string) string {
 	if title == "" {
 		title = os.Getenv(envVariableName)
 		if title == "" {
-			title = "kubewatch"
+			title = "diffwatcher"
 		}
 	}
 	return title

@@ -1,4 +1,4 @@
-# Contributing to Kubewatch
+# Contributing to diffwatcher
 
 We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 
@@ -7,7 +7,7 @@ We love your input! We want to make contributing to this project as easy and tra
 - Submitting a fix
 - Proposing new features
 
-## We use Github to develop kubewatch
+## We use Github to develop diffwatcher
 We use github to host code, to track issues and feature requests, as well as accept pull requests.
 
 ## We use [Github Flow](https://guides.github.com/introduction/flow/index.html), so all code changes happen through Pull Requests
@@ -20,7 +20,7 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 5. Make sure your code lints. (by using gofmt tool `gofmt -s -w . `)
 6. Issue that pull request!
 
-## Report bugs using Github's [issues](https://github.com/bitnami-labs/kubewatch/issues)
+## Report bugs using Github's [issues](https://github.com/marvasgit/diffwatcher/issues)
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](); it's that easy!
 
 ## Write bug reports with detail, background, and sample code

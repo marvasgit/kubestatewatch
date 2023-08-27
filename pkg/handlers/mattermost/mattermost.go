@@ -18,16 +18,17 @@ package mattermost
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
+
+	"github.com/sirupsen/logrus"
 
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 )
 
 var mattermostColors = map[string]string{

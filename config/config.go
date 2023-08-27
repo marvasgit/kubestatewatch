@@ -29,7 +29,7 @@ import (
 
 var (
 	// ConfigFileName stores file of config
-	ConfigFileName = ".kubewatch.yaml"
+	ConfigFileName = ".diffwatcher.yaml"
 
 	// ConfigSample is a sample configuration file.
 	ConfigSample = yannotated
@@ -73,7 +73,7 @@ type Resource struct {
 	CoreEvent             bool `yaml:"coreevent"`
 }
 
-// Config struct contains kubewatch configuration
+// Config struct contains diffwatcher configuration
 type Config struct {
 	// Handlers know how to send notifications to specific services.
 	Handler Handler `yaml:"handler"`
@@ -326,7 +326,7 @@ func (c *Config) Write() error {
 	defer f.Close()
 
 	enc := yaml.NewEncoder(f)
-	enc.SetIndent(2) // compat with old versions of kubewatch
+	enc.SetIndent(2) // compat with old versions of diffwatcher
 	return enc.Encode(c)
 }
 
@@ -349,7 +349,7 @@ func configDir() string {
 		return home
 	}
 	return os.Getenv("HOME")
-	//path := "/etc/kubewatch"
+	//path := "/etc/diffwatcher"
 	//if _, err := os.Stat(path); os.IsNotExist(err) {
 	//	os.Mkdir(path, 755)
 	//}

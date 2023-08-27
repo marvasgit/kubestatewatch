@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/smtp"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/smtp"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +30,7 @@ var smtpConfigCmd = &cobra.Command{
 	Short: "specific smtp configuration",
 	Long:  `specific smtp configuration`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(os.Stderr, "CLI setters not implemented yet, please edit ~/.kubewatch.yaml directly. Example:\n\n%s", smtp.ConfigExample)
+		fmt.Fprintf(os.Stderr, "CLI setters not implemented yet, please edit ~/.diffwatcher.yaml directly. Example:\n\n%s", smtp.ConfigExample)
 	},
 }
 

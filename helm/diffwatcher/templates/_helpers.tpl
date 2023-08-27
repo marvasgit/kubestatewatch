@@ -3,7 +3,7 @@
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "kubewatch.serviceAccountName" -}}
+{{- define "diffwatcher.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
     {{ default (include "common.names.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
@@ -12,22 +12,22 @@ Create the name of the service account to use
 {{- end -}}
 
 {{/*
-Return the proper Kubewatch image name
+Return the proper diffwatcher image name
 */}}
-{{- define "kubewatch.image" -}}
+{{- define "diffwatcher.image" -}}
 {{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
 {{- end -}}
 
 {{/*
 Return the proper Docker Image Registry Secret Names
 */}}
-{{- define "kubewatch.imagePullSecrets" -}}
+{{- define "diffwatcher.imagePullSecrets" -}}
 {{- include "common.images.pullSecrets" (dict "images" (list .Values.image) "global" .Values.global) -}}
 {{- end -}}
 
 {{/*
 Check if there are rolling tags in the images
 */}}
-{{- define "kubewatch.checkRollingTags" -}}
+{{- define "diffwatcher.checkRollingTags" -}}
 {{- include "common.warnings.rollingTag" .Values.image }}
 {{- end -}}

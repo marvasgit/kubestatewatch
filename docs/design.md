@@ -1,18 +1,18 @@
-# Kubewatch
+# diffwatcher
 
-Kubewatch contains three components: controller, config, handler
+diffwatcher contains three components: controller, config, handler
 
-![Kubewatch Diagram](kubewatch.png?raw=true "Kubewatch Overview")
+![diffwatcher Diagram](diffwatcher.png?raw=true "diffwatcher Overview")
 
 ## Config
 
-The config object contains `kubewatch` configuration, like handlers, filters.
+The config object contains `diffwatcher` configuration, like handlers, filters.
 
 A config object is used to creating new client.
 
 ## Controller
 
-The controller initializes using the config object by reading the `.kubewatch.yaml` or command line arguments.
+The controller initializes using the config object by reading the `.diffwatcher.yaml` or command line arguments.
 If the parameters are not fully mentioned, the config falls back to read a set of standard environment variables.
 
 Controller creates necessary `SharedIndexInformer`s provided by `kubernetes/client-go` for listening and watching
@@ -26,9 +26,9 @@ necessary filtering.
 
 ## Handler
 
-Handler manages how `kubewatch` handles events.
+Handler manages how `diffwatcher` handles events.
 
-With each event get from k8s and matched filtering from configuration, it is passed to handler. Currently, `kubewatch` has 8 handlers:
+With each event get from k8s and matched filtering from configuration, it is passed to handler. Currently, `diffwatcher` has 8 handlers:
 
  - `Default`: which just print the event in JSON format
  - `Flock`: which send notification to Flock channel based on information from config
@@ -41,4 +41,4 @@ With each event get from k8s and matched filtering from configuration, it is pas
 
 More handlers will be added in future.
 
-Each handler must implement the [Handler interface](https://github.com/bitnami-labs/kubewatch/blob/master/pkg/handlers/handler.go#L31)
+Each handler must implement the [Handler interface](https://github.com/marvasgit/diffwatcher/blob/master/pkg/handlers/handler.go#L31)

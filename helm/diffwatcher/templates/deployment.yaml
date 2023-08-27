@@ -28,7 +28,7 @@ spec:
         {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
         {{- end }}
     spec:
-      {{- include "kubewatch.imagePullSecrets" . | nindent 6 }}
+      {{- include "diffwatcher.imagePullSecrets" . | nindent 6 }}
       {{- if .Values.hostAliases }}
       hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}
       {{- end }}
@@ -56,7 +56,7 @@ spec:
       topologySpreadConstraints: {{- include "common.tplvalues.render" (dict "value" .Values.topologySpreadConstraints "context" .) | nindent 8 }}
       {{- end }}
       restartPolicy: Always
-      serviceAccountName: {{ include "kubewatch.serviceAccountName" . }}
+      serviceAccountName: {{ include "diffwatcher.serviceAccountName" . }}
       {{- if .Values.podSecurityContext.enabled }}
       securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
       {{- end }}
@@ -64,8 +64,8 @@ spec:
       initContainers: {{- include "common.tplvalues.render" (dict "value" .Values.initContainers "context" $) | nindent 8 }}
       {{- end }}
       containers:
-        - name: kubewatch
-          image: {{ template "kubewatch.image" . }}
+        - name: diffwatcher
+          image: {{ template "diffwatcher.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.containerSecurityContext.enabled }}
           securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
@@ -119,8 +119,8 @@ spec:
           {{- end }}
           volumeMounts:
             - name: configuration
-              mountPath: /opt/bitnami/kubewatch/.kubewatch.yaml
-              subPath: .kubewatch.yaml
+              mountPath: /opt/bitnami/diffwatcher/.diffwatcher.yaml
+              subPath: .diffwatcher.yaml
             {{- if .Values.extraVolumeMounts }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
             {{- end }}

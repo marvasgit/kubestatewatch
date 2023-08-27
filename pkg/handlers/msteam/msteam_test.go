@@ -9,8 +9,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 	"github.com/mohae/deepcopy"
 	"github.com/stretchr/testify/assert"
 )
@@ -24,8 +24,8 @@ func TestSendCard_Success(t *testing.T) {
 	initCard := &TeamsMessageCard{
 		Type:    messageType,
 		Context: context,
-		Summary: "kubewatch notification received",
-		Title:   "kubewatch",
+		Summary: "diffwatcher notification received",
+		Title:   "diffwatcher",
 
 		Sections: []TeamsMessageCardSection{
 			{
@@ -40,8 +40,8 @@ func TestSendCard_Success(t *testing.T) {
 	expectedCard := &TeamsMessageCard{
 		Type:    messageType,
 		Context: context,
-		Summary: "kubewatch notification received",
-		Title:   "kubewatch",
+		Summary: "diffwatcher notification received",
+		Title:   "diffwatcher",
 
 		Sections: []TeamsMessageCardSection{
 			{
@@ -52,7 +52,7 @@ func TestSendCard_Success(t *testing.T) {
 
 	ms := &MSTeams{
 		TeamsWebhookURL: server.URL,
-		Title:           "kubewatch",
+		Title:           "diffwatcher",
 	}
 
 	response, err := sendCard(ms, expectedCard)
@@ -152,7 +152,7 @@ func TestInit(t *testing.T) {
 
 	for _, tt := range Tests {
 		c := &config.Config{}
-		c.Message.Title = "kubewatch"
+		c.Message.Title = "diffwatcher"
 		c.Handler.MSTeams = tt.ms
 		if err := s.Init(c); !reflect.DeepEqual(err, tt.err) {
 			t.Fatalf("Init(): %v", err)
@@ -171,8 +171,8 @@ func TestObjectCreated(t *testing.T) {
 		Type:       messageType,
 		Context:    context,
 		ThemeColor: msTeamsColors["Normal"],
-		Summary:    "kubewatch notification received",
-		Title:      "kubewatch",
+		Summary:    "diffwatcher notification received",
+		Title:      "diffwatcher",
 		Text:       "",
 
 		Sections: []TeamsMessageCardSection{
@@ -186,7 +186,7 @@ func TestObjectCreated(t *testing.T) {
 	ts := httptestConfig(t, expectedCard, "ObjectCreated")
 	defer ts.Close()
 
-	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "kubewatch"}
+	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
 	p := deepcopy.Copy(msTeamsTestMessage).(event.Event)
 	p.Reason = e.Reason
 	p.Status = "Normal"
@@ -202,8 +202,8 @@ func TestObjectDeleted(t *testing.T) {
 		Type:       messageType,
 		Context:    context,
 		ThemeColor: msTeamsColors["Danger"],
-		Summary:    "kubewatch notification received",
-		Title:      "kubewatch",
+		Summary:    "diffwatcher notification received",
+		Title:      "diffwatcher",
 		Text:       "",
 		Sections: []TeamsMessageCardSection{
 			{
@@ -216,7 +216,7 @@ func TestObjectDeleted(t *testing.T) {
 	ts := httptestConfig(t, expectedCard, "ObjectDeleted")
 	defer ts.Close()
 
-	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "kubewatch"}
+	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
 
 	p := deepcopy.Copy(msTeamsTestMessage).(event.Event)
 	p.Status = "Danger"
@@ -235,8 +235,8 @@ func TestObjectUpdated(t *testing.T) {
 		Type:       messageType,
 		Context:    context,
 		ThemeColor: msTeamsColors["Warning"],
-		Summary:    "kubewatch notification received",
-		Title:      "kubewatch",
+		Summary:    "diffwatcher notification received",
+		Title:      "diffwatcher",
 		Text:       "",
 		Sections: []TeamsMessageCardSection{
 			{
@@ -249,7 +249,7 @@ func TestObjectUpdated(t *testing.T) {
 	ts := httptestConfig(t, expectedCard, "ObjectUpdated")
 	defer ts.Close()
 
-	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "kubewatch"}
+	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
 
 	oldP := deepcopy.Copy(msTeamsTestMessage).(event.Event)
 	oldP.Reason = "Updated"

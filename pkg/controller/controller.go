@@ -27,10 +27,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers"
-	"github.com/bitnami-labs/kubewatch/pkg/utils"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
+	"github.com/marvasgit/diffwatcher/pkg/handlers"
+	"github.com/marvasgit/diffwatcher/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/wI2L/jsondiff"
 
@@ -567,9 +567,9 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			newEvent.apiVersion = apiVersion
 			newEvent.obj, ok = obj.(runtime.Object)
 			if !ok {
-				logrus.WithField("pkg", "kubewatch-"+resourceType).Errorf("cannot convert to runtime.Object for add on %v", obj)
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for add on %v", obj)
 			}
-			logrus.WithField("pkg", "kubewatch-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
+			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
 			if err == nil {
 				queue.Add(newEvent)
 			}
@@ -583,13 +583,13 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			newEvent.apiVersion = apiVersion
 			newEvent.obj, ok = new.(runtime.Object)
 			if !ok {
-				logrus.WithField("pkg", "kubewatch-"+resourceType).Errorf("cannot convert to runtime.Object for update on %v", new)
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for update on %v", new)
 			}
 			newEvent.oldObj, ok = old.(runtime.Object)
 			if !ok {
-				logrus.WithField("pkg", "kubewatch-"+resourceType).Errorf("cannot convert old to runtime.Object for update on %v", old)
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert old to runtime.Object for update on %v", old)
 			}
-			logrus.WithField("pkg", "kubewatch-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
+			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
 			if err == nil {
 				queue.Add(newEvent)
 			}
@@ -603,9 +603,9 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			newEvent.apiVersion = apiVersion
 			newEvent.obj, ok = obj.(runtime.Object)
 			if !ok {
-				logrus.WithField("pkg", "kubewatch-"+resourceType).Errorf("cannot convert to runtime.Object for delete on %v", obj)
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for delete on %v", obj)
 			}
-			logrus.WithField("pkg", "kubewatch-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
+			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
 			if err == nil {
 				queue.Add(newEvent)
 			}
@@ -613,7 +613,7 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 	})
 
 	return &Controller{
-		logger:       logrus.WithField("pkg", "kubewatch-"+resourceType),
+		logger:       logrus.WithField("pkg", "diffwatcher-"+resourceType),
 		clientset:    client,
 		informer:     informer,
 		queue:        queue,
@@ -621,12 +621,12 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 	}
 }
 
-// Run starts the kubewatch controller
+// Run starts the diffwatcher controller
 func (c *Controller) Run(stopCh <-chan struct{}) {
 	defer utilruntime.HandleCrash()
 	defer c.queue.ShutDown()
 
-	c.logger.Info("Starting kubewatch controller")
+	c.logger.Info("Starting diffwatcher controller")
 	serverStartTime = time.Now().Local()
 
 	go c.informer.Run(stopCh)
@@ -636,7 +636,7 @@ func (c *Controller) Run(stopCh <-chan struct{}) {
 		return
 	}
 
-	c.logger.Info("Kubewatch controller synced and ready")
+	c.logger.Info("diffwatcher controller synced and ready")
 
 	wait.Until(c.runWorker, time.Second, stopCh)
 }

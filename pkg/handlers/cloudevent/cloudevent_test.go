@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bitnami-labs/kubewatch/config"
+	"github.com/marvasgit/diffwatcher/config"
 )
 
 func TestCloudEventInit(t *testing.T) {
