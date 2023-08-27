@@ -749,10 +749,6 @@ func (c *Controller) processItem(newEvent Event) error {
 
 		diffStr := compareObjects(newEvent)
 
-		if !confDiff.Enabled {
-			diffStr = ""
-		}
-
 		kbEvent := event.Event{
 			Name:       newEvent.key,
 			Namespace:  newEvent.namespace,
@@ -765,7 +761,7 @@ func (c *Controller) processItem(newEvent Event) error {
 			Diff:       diffStr,
 		}
 
-		if confDiff.Enabled && kbEvent.Diff == "" {
+		if kbEvent.Diff == "" {
 			logrus.Printf("No diff( or ingored paths) found for %s", newEvent.key)
 			return nil
 		}
