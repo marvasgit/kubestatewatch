@@ -70,12 +70,12 @@ func (s *SMTP) Init(c *config.Config) error {
 }
 
 // Handle handles the notification.
-func (s *SMTP) Handle(e event.Event) {
+func (s *SMTP) Handle(e event.DiffWatchEvent) {
 	send(s.cfg, e.Message())
 	logrus.Printf("Message successfully sent to %s at %s ", s.cfg.To, time.Now())
 }
 
-func formatEmail(e event.Event) (string, error) {
+func formatEmail(e event.DiffWatchEvent) (string, error) {
 	return e.Message(), nil
 }
 

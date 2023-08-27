@@ -84,7 +84,7 @@ func (s *Hipchat) Init(c *config.Config) error {
 }
 
 // Handle handles the notification.
-func (s *Hipchat) Handle(e event.Event) {
+func (s *Hipchat) Handle(e event.DiffWatchEvent) {
 	client := hipchat.NewClient(s.Token)
 	if s.Url != "" {
 		baseUrl, err := url.Parse(s.Url)
@@ -113,7 +113,7 @@ func checkMissingHipchatVars(s *Hipchat) error {
 	return nil
 }
 
-func prepareHipchatNotification(e event.Event) hipchat.NotificationRequest {
+func prepareHipchatNotification(e event.DiffWatchEvent) hipchat.NotificationRequest {
 	notification := hipchat.NotificationRequest{
 		Message: e.Message(),
 		Notify:  true,

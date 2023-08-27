@@ -132,7 +132,7 @@ func TestInit_MissingWebhookURL(t *testing.T) {
 	assert.Error(t, err)
 }
 
-var msTeamsTestMessage = event.Event{
+var msTeamsTestMessage = event.DiffWatchEvent{
 	Name:      "foo",
 	Namespace: "new",
 	Kind:      "pod",
@@ -162,7 +162,7 @@ func TestInit(t *testing.T) {
 
 // Tests ObjectCreated() by passing v1.Pod
 func TestObjectCreated(t *testing.T) {
-	e := deepcopy.Copy(msTeamsTestMessage).(event.Event)
+	e := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
 	e.Reason = "Created"
 	e.Namespace = "new"
 	e.Status = "Normal"
@@ -187,7 +187,7 @@ func TestObjectCreated(t *testing.T) {
 	defer ts.Close()
 
 	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
-	p := deepcopy.Copy(msTeamsTestMessage).(event.Event)
+	p := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
 	p.Reason = e.Reason
 	p.Status = "Normal"
 	ms.Handle(p)
@@ -195,7 +195,7 @@ func TestObjectCreated(t *testing.T) {
 
 // Tests ObjectDeleted() by passing v1.Pod
 func TestObjectDeleted(t *testing.T) {
-	e := deepcopy.Copy(msTeamsTestMessage).(event.Event)
+	e := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
 	e.Reason = "Deleted"
 	e.Status = "Danger"
 	expectedCard := TeamsMessageCard{
@@ -218,7 +218,7 @@ func TestObjectDeleted(t *testing.T) {
 
 	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
 
-	p := deepcopy.Copy(msTeamsTestMessage).(event.Event)
+	p := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
 	p.Status = "Danger"
 	p.Reason = "Deleted"
 
@@ -227,7 +227,7 @@ func TestObjectDeleted(t *testing.T) {
 
 // Tests ObjectUpdated() by passing v1.Pod
 func TestObjectUpdated(t *testing.T) {
-	e := deepcopy.Copy(msTeamsTestMessage).(event.Event)
+	e := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
 	e.Status = "Warning"
 	e.Reason = "Updated"
 
@@ -251,7 +251,7 @@ func TestObjectUpdated(t *testing.T) {
 
 	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
 
-	oldP := deepcopy.Copy(msTeamsTestMessage).(event.Event)
+	oldP := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
 	oldP.Reason = "Updated"
 	oldP.Status = "Warning"
 
@@ -274,7 +274,7 @@ func httptestConfig(t *testing.T, expectedCard TeamsMessageCard, action string) 
 		}
 	}))
 }
-func getFacts(e event.Event) []TeamsMessageCardSectionFacts {
+func getFacts(e event.DiffWatchEvent) []TeamsMessageCardSectionFacts {
 	return []TeamsMessageCardSectionFacts{
 		{
 			Name:  "Type",

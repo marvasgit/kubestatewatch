@@ -77,7 +77,7 @@ func (s *Slack) Init(c *config.Config) error {
 }
 
 // Handle handles the notification.
-func (s *Slack) Handle(e event.Event) {
+func (s *Slack) Handle(e event.DiffWatchEvent) {
 	api := slack.New(s.Token)
 	attachment := prepareSlackAttachment(e, s)
 
@@ -100,7 +100,7 @@ func checkMissingSlackVars(s *Slack) error {
 	return nil
 }
 
-func prepareSlackAttachment(e event.Event, s *Slack) slack.Attachment {
+func prepareSlackAttachment(e event.DiffWatchEvent, s *Slack) slack.Attachment {
 
 	attachment := slack.Attachment{
 		Fields: []slack.AttachmentField{

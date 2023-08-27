@@ -64,7 +64,7 @@ Tests handler configs present in ~/.diffwatcher.yaml by sending test messages`,
 			logrus.Fatal(err)
 		}
 		eventHandler := client.ParseEventHandler(conf)
-		e := event.Event{
+		e := event.DiffWatchEvent{
 			Namespace: "testNamespace",
 			Name:      "testResource",
 			Kind:      "testKind",

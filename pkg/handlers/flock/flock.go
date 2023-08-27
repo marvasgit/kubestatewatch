@@ -88,7 +88,7 @@ func (f *Flock) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (f *Flock) Handle(e event.Event) {
+func (f *Flock) Handle(e event.DiffWatchEvent) {
 	flockMessage := prepareFlockMessage(e, f)
 
 	err := postMessage(f.Url, flockMessage)
@@ -108,7 +108,7 @@ func checkMissingFlockVars(s *Flock) error {
 	return nil
 }
 
-func prepareFlockMessage(e event.Event, f *Flock) *FlockMessage {
+func prepareFlockMessage(e event.DiffWatchEvent, f *Flock) *FlockMessage {
 	return &FlockMessage{
 		Text:         "diffwatcher Alert",
 		Notification: "diffwatcher Alert",
