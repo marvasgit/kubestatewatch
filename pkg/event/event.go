@@ -32,12 +32,6 @@ type DiffWatchEvent struct {
 	Diff       string
 }
 
-var m = map[string]string{
-	"created": "Normal",
-	"deleted": "Danger",
-	"updated": "Warning",
-}
-
 // Message returns event message in standard format.
 // included as a part of event packege to enhance code resuablity across handlers.
 func (e *DiffWatchEvent) Message() (msg string) {
