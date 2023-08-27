@@ -17,19 +17,19 @@ limitations under the License.
 package client
 
 import (
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/controller"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/cloudevent"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/flock"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/hipchat"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/lark"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/mattermost"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/msteam"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/slack"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/slackwebhook"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/smtp"
-	"github.com/bitnami-labs/kubewatch/pkg/handlers/webhook"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/controller"
+	"github.com/marvasgit/diffwatcher/pkg/handlers"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/cloudevent"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/flock"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/hipchat"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/lark"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/mattermost"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/msteam"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/slack"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/slackwebhook"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/smtp"
+	"github.com/marvasgit/diffwatcher/pkg/handlers/webhook"
 	"github.com/sirupsen/logrus"
 )
 

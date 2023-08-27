@@ -21,24 +21,25 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	c "github.com/bitnami-labs/kubewatch/pkg/client"
+	_ "net/http/pprof"
+
+	"github.com/marvasgit/diffwatcher/config"
+	c "github.com/marvasgit/diffwatcher/pkg/client"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	_ "net/http/pprof"
 )
 
 var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "kubewatch",
+	Use:   "diffwatcher",
 	Short: "A watcher for Kubernetes",
 	Long: `
-Kubewatch: A watcher for Kubernetes
+diffwatcher: A watcher for Kubernetes
 
-kubewatch is a Kubernetes watcher that could publishes notification
+diffwatcher is a Kubernetes watcher that could publishes notification
 to Slack/hipchat/mattermost/flock channels. It watches the cluster
 for resource changes and notifies them through webhooks.
 
@@ -80,7 +81,7 @@ func init() {
 		Use:    "no-help",
 		Hidden: true,
 	})
-	//RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.kubewatch.yaml)")
+	//RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.diffwatcher.yaml)")
 	if os.Getenv("ENABLE_PPROF") == "True" {
 		go func() {
 			pprofAddr := "localhost:6060"
@@ -123,9 +124,9 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	}
 
-	viper.SetConfigName(kubewatchConfigFile) // name of config file (without extension)
-	viper.AddConfigPath("$HOME")             // adding home directory as first search path
-	viper.AutomaticEnv()                     // read in environment variables that match
+	viper.SetConfigName(diffwatcherConfigFile) // name of config file (without extension)
+	viper.AddConfigPath("$HOME")               // adding home directory as first search path
+	viper.AutomaticEnv()                       // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {

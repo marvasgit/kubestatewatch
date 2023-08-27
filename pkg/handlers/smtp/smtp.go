@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 /*
-Package smtp implements an email notification handler for kubewatch.
+Package smtp implements an email notification handler for diffwatcher.
 
 See example configuration in the ConfigExample constant.
 */
@@ -25,19 +25,19 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 	"github.com/sirupsen/logrus"
 )
 
 const (
-	defaultSubject = "Kubewatch notification"
+	defaultSubject = "diffwatcher notification"
 
 	// ConfigExample is an example configuration.
 	ConfigExample = `handler:
   smtp:
     to: "myteam@mycompany.com"
-    from: "kubewatch@mycluster.com"
+    from: "diffwatcher@mycluster.com"
     smarthost: smtp.mycompany.com:2525
     subject: Test notification
     auth:

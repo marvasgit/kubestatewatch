@@ -4,8 +4,8 @@ APP VERSION: {{ .Chart.AppVersion }}
 
 ** Please be patient while the chart is being deployed **
 
-To verify that kubewatch has started, run:
+To verify that diffwatcher has started, run:
 
   kubectl get deploy -w --namespace {{ .Release.Namespace }} {{ template "common.names.fullname" . }}
 
-{{- include "kubewatch.checkRollingTags" . }}
+{{- include "diffwatcher.checkRollingTags" . }}

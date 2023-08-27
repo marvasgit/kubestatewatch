@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kubewatch
+  name: diffwatcher
   namespace: default
 spec:
   containers:
-  - image: bitnami/kubewatch #using this image, its more stable and active
+  - image: bitnami/diffwatcher #using this image, its more stable and active
     imagePullPolicy: Always
-    name: kubewatch
+    name: diffwatcher
     volumeMounts:
     - name: config-volume
       mountPath: /root
@@ -15,4 +15,4 @@ spec:
   volumes:
   - name: config-volume
     configMap:
-      name: kubewatch
+      name: diffwatcher

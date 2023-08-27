@@ -18,16 +18,17 @@ package cloudevent
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
+
+	"github.com/sirupsen/logrus"
 
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"time"
 
-	"github.com/bitnami-labs/kubewatch/config"
-	"github.com/bitnami-labs/kubewatch/pkg/event"
+	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/diffwatcher/pkg/event"
 	"k8s.io/apimachinery/pkg/runtime"
 )
 
@@ -106,7 +107,7 @@ func (m *CloudEvent) prepareMessage(e event.Event) *CloudEventMessage {
 	return &CloudEventMessage{
 		SpecVersion:     "1.0",
 		Type:            "KUBERNETES_TOPOLOGY_CHANGE",
-		Source:          "https://github.com/aantn/kubewatch",
+		Source:          "https://github.com/aantn/diffwatcher",
 		ID:              fmt.Sprintf("%v-%v", m.StartTime, m.Counter),
 		Time:            time.Now(), // TODO: verify that time format is correct - note that this is the time of sending not time of event
 		DataContentType: "application/json",

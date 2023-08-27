@@ -49,19 +49,19 @@ diagnosticMode:
 ##
 extraDeploy: []
 
-## @section Kubewatch parameters
+## @section diffwatcher parameters
 
-## Bitnami Kubewatch image version
-## ref: https://hub.docker.com/r/bitnami/kubewatch/tags/
-## @param image.registry Kubewatch image registry
-## @param image.repository Kubewatch image repository
-## @param image.tag Kubewatch image tag (immutable tags are recommended)
-## @param image.pullPolicy Kubewatch image pull policy
+## Bitnami diffwatcher image version
+## ref: https://hub.docker.com/r/bitnami/diffwatcher/tags/
+## @param image.registry diffwatcher image registry
+## @param image.repository diffwatcher image repository
+## @param image.tag diffwatcher image tag (immutable tags are recommended)
+## @param image.pullPolicy diffwatcher image pull policy
 ## @param image.pullSecrets Specify docker-registry secret names as an array
 ##
 image:
   registry: us-central1-docker.pkg.dev
-  repository: genuine-flight-317411/devel/kubewatch
+  repository: genuine-flight-317411/devel/diffwatcher
   tag: v2.4
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -229,10 +229,10 @@ command: []
 ## @param args Override default container args (useful when using custom images)
 ##
 args: []
-## @param lifecycleHooks for the Kubewatch container(s) to automate configuration before or after startup
+## @param lifecycleHooks for the diffwatcher container(s) to automate configuration before or after startup
 ##
 lifecycleHooks: {}
-## @param extraEnvVars Extra environment variables to be set on Kubewatch container
+## @param extraEnvVars Extra environment variables to be set on diffwatcher container
 ## Example:
 ## extraEnvVars:
 ##   - name: FOO
@@ -246,37 +246,37 @@ extraEnvVarsCM: ""
 ##
 extraEnvVarsSecret: ""
 
-## @section Kubewatch deployment parameters
+## @section diffwatcher deployment parameters
 
-## @param replicaCount Number of Kubewatch replicas to deploy
+## @param replicaCount Number of diffwatcher replicas to deploy
 ##
 replicaCount: 1
-## Kubewatch containers' SecurityContext
+## diffwatcher containers' SecurityContext
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext.enabled Enable Kubewatch containers' SecurityContext
-## @param podSecurityContext.fsGroup Set Kubewatch containers' SecurityContext fsGroup
+## @param podSecurityContext.enabled Enable diffwatcher containers' SecurityContext
+## @param podSecurityContext.fsGroup Set diffwatcher containers' SecurityContext fsGroup
 ##
 podSecurityContext:
   enabled: false
   fsGroup: ""
-## Kubewatch pods' Security Context
+## diffwatcher pods' Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-## @param containerSecurityContext.enabled Enable Kubewatch pods' Security Context
-## @param containerSecurityContext.runAsUser Set Kubewatch pods' SecurityContext runAsUser
-## @param containerSecurityContext.runAsNonRoot Set Kubewatch pods' SecurityContext runAsNonRoot
+## @param containerSecurityContext.enabled Enable diffwatcher pods' Security Context
+## @param containerSecurityContext.runAsUser Set diffwatcher pods' SecurityContext runAsUser
+## @param containerSecurityContext.runAsNonRoot Set diffwatcher pods' SecurityContext runAsNonRoot
 ##
 containerSecurityContext:
   enabled: false
   runAsUser: ""
   runAsNonRoot: ""
-## Kubewatch resource requests and limits
+## diffwatcher resource requests and limits
 ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
 ## We usually recommend not to specify default resources and to leave this as a conscious
 ## choice for the user. This also increases chances charts run on environments with little
 ## resources, such as Minikube. If you do want to specify resources, uncomment the following
 ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-## @param resources.limits The resources limits for the Kubewatch container
-## @param resources.requests The requested resources for the Kubewatch container
+## @param resources.limits The resources limits for the diffwatcher container
+## @param resources.requests The requested resources for the diffwatcher container
 ##
 resources:
   ## Example:
@@ -399,18 +399,18 @@ schedulerName: ""
 ## The value is evaluated as a template
 ##
 topologySpreadConstraints: []
-## @param podLabels Extra labels for Kubewatch pods
+## @param podLabels Extra labels for diffwatcher pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
 podLabels: {}
-## @param podAnnotations Annotations for Kubewatch pods
+## @param podAnnotations Annotations for diffwatcher pods
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 ##
 podAnnotations: {}
-## @param extraVolumes Optionally specify extra list of additional volumes for Kubewatch pods
+## @param extraVolumes Optionally specify extra list of additional volumes for diffwatcher pods
 ##
 extraVolumes: []
-## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for Kubewatch container(s)
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for diffwatcher container(s)
 ##
 extraVolumeMounts: []
 ## @param updateStrategy.type Deployment strategy type.
@@ -424,7 +424,7 @@ extraVolumeMounts: []
 ##
 updateStrategy:
   type: RollingUpdate
-## @param initContainers Add additional init containers to the Kubewatch pods
+## @param initContainers Add additional init containers to the diffwatcher pods
 ## Example:
 ## initContainers:
 ##   - name: your-image-name
@@ -435,7 +435,7 @@ updateStrategy:
 ##         containerPort: 1234
 ##
 initContainers: []
-## @param sidecars Add additional sidecar containers to the Kubewatch pods
+## @param sidecars Add additional sidecar containers to the diffwatcher pods
 ## Example:
 ## sidecars:
 ##   - name: your-image-name

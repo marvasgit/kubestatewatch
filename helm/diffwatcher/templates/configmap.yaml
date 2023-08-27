@@ -11,7 +11,7 @@ metadata:
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 data:
-  .kubewatch.yaml: |
+  .diffwatcher.yaml: |
     handler:
       {{- if .Values.slack.enabled }}
       slack: {{- toYaml .Values.slack | nindent 8 }}
