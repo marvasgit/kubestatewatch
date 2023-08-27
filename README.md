@@ -1,19 +1,20 @@
 <div align="center">
 
-**This is the official diffwatcher project, [originally by Bitnami](https://github.com/marvasgit/diffwatcher/), now maintained by [Robusta.dev](https://home.robusta.dev/).**
+**This porject started as fork of kubewatch project maintained by [Robusta.dev](https://home.robusta.dev/) [originally by Bitnami](https://github.com/bitnami-labs/kubewatch/),**
 
-**Feel free to open issues, raise PRs or talk with us on [Slack](https://bit.ly/robusta-slack)!**
-
-**diffwatcher** is a Kubernetes watcher that publishes notification to available collaboration hubs/notification channels. Run it in your k8s cluster, and you will get event notifications through webhooks.
-
-[See the blog post on diffwatcher 2.0 to learn more about how diffwatcher is used.](https://home.robusta.dev/blog/diffwatcher-2-0-released)
+There is way too many changes happening in a Kubernetes cluster, and it is not always easy to keep track of them. diffwatcher is a Kubernetes watcher that publishes notifications to available collaboration hubs/notification channels. Run it in your k8s cluster, and you will get event notifications through webhooks.
 
 <img src="./docs/diffwatcher-logo.jpeg">
 
 [![GoDoc](https://godoc.org/github.com/marvasgit/diffwatcher?status.svg)](https://godoc.org/github.com/marvasgit/diffwatcher) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/marvasgit/diffwatcher/blob/master/LICENSE)
-[![slack robusta](https://img.shields.io/badge/Slack-Join-4A154B?style=flat-square&logo=slack&logoColor=white)](https://bit.ly/robusta-slack)
 
 </div>
+
+There are basically two kind of notifications:
+**notifications for UPDATED items** there were too many changes done in this flow so decided that its best to create a separate project for it.
+The whole idea behind is to track the **usefull** differences made on the items we track, ignoring things like metadata changes, status changes, etc. Not only a simple msg that something was changed.
+**notifications for ADDED/DELETED items** this is the original idea behind kubewatch, to track the added/deleted items and notify about them.
+
 
 # Latest image
 
@@ -25,11 +26,11 @@ us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher:v2.5
 ```
 $ diffwatcher -h
 
-diffwatcher: A watcher for Kubernetes
+diffwatcher: A diff watcher for Kubernetes
 
 diffwatcher is a Kubernetes watcher that publishes notifications
 to Slack/hipchat/mattermost/flock channels. It watches the cluster
-for resource changes and notifies them through webhooks.
+for resource changes compares them with prev state and notifies them through webhooks.
 
 supported webhooks:
  - slack
@@ -63,14 +64,7 @@ Use "diffwatcher [command] --help" for more information about a command.
 ### Cluster Installation
 #### Using helm:
 
-When you have helm installed in your cluster, use the following setup:
-
-```console
-helm repo add robusta https://robusta-charts.storage.googleapis.com && helm repo update
-helm install diffwatcher robusta/diffwatcher --set='rbac.create=true,slack.channel=#YOUR_CHANNEL,slack.token=xoxb-YOUR_TOKEN,resourcesToWatch.pod=true,resourcesToWatch.daemonset=true'
-```
-
-You may also provide a values file instead:
+You may also provide a values file :
 
 ```yaml
 rbac:
@@ -102,14 +96,14 @@ slack:
 And use that:
 
 ```console
-$ helm upgrade --install diffwatcher robusta/diffwatcher --values=values-file.yml
+$ helm upgrade --install diffwatcher --namespace kube-system kubernetes-diffwatcher --values=values-file.yml helm/diffwatcher
 ```
 
 #### Using kubectl:
 
-In order to run diffwatcher in a Kubernetes cluster quickly, the easiest way is for you to create a [ConfigMap](https://github.com/robusta-dev/diffwatcher/blob/master/diffwatcher-configmap.yaml) to hold diffwatcher configuration.
+In order to run diffwatcher in a Kubernetes cluster quickly, the easiest way is for you to create a [ConfigMap](https://github.com/marvasgit/kubernetes-diffwatcher/blob/master/diffwatcher-configmap.yaml) to hold diffwatcher configuration.
 
-An example is provided at [`diffwatcher-configmap.yaml`](https://github.com/robusta-dev/diffwatcher/blob/master/diffwatcher-configmap.yaml), do not forget to update your own slack channel and token parameters. Alternatively, you could use secrets.
+An example is provided at [`diffwatcher-configmap.yaml`](https://github.com/marvasgit/kubernetes-diffwatcher/blob/master/diffwatcher-configmap.yaml), do not forget to update your own slack channel and token parameters. Alternatively, you could use secrets.
 
 Create k8s configmap:
 
@@ -117,7 +111,7 @@ Create k8s configmap:
 $ kubectl create -f diffwatcher-configmap.yaml
 ```
 
-Create the [Pod](https://github.com/robusta-dev/diffwatcher/blob/master/diffwatcher.yaml) directly, or create your own deployment:
+Create the [Pod](https://github.com/marvasgit/kubernetes-diffwatcher/blob/master/diffwatcher.yaml) directly, or creakubernetes-diffwatcherte your own deployment:
 
 ```console
 $ kubectl create -f diffwatcher.yaml
@@ -184,7 +178,7 @@ $ kubectl create -f diffwatcher.yaml
 
 ```console
 # Download and install diffwatcher
-$ go get -u github.com/robusta-dev/diffwatcher
+$ go get -u github.com/marvasgit/kubernetes-diffwatcher
 
 # Configure the notification channel
 $ diffwatcher config add slack --channel <slack_channel> --token <slack_token>
