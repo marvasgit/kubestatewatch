@@ -34,7 +34,7 @@ import (
 // The Handle method is used to process event
 type Handler interface {
 	Init(c *config.Config) error
-	Handle(e event.Event)
+	Handle(e event.DiffWatchEvent)
 }
 
 // Map maps each event handler function to a name for easily lookup
@@ -63,5 +63,5 @@ func (d *Default) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (d *Default) Handle(e event.Event) {
+func (d *Default) Handle(e event.DiffWatchEvent) {
 }

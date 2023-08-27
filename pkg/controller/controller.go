@@ -727,14 +727,13 @@ func (c *Controller) processItem(newEvent Event) error {
 			default:
 				status = "Normal"
 			}
-			kbEvent := event.Event{
+			kbEvent := event.DiffWatchEvent{
 				Name:       newEvent.key,
 				Namespace:  newEvent.namespace,
 				Kind:       newEvent.resourceType,
 				ApiVersion: newEvent.apiVersion,
 				Status:     status,
 				Reason:     "Created",
-				Obj:        newEvent.obj,
 			}
 			c.eventHandler.Handle(kbEvent)
 			return nil
@@ -749,15 +748,13 @@ func (c *Controller) processItem(newEvent Event) error {
 
 		diffStr := compareObjects(newEvent)
 
-		kbEvent := event.Event{
+		kbEvent := event.DiffWatchEvent{
 			Name:       newEvent.key,
 			Namespace:  newEvent.namespace,
 			Kind:       newEvent.resourceType,
 			ApiVersion: newEvent.apiVersion,
 			Status:     status,
 			Reason:     "Updated",
-			Obj:        newEvent.obj,
-			OldObj:     newEvent.oldObj,
 			Diff:       diffStr,
 		}
 
@@ -769,14 +766,13 @@ func (c *Controller) processItem(newEvent Event) error {
 		c.eventHandler.Handle(kbEvent)
 		return nil
 	case "delete":
-		kbEvent := event.Event{
+		kbEvent := event.DiffWatchEvent{
 			Name:       newEvent.key,
 			Namespace:  newEvent.namespace,
 			Kind:       newEvent.resourceType,
 			ApiVersion: newEvent.apiVersion,
 			Status:     "Danger",
 			Reason:     "Deleted",
-			Obj:        newEvent.obj,
 		}
 		c.eventHandler.Handle(kbEvent)
 		return nil

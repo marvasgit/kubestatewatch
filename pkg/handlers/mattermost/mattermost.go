@@ -100,7 +100,7 @@ func (m *Mattermost) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (m *Mattermost) Handle(e event.Event) {
+func (m *Mattermost) Handle(e event.DiffWatchEvent) {
 	mattermostMessage := prepareMattermostMessage(e, m)
 
 	err := postMessage(m.Url, mattermostMessage)
@@ -120,7 +120,7 @@ func checkMissingMattermostVars(s *Mattermost) error {
 	return nil
 }
 
-func prepareMattermostMessage(e event.Event, m *Mattermost) *MattermostMessage {
+func prepareMattermostMessage(e event.DiffWatchEvent, m *Mattermost) *MattermostMessage {
 	return &MattermostMessage{
 		Channel:  m.Channel,
 		Username: m.Username,

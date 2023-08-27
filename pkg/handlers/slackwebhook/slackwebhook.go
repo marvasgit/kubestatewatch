@@ -103,7 +103,7 @@ func (m *SlackWebhook) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (m *SlackWebhook) Handle(e event.Event) {
+func (m *SlackWebhook) Handle(e event.DiffWatchEvent) {
 
 	webhookMessage := slack.WebhookMessage{
 		Channel:   m.Channel,

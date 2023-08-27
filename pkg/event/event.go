@@ -15,14 +15,12 @@ package event
 
 import (
 	"fmt"
-
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
-// Event represent an event got from k8s api server
-// Events from different endpoints need to be casted to KubewatchEvent
+// DiffWatchEvent represent an event got from k8s api server
+// Events from different endpoints need to be casted to DiffWatchEvent
 // before being able to be handled by handler
-type Event struct {
+type DiffWatchEvent struct {
 	Namespace  string
 	Kind       string
 	ApiVersion string
@@ -31,8 +29,6 @@ type Event struct {
 	Reason     string
 	Status     string
 	Name       string
-	Obj        runtime.Object // not needed anymore after we have the Diff
-	OldObj     runtime.Object // not needed anymore after we have the Diff
 	Diff       string
 }
 
@@ -44,7 +40,7 @@ var m = map[string]string{
 
 // Message returns event message in standard format.
 // included as a part of event packege to enhance code resuablity across handlers.
-func (e *Event) Message() (msg string) {
+func (e *DiffWatchEvent) Message() (msg string) {
 	// using switch over if..else, since the format could vary based on the kind of the object in future.
 	switch e.Kind {
 	case "namespace":

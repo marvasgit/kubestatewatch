@@ -29,7 +29,6 @@ import (
 
 	"github.com/marvasgit/diffwatcher/config"
 	"github.com/marvasgit/diffwatcher/pkg/event"
-	"k8s.io/apimachinery/pkg/runtime"
 )
 
 var cloudEventErrMsg = `
@@ -65,13 +64,12 @@ type CloudEventMessage struct {
 
 // EventMeta containes the meta data about the event occurred
 type CloudEventMessageData struct {
-	Operation   string         `json:"operation"`
-	Kind        string         `json:"kind"`
-	ClusterUid  string         `json:"clusterUid"`
-	Description string         `json:"description"`
-	ApiVersion  string         `json:"apiVersion"`
-	Obj         runtime.Object `json:"obj"`
-	OldObj      runtime.Object `json:"oldObj"`
+	Operation   string `json:"operation"`
+	Kind        string `json:"kind"`
+	ClusterUid  string `json:"clusterUid"`
+	Description string `json:"description"`
+	ApiVersion  string `json:"apiVersion"`
+	Diff        string `json:"diff"`
 }
 
 func (m *CloudEvent) Init(c *config.Config) error {
@@ -90,7 +88,7 @@ func (m *CloudEvent) Init(c *config.Config) error {
 	return nil
 }
 
-func (m *CloudEvent) Handle(e event.Event) {
+func (m *CloudEvent) Handle(e event.DiffWatchEvent) {
 	m.Counter++ // TODO: do we have to worry about threadsafety here?
 	message := m.prepareMessage(e)
 
@@ -103,7 +101,7 @@ func (m *CloudEvent) Handle(e event.Event) {
 	logrus.Printf("Message successfully sent to %s at %s ", m.Url, time.Now())
 }
 
-func (m *CloudEvent) prepareMessage(e event.Event) *CloudEventMessage {
+func (m *CloudEvent) prepareMessage(e event.DiffWatchEvent) *CloudEventMessage {
 	return &CloudEventMessage{
 		SpecVersion:     "1.0",
 		Type:            "KUBERNETES_TOPOLOGY_CHANGE",
@@ -117,13 +115,12 @@ func (m *CloudEvent) prepareMessage(e event.Event) *CloudEventMessage {
 			ApiVersion:  e.ApiVersion,
 			ClusterUid:  "TODO",
 			Description: e.Message(),
-			Obj:         e.Obj,
-			OldObj:      e.OldObj,
+			Diff:        e.Diff,
 		},
 	}
 }
 
-func (m *CloudEvent) formatReason(e event.Event) string {
+func (m *CloudEvent) formatReason(e event.DiffWatchEvent) string {
 	switch e.Reason {
 	case "Created":
 		return "create"

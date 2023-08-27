@@ -70,7 +70,7 @@ func (m *Webhook) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (m *Webhook) Handle(e event.Event) {
+func (m *Webhook) Handle(e event.DiffWatchEvent) {
 	webhookMessage := prepareWebhookMessage(e, m)
 
 	err := postMessage(m.Url, webhookMessage)
@@ -88,7 +88,7 @@ func checkMissingWebhookVars(s *Webhook) error {
 	return nil
 }
 
-func prepareWebhookMessage(e event.Event, m *Webhook) *TextMessage {
+func prepareWebhookMessage(e event.DiffWatchEvent, m *Webhook) *TextMessage {
 	return &TextMessage{
 		MsgType: "text",
 		Content: &TextContent{Text: e.Message()},

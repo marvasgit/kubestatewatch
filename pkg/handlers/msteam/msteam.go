@@ -131,7 +131,7 @@ func (ms *MSTeams) Init(c *config.Config) error {
 }
 
 // Handle handles notification.
-func (ms *MSTeams) Handle(e event.Event) {
+func (ms *MSTeams) Handle(e event.DiffWatchEvent) {
 	card := &TeamsMessageCard{
 		Type:    messageType,
 		Context: context,
