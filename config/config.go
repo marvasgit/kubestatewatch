@@ -94,7 +94,6 @@ type Config struct {
 }
 
 type Diff struct {
-	Enabled    bool     `yaml:"enabled"`
 	IgnorePath []string `yaml:"ignore"`
 }
 
