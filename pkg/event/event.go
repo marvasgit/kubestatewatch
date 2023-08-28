@@ -15,6 +15,7 @@ package event
 
 import (
 	"fmt"
+	"strings"
 )
 
 // DiffWatchEvent represent an event got from k8s api server
@@ -78,13 +79,31 @@ func (e *DiffWatchEvent) Message() (msg string) {
 			e.Reason,
 		)
 	default:
-		msg = fmt.Sprintf(
-			"A `%s` in namespace `%s` has been `%s`:\n`%s`",
-			e.Kind,
-			e.Namespace,
-			e.Reason,
-			e.Name,
-		)
+		msg = formatDefaultMessage(e)
 	}
 	return msg
+}
+
+func formatDefaultMessage(e *DiffWatchEvent) string {
+	maxLen := getlongerString(e.Name, e.Namespace)
+	totalLen := maxLen + (40 - maxLen) + 17 //dont like magic numbers but this is all the spaces and chars in the message + Namespace str
+	var sb strings.Builder
+	sb.WriteString(e.Diff + "\n")
+	sb.WriteString(strings.Repeat("-", totalLen) + "\n")
+	sb.WriteString(strings.Repeat("-", totalLen) + "\n")
+	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Type", e.Kind))
+	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Name", e.Name))
+	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Action", e.Reason))
+	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Namespace", e.Namespace))
+	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Status", e.Status))
+	sb.WriteString(strings.Repeat("-", totalLen) + "\n")
+	sb.WriteString(strings.Repeat("-", totalLen) + "\n")
+	return sb.String()
+}
+
+func getlongerString(a, b string) int {
+	if len(a) > len(b) {
+		return len(a)
+	}
+	return len(b)
 }
