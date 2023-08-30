@@ -81,7 +81,7 @@ func (e *DiffWatchEvent) Message() (msg string) {
 	default:
 		msg = createBoxlikeOutput(e)
 	}
-	return msg + e.Diff
+	return msg
 }
 
 func createBoxlikeOutput(e *DiffWatchEvent) string {
