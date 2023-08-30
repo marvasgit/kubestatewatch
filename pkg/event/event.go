@@ -79,31 +79,38 @@ func (e *DiffWatchEvent) Message() (msg string) {
 			e.Reason,
 		)
 	default:
-		msg = formatDefaultMessage(e)
+		msg = createBoxlikeOutput(e)
 	}
-	return msg
+	return msg + e.Diff
 }
 
-func formatDefaultMessage(e *DiffWatchEvent) string {
-	maxLen := getlongerString(e.Name, e.Namespace)
-	totalLen := maxLen + (40 - maxLen) + 17 //dont like magic numbers but this is all the spaces and chars in the message + Namespace str
+func createBoxlikeOutput(e *DiffWatchEvent) string {
 	var sb strings.Builder
+	sb.Grow(1200)
+
+	const col1Width = 12
+	var col2Width = 15
+
+	if len(e.Name) > col2Width {
+		col2Width = len(e.Name) + 2
+	}
 	sb.WriteString(e.Diff + "\n")
-	sb.WriteString(strings.Repeat("-", totalLen) + "\n")
-	sb.WriteString(strings.Repeat("-", totalLen) + "\n")
-	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Type", e.Kind))
-	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Name", e.Name))
-	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Action", e.Reason))
-	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Namespace", e.Namespace))
-	sb.WriteString(fmt.Sprintf("| %-10s | %-40s |\n", "Status", e.Status))
-	sb.WriteString(strings.Repeat("-", totalLen) + "\n")
-	sb.WriteString(strings.Repeat("-", totalLen) + "\n")
+
+	dataRow(&sb, col1Width, col2Width, "Type", e.Kind)
+	dataRow(&sb, col1Width, col2Width, "Name", e.Name)
+	dataRow(&sb, col1Width, col2Width, "Action", e.Reason)
+	dataRow(&sb, col1Width, col2Width, "Namespace", e.Namespace)
+	dataRow(&sb, col1Width, col2Width, "Status", e.Status)
+	sb.WriteString(fmt.Sprintf("+%s+%s+\n", strings.Repeat("-", col1Width), strings.Repeat("-", col2Width)))
+
 	return sb.String()
 }
 
-func getlongerString(a, b string) int {
-	if len(a) > len(b) {
-		return len(a)
-	}
-	return len(b)
+// Write the data rows
+func dataRow(sb *strings.Builder, col1Width int, col2Width int, description string, value string) {
+
+	sb.WriteString(fmt.Sprintf("+%s+%s+\n",
+		strings.Repeat("-", col1Width), strings.Repeat("-", col2Width)))
+
+	sb.WriteString(fmt.Sprintf("| %-"+fmt.Sprintf("%d", col1Width-2)+"s | %-"+fmt.Sprintf("%d", col2Width-2)+"s |\n", description, value))
 }
