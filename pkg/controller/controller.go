@@ -746,8 +746,6 @@ func (c *Controller) processItem(newEvent Event) error {
 			status = "Warning"
 		}
 
-		diffStr := compareObjects(newEvent)
-
 		kbEvent := event.DiffWatchEvent{
 			Name:       newEvent.key,
 			Namespace:  newEvent.namespace,
@@ -755,7 +753,7 @@ func (c *Controller) processItem(newEvent Event) error {
 			ApiVersion: newEvent.apiVersion,
 			Status:     status,
 			Reason:     "Updated",
-			Diff:       diffStr,
+			Diff:       compareObjects(newEvent),
 		}
 
 		if kbEvent.Diff == "" {
