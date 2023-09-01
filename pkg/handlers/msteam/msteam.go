@@ -164,6 +164,7 @@ func (ms *MSTeams) Handle(e event.DiffWatchEvent) {
 	s.Markdown = true
 	card.Text = e.Diff
 
+	//TODO: Ignore metadata & status changes
 	card.Sections = append(card.Sections, s)
 
 	if _, err := sendCard(ms, card); err != nil {
