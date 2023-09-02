@@ -119,7 +119,7 @@ spec:
           {{- end }}
           volumeMounts:
             - name: configuration
-              mountPath: /opt/bitnami/diffwatcher/.diffwatcher.yaml
+              mountPath: /config/.diffwatcher.yaml
               subPath: .diffwatcher.yaml
             {{- if .Values.extraVolumeMounts }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}

@@ -1,5 +1,5 @@
 FROM golang AS builder
-LABEL MAINTAINER="Cuong Manh Le <cuong.manhle.vn@gmail.com>"
+LABEL REPO="www.github.com/marvasgit/diffwatcher"
 
 RUN apt-get update && \
     dpkg --add-architecture arm64 &&\
@@ -16,6 +16,7 @@ FROM cgr.dev/chainguard/static:latest-glibc
 
 COPY --from=builder /diffwatcher /bin/diffwatcher
 
-ENV KW_CONFIG=/opt/bitnami/diffwatcher
+# Propably should be default value and not in the image
+ENV KW_CONFIG=/config
 
 ENTRYPOINT ["/bin/diffwatcher"]
