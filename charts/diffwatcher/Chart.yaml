@@ -2,14 +2,7 @@ annotations:
   category: Infrastructure
 apiVersion: v2
 appVersion: 0.1.0
-dependencies:
-- name: common
-  repository: https://charts.bitnami.com/bitnami
-  tags:
-  - bitnami-common
-  version: 1.x.x
-description: diffwatcher is a Kubernetes watcher that currently publishes notification to Slack. Run it in your k8s cluster, and you will get event notifications in a slack channel.
-engine: gotpl
+description: diffwatcher is a Kubernetes Difference watcher that currently publishes notification to needed channels. Run it in your k8s cluster, and you will get event notifications in a configured channels.
 home: https://github.com/masrvasgit/diffwatcher
 icon: https://bitnami.com/assets/stacks/diffwatcher/img/diffwatcher-stack-220x234.png
 keywords:
@@ -23,4 +16,4 @@ maintainers: []
 name: diffwatcher
 sources:
 - https://github.com/marvasgit/diffwatcher
-version: 3.3.10
+version: 1.0.0
