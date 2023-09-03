@@ -6,11 +6,11 @@ There is way too many changes happening in a Kubernetes cluster, and it is not a
 
 <img src="./docs/diffwatcher-logo.jpeg">
 
-[![Build Status](https://travis-ci.org/marvasgit/diffwatcher.svg?branch=master)](https://travis-ci.org/marvasgit/diffwatcher) 
-[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/diffwatcher)](https://goreportcard.com/report/github.com/marvasgit/diffwatcher) 
-[![codecov](https://codecov.io/gh/marvasgit/diffwatcher/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/diffwatcher)
-[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/diffwatcher.svg)](https://hub.docker.com/r/marvasgit/diffwatcher/) 
-![GitHub release](https://img.shields.io/github/release/marvasgit/diffwatcher.svg)
+[![Build Status](https://travis-ci.org/marvasgit/kubernetes-diffwatcher.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-diffwatcher) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubernetes-diffwatcher)](https://goreportcard.com/report/github.com/marvasgit/kubernetes-diffwatcher) 
+[![codecov](https://codecov.io/gh/marvasgit/kubernetes-diffwatcher/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubernetes-diffwatcher)
+[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-diffwatcher.svg)](https://hub.docker.com/r/marvasgit/kubernetes-diffwatcher/) 
+![GitHub release](https://img.shields.io/github/release/marvasgit/kubernetes-diffwatcher.svg)
 </div>
 
 There are basically two kind of notifications:
@@ -668,7 +668,7 @@ env:
 
 Clone the repository anywhere:
 ```console
-$ git clone https://github.com/marvasgit/diffwatcher.git
+$ git clone https://github.com/marvasgit/kubernetes-diffwatcher.git
 $ cd diffwatcher
 $ go build
 ```

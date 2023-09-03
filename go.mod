@@ -1,4 +1,4 @@
-module github.com/marvasgit/diffwatcher
+module github.com/marvasgit/kubernetes-diffwatcher
 
 go 1.14
 

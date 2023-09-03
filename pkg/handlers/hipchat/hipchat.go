@@ -26,8 +26,8 @@ import (
 
 	"net/url"
 
-	"github.com/marvasgit/diffwatcher/config"
-	"github.com/marvasgit/diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
 )
 
 var hipchatColors = map[string]hipchat.Color{

@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/marvasgit/diffwatcher/pkg/handlers/smtp"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/smtp"
 	"github.com/spf13/cobra"
 )
 

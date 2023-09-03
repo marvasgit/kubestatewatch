@@ -23,8 +23,8 @@ import (
 
 	_ "net/http/pprof"
 
-	"github.com/marvasgit/diffwatcher/config"
-	c "github.com/marvasgit/diffwatcher/pkg/client"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
+	c "github.com/marvasgit/kubernetes-diffwatcher/pkg/client"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
