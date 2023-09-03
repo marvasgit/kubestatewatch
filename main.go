@@ -16,7 +16,7 @@ limitations under the License.
 
 package main
 
-import "github.com/marvasgit/diffwatcher/cmd"
+import "github.com/marvasgit/kubernetes-diffwatcher/cmd"
 
 func main() {
 	cmd.Execute()

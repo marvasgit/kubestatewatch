@@ -22,9 +22,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/marvasgit/diffwatcher/config"
-	"github.com/marvasgit/diffwatcher/pkg/client"
-	"github.com/marvasgit/diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/client"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

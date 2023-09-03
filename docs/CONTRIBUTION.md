@@ -20,7 +20,7 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 5. Make sure your code lints. (by using gofmt tool `gofmt -s -w . `)
 6. Issue that pull request!
 
-## Report bugs using Github's [issues](https://github.com/marvasgit/diffwatcher/issues)
+## Report bugs using Github's [issues](https://github.com/marvasgit/kubernetes-diffwatcher/issues)
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](); it's that easy!
 
 ## Write bug reports with detail, background, and sample code

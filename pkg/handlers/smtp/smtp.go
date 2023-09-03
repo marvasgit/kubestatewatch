@@ -25,8 +25,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/marvasgit/diffwatcher/config"
-	"github.com/marvasgit/diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
 	"github.com/sirupsen/logrus"
 )
 

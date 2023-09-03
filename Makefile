@@ -5,7 +5,7 @@ BINARY = diffwatcher
 VERSION=
 BUILD=
 
-PKG            = github.com/marvasgit/diffwatcher
+PKG            = github.com/marvasgit/kubernetes-diffwatcher
 TRAVIS_COMMIT ?= `git describe --tags`
 GOCMD          = go
 BUILD_DATE     = `date +%FT%T%z`

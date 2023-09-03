@@ -27,7 +27,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
 )
 
 func TestWebhookInit(t *testing.T) {

@@ -17,17 +17,17 @@ limitations under the License.
 package handlers
 
 import (
-	"github.com/marvasgit/diffwatcher/config"
-	"github.com/marvasgit/diffwatcher/pkg/event"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/flock"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/hipchat"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/lark"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/mattermost"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/msteam"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/slack"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/slackwebhook"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/smtp"
-	"github.com/marvasgit/diffwatcher/pkg/handlers/webhook"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/flock"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/hipchat"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/lark"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/mattermost"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/msteam"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slack"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slackwebhook"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/smtp"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/webhook"
 )
 
 // Handler is implemented by any handler.

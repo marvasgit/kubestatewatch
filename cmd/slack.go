@@ -17,8 +17,8 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/marvasgit/diffwatcher/config"
-	"github.com/marvasgit/diffwatcher/pkg/message"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/message"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )

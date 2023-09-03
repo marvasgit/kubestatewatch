@@ -19,7 +19,7 @@ limitations under the License.
 import (
 	"os"
 
-	"github.com/marvasgit/diffwatcher/config"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
 	"github.com/spf13/cobra"
 )
 

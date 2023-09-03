@@ -4,7 +4,7 @@
 
 diffwatcher is a Kubernetes watcher that currently publishes notification to Slack. Run it in your k8s cluster, and you will get event notifications in a slack channel.
 
-[Overview of diffwatcher](https://github.com/marvasgit/diffwatcher)
+[Overview of diffwatcher](https://github.com/marvasgit/kubernetes-diffwatcher)
 
 ## TL;DR
 

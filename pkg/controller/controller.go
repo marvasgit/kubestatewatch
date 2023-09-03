@@ -27,10 +27,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/marvasgit/diffwatcher/config"
-	"github.com/marvasgit/diffwatcher/pkg/event"
-	"github.com/marvasgit/diffwatcher/pkg/handlers"
-	"github.com/marvasgit/diffwatcher/pkg/utils"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/wI2L/jsondiff"
 
