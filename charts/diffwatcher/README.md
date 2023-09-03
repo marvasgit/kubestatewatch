@@ -1,6 +1,6 @@
 <!--- app-name: diffwatcher -->
 
-# diffwatcher packaged by Bitnami
+# diffwatcher 
 
 diffwatcher is a Kubernetes watcher that currently publishes notification to Slack. Run it in your k8s cluster, and you will get event notifications in a slack channel.
 
@@ -27,7 +27,8 @@ This chart bootstraps a diffwatcher deployment on a [Kubernetes](https://kuberne
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm install my-release bitnami/diffwatcher
+$ helm repo add diffwatcher https://marvasgit.github.io/kubernetes-diffwatcher/
+$ helm install my-release diffwatcher
 ```
 
 The command deploys diffwatcher on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.

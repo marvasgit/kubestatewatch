@@ -22,3 +22,18 @@ data:
       hpa: false
       coreevent: false
       event: true
+    message:
+      title: "XXXX"
+    diff:
+      ignore:
+        - "metadata.creationTimestamp"
+        - "metadata.resourceVersion"
+        - "metadata.uid"
+        - "metadata.selfLink"
+        - "metadata.generation"
+        - "metadata.managedFields"
+        - "metadata.annotations.kubectl.kubernetes.io/last-applied-configuration"
+        - "metadata.annotations.deployment.kubernetes.io/revision"
+        - "metadata.annotations.kubernetes.io/change-cause"
+        - "metadata.annotations.kubernetes.io/limit-ranger"
+        - "metadata.annotations.kubectl.kubernetes.io/last-applied-configura

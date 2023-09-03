@@ -2,176 +2,287 @@
 
 **This porject started as fork of kubewatch project maintained by [Robusta.dev](https://home.robusta.dev/) [originally by Bitnami](https://github.com/bitnami-labs/kubewatch/),**
 
-There is way too many changes happening in a Kubernetes cluster, and it is not always easy to keep track of them. diffwatcher is a Kubernetes watcher that publishes notifications to available collaboration hubs/notification channels. Run it in your k8s cluster, and you will get event notifications through webhooks.
+There is way too many changes happening in a Kubernetes cluster, and it is not always easy to keep track of them. diffwatcher is a Kubernetes watcher that publishes notifications to available collaboration hubs/notification channels.When there is an update on any of the watched components there is a diff as notification. Run it in your k8s cluster, and you will get event notifications through webhooks. Because of the diff nature of the notifications, you can easily see what has changed. You can also use it to watch for new resources and get notified when they are created. Because of k8s nature and its regular updates, there is a possiblity to ignore some of the changes, like metadata changes, status changes, etc. This is configurable in the config file.
 
 <img src="./docs/diffwatcher-logo.jpeg">
 
-[![GoDoc](https://godoc.org/github.com/marvasgit/diffwatcher?status.svg)](https://godoc.org/github.com/marvasgit/diffwatcher) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/marvasgit/diffwatcher/blob/master/LICENSE)
-
+[![Build Status](https://travis-ci.org/marvasgit/diffwatcher.svg?branch=master)](https://travis-ci.org/marvasgit/diffwatcher) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/diffwatcher)](https://goreportcard.com/report/github.com/marvasgit/diffwatcher) 
+[![codecov](https://codecov.io/gh/marvasgit/diffwatcher/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/diffwatcher)
+[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/diffwatcher.svg)](https://hub.docker.com/r/marvasgit/diffwatcher/) 
+![GitHub release](https://img.shields.io/github/release/marvasgit/diffwatcher.svg)
 </div>
 
 There are basically two kind of notifications:
-**notifications for UPDATED items** there were too many changes done in this flow so decided that its best to create a separate project for it.
-The whole idea behind is to track the **usefull** differences made on the items we track, ignoring things like metadata changes, status changes, etc. Not only a simple msg that something was changed.
+**notifications for UPDATED items** The whole idea behind is to track the **usefull** differences made on the items we watch, ignoring things like metadata changes, status changes, etc. Not only a simple msg that something was changed.
 **notifications for ADDED/DELETED items** this is the original idea behind kubewatch, to track the added/deleted items and notify about them.
 
 
 # Latest image
 
 ```
-us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher:v2.5
-```
-
-# Usage
-```
-$ diffwatcher -h
-
-diffwatcher: A diff watcher for Kubernetes
-
-diffwatcher is a Kubernetes watcher that publishes notifications
-to Slack/hipchat/mattermost/flock channels. It watches the cluster
-for resource changes compares them with prev state and notifies them through webhooks.
-
-supported webhooks:
- - slack
- - slackwebhook
- - msteams
- - hipchat
- - mattermost
- - flock
- - webhook
- - cloudevent
- - smtp
-
-Usage:
-  diffwatcher [flags]
-  diffwatcher [command]
-
-Available Commands:
-  config      modify diffwatcher configuration
-  resource    manage resources to be watched
-  version     print version
-
-Flags:
-  -h, --help   help for diffwatcher
-
-Use "diffwatcher [command] --help" for more information about a command.
-
+docmarr/kubernetes-diffwatcher:1.0.0
 ```
 
 # Install
 
-### Cluster Installation
-#### Using helm:
+```console
+$ helm repo add diffwatcher https://marvasgit.github.io/kubernetes-diffwatcher/
+$ helm install my-release diffwatcher
+```
 
-You may also provide a values file :
+## Introduction
+
+This chart bootstraps a diffwatcher deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+
+## Prerequisites
+
+- Kubernetes 1.19+
+- Helm 3.2.0+
+
+## Installing the Chart
+
+To install the chart with the release name `my-release`:
+
+```console
+$ helm repo add diffwatcher https://marvasgit.github.io/kubernetes-diffwatcher/
+$ helm install my-release diffwatcher
+```
+
+The command deploys diffwatcher on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+
+## Uninstalling the Chart
+
+To uninstall/delete the `my-release` deployment:
+
+```console
+$ helm delete my-release
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+## Parameters
+
+### Global parameters
+
+| Name                      | Description                                     | Value |
+| ------------------------- | ----------------------------------------------- | ----- |
+| `global.imageRegistry`    | Global Docker image registry                    | `""`  |
+| `global.imagePullSecrets` | Global Docker registry secret names as an array | `[]`  |
+
+
+### Common parameters
+
+| Name                     | Description                                                                             | Value          |
+| ------------------------ | --------------------------------------------------------------------------------------- | -------------- |
+| `kubeVersion`            | Force target Kubernetes version (using Helm capabilities if not set)                    | `""`           |
+| `nameOverride`           | String to partially override common.names.fullname template                             | `""`           |
+| `fullnameOverride`       | String to fully override common.names.fullname template                                 | `""`           |
+| `commonLabels`           | Labels to add to all deployed objects                                                   | `{}`           |
+| `commonAnnotations`      | Annotations to add to all deployed objects                                              | `{}`           |
+| `diagnosticMode.enabled` | Enable diagnostic mode (all probes will be disabled and the command will be overridden) | `false`        |
+| `diagnosticMode.command` | Command to override all containers in the the deployment(s)/statefulset(s)              | `["sleep"]`    |
+| `diagnosticMode.args`    | Args to override all containers in the the deployment(s)/statefulset(s)                 | `["infinity"]` |
+| `extraDeploy`            | Array of extra objects to deploy with the release                                       | `[]`           |
+
+
+### diffwatcher parameters
+
+| Name                                     | Description                                                                      | Value                  |
+| ---------------------------------------- | -------------------------------------------------------------------------------- | ---------------------- |
+| `image.registry`                         | diffwatcher image registry                                                         | `docker.io`            |
+| `image.repository`                       | diffwatcher image repository                                                       | `bitnami/diffwatcher`    |
+| `image.tag`                              | diffwatcher image tag (immutable tags are recommended)                             | `0.1.0-debian-10-r513` |
+| `image.pullPolicy`                       | diffwatcher image pull policy                                                      | `IfNotPresent`         |
+| `image.pullSecrets`                      | Specify docker-registry secret names as an array                                 | `[]`                   |
+| `hostAliases`                            | Add deployment host aliases                                                      | `[]`                   |
+| `slack.enabled`                          | Enable Slack notifications                                                       | `true`                 |
+| `slack.channel`                          | Slack channel to notify                                                          | `XXXX`                 |
+| `slack.token`                            | Slack API token                                                                  | `XXXX`                 |
+| `hipchat.enabled`                        | Enable HipChat notifications                                                     | `false`                |
+| `hipchat.room`                           | HipChat room to notify                                                           | `""`                   |
+| `hipchat.token`                          | HipChat token                                                                    | `""`                   |
+| `hipchat.url`                            | HipChat URL                                                                      | `""`                   |
+| `mattermost.enabled`                     | Enable Mattermost notifications                                                  | `false`                |
+| `mattermost.channel`                     | Mattermost channel to notify                                                     | `""`                   |
+| `mattermost.url`                         | Mattermost URL                                                                   | `""`                   |
+| `mattermost.username`                    | Mattermost user to notify                                                        | `""`                   |
+| `flock.enabled`                          | Enable Flock notifications                                                       | `false`                |
+| `flock.url`                              | Flock URL                                                                        | `""`                   |
+| `msteams.enabled`                        | Enable Microsoft Teams notifications                                             | `false`                |
+| `msteams.webhookurl`                     | Microsoft Teams webhook URL                                                      | `""`                   |
+| `webhook.enabled`                        | Enable Webhook notifications                                                     | `false`                |
+| `webhook.url`                            | Webhook URL                                                                      | `""`                   |
+| `smtp.enabled`                           | Enable SMTP (email) notifications                                                | `false`                |
+| `smtp.to`                                | Destination email address (required)                                             | `""`                   |
+| `smtp.from`                              | Source email address (required)                                                  | `""`                   |
+| `smtp.hello`                             | SMTP hello field (optional)                                                      | `""`                   |
+| `smtp.smarthost`                         | SMTP server address (name:port) (required)                                       | `""`                   |
+| `smtp.subject`                           | Source email subject                                                             | `""`                   |
+| `smtp.auth.username`                     | Username for LOGIN and PLAIN auth mech                                           | `""`                   |
+| `smtp.auth.password`                     | Password for LOGIN and PLAIN auth mech                                           | `""`                   |
+| `smtp.auth.secret`                       | Secret for CRAM-MD5 auth mech                                                    | `""`                   |
+| `smtp.auth.identity`                     | Identity for PLAIN auth mech                                                     | `""`                   |
+| `smtp.requireTLS`                        | Force STARTTLS. Set to `true` or `false`                                         | `""`                   |
+| `namespaceToWatch`                       | Namespace to watch, leave it empty for watching all                              | `""`                   |
+| `resourcesToWatch.deployment`            | Watch changes to Deployments                                                     | `true`                 |
+| `resourcesToWatch.replicationcontroller` | Watch changes to ReplicationControllers                                          | `false`                |
+| `resourcesToWatch.replicaset`            | Watch changes to ReplicaSets                                                     | `false`                |
+| `resourcesToWatch.daemonset`             | Watch changes to DaemonSets                                                      | `false`                |
+| `resourcesToWatch.services`              | Watch changes to Services                                                        | `false`                |
+| `resourcesToWatch.pod`                   | Watch changes to Pods                                                            | `true`                 |
+| `resourcesToWatch.job`                   | Watch changes to Jobs                                                            | `false`                |
+| `resourcesToWatch.persistentvolume`      | Watch changes to PersistentVolumes                                               | `false`                |
+| `command`                                | Override default container command (useful when using custom images)             | `[]`                   |
+| `args`                                   | Override default container args (useful when using custom images)                | `[]`                   |
+| `lifecycleHooks`                         | for the diffwatcher container(s) to automate configuration before or after startup | `{}`                   |
+| `extraEnvVars`                           | Extra environment variables to be set on diffwatcher container                     | `[]`                   |
+| `extraEnvVarsCM`                         | Name of existing ConfigMap containing extra env vars                             | `""`                   |
+| `extraEnvVarsSecret`                     | Name of existing Secret containing extra env vars                                | `""`                   |
+
+
+### diffwatcher deployment parameters
+
+| Name                                    | Description                                                                               | Value           |
+| --------------------------------------- | ----------------------------------------------------------------------------------------- | --------------- |
+| `replicaCount`                          | Number of diffwatcher replicas to deploy                                                    | `1`             |
+| `podSecurityContext.enabled`            | Enable diffwatcher containers' SecurityContext                                              | `false`         |
+| `podSecurityContext.fsGroup`            | Set diffwatcher containers' SecurityContext fsGroup                                         | `""`            |
+| `containerSecurityContext.enabled`      | Enable diffwatcher pods' Security Context                                                   | `false`         |
+| `containerSecurityContext.runAsUser`    | Set diffwatcher pods' SecurityContext runAsUser                                             | `""`            |
+| `containerSecurityContext.runAsNonRoot` | Set diffwatcher pods' SecurityContext runAsNonRoot                                          | `""`            |
+| `resources.limits`                      | The resources limits for the diffwatcher container                                          | `{}`            |
+| `resources.requests`                    | The requested resources for the diffwatcher container                                       | `{}`            |
+| `startupProbe.enabled`                  | Enable startupProbe                                                                       | `false`         |
+| `startupProbe.initialDelaySeconds`      | Initial delay seconds for startupProbe                                                    | `10`            |
+| `startupProbe.periodSeconds`            | Period seconds for startupProbe                                                           | `10`            |
+| `startupProbe.timeoutSeconds`           | Timeout seconds for startupProbe                                                          | `1`             |
+| `startupProbe.failureThreshold`         | Failure threshold for startupProbe                                                        | `3`             |
+| `startupProbe.successThreshold`         | Success threshold for startupProbe                                                        | `1`             |
+| `livenessProbe.enabled`                 | Enable livenessProbe                                                                      | `false`         |
+| `livenessProbe.initialDelaySeconds`     | Initial delay seconds for livenessProbe                                                   | `10`            |
+| `livenessProbe.periodSeconds`           | Period seconds for livenessProbe                                                          | `10`            |
+| `livenessProbe.timeoutSeconds`          | Timeout seconds for livenessProbe                                                         | `1`             |
+| `livenessProbe.failureThreshold`        | Failure threshold for livenessProbe                                                       | `3`             |
+| `livenessProbe.successThreshold`        | Success threshold for livenessProbe                                                       | `1`             |
+| `readinessProbe.enabled`                | Enable readinessProbe                                                                     | `false`         |
+| `readinessProbe.initialDelaySeconds`    | Initial delay seconds for readinessProbe                                                  | `10`            |
+| `readinessProbe.periodSeconds`          | Period seconds for readinessProbe                                                         | `10`            |
+| `readinessProbe.timeoutSeconds`         | Timeout seconds for readinessProbe                                                        | `1`             |
+| `readinessProbe.failureThreshold`       | Failure threshold for readinessProbe                                                      | `3`             |
+| `readinessProbe.successThreshold`       | Success threshold for readinessProbe                                                      | `1`             |
+| `customStartupProbe`                    | Override default startup probe                                                            | `{}`            |
+| `customLivenessProbe`                   | Override default liveness probe                                                           | `{}`            |
+| `customReadinessProbe`                  | Override default readiness probe                                                          | `{}`            |
+| `podAffinityPreset`                     | Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`       | `""`            |
+| `podAntiAffinityPreset`                 | Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`  | `soft`          |
+| `nodeAffinityPreset.type`               | Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard` | `""`            |
+| `nodeAffinityPreset.key`                | Node label key to match. Ignored if `affinity` is set.                                    | `""`            |
+| `nodeAffinityPreset.values`             | Node label values to match. Ignored if `affinity` is set.                                 | `[]`            |
+| `affinity`                              | Affinity for pod assignment                                                               | `{}`            |
+| `nodeSelector`                          | Node labels for pod assignment                                                            | `{}`            |
+| `tolerations`                           | Tolerations for pod assignment                                                            | `[]`            |
+| `priorityClassName`                     | Controller priorityClassName                                                              | `""`            |
+| `schedulerName`                         | Name of the k8s scheduler (other than default)                                            | `""`            |
+| `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment                                            | `[]`            |
+| `podLabels`                             | Extra labels for diffwatcher pods                                                           | `{}`            |
+| `podAnnotations`                        | Annotations for diffwatcher pods                                                            | `{}`            |
+| `extraVolumes`                          | Optionally specify extra list of additional volumes for diffwatcher pods                    | `[]`            |
+| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for diffwatcher container(s)       | `[]`            |
+| `updateStrategy.type`                   | Deployment strategy type.                                                                 | `RollingUpdate` |
+| `initContainers`                        | Add additional init containers to the diffwatcher pods                                      | `[]`            |
+| `sidecars`                              | Add additional sidecar containers to the diffwatcher pods                                   | `[]`            |
+
+
+### RBAC parameters
+
+| Name                                          | Description                                                                                                         | Value   |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------- |
+| `rbac.create`                                 | Whether to create & use RBAC resources or not                                                                       | `false` |
+| `serviceAccount.create`                       | Specifies whether a ServiceAccount should be created                                                                | `true`  |
+| `serviceAccount.name`                         | Name of the service account to use. If not set and create is true, a name is generated using the fullname template. | `""`    |
+| `serviceAccount.automountServiceAccountToken` | Automount service account token for the server service account                                                      | `true`  |
+| `serviceAccount.annotations`                  | Annotations for service account. Evaluated as a template. Only used if `create` is `true`.                          | `{}`    |
+
+
+Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
+
+```console
+$ helm install my-release bitnami/diffwatcher \
+  --set=slack.channel="#bots",slack.token="XXXX-XXXX-XXXX"
+```
+
+Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
+
+```console
+$ helm install my-release -f values.yaml bitnami/diffwatcher
+```
+
+> **Tip**: You can use the default [values.yaml](values.yaml)
+
+## Configuration and installation details
+
+### [Rolling VS Immutable tags](https://docs.bitnami.com/containers/how-to/understand-rolling-tags-containers/)
+
+It is strongly recommended to use immutable tags in a production environment. This ensures your deployment does not change automatically if the same tag is updated with a different image.
+
+Bitnami will release a new chart updating its containers if a new version of the main container, significant changes, or critical vulnerabilities exist.
+
+### Create a Slack bot
+
+Open [https://my.slack.com/services/new/bot](https://my.slack.com/services/new/bot) to create a new Slack bot.
+The API token can be found on the edit page (it starts with `xoxb-`).
+
+Invite the Bot to your channel by typing `/join @name_of_your_bot` in the Slack message area.
+
+### Adding extra environment variables
+
+In case you want to add extra environment variables (useful for advanced operations like custom init scripts), you can use the `extraEnvVars` property.
 
 ```yaml
-rbac:
-  create: true
-resourcesToWatch:
-  deployment: false
-  replicationcontroller: false
-  replicaset: false
-  daemonset: false
-  services: true
-  pod: true
-  job: false
-  node: false
-  clusterrole: true
-  clusterrolebinding: true
-  serviceaccount: true
-  persistentvolume: false
-  namespace: false
-  secret: false
-  configmap: false
-  ingress: false
-  coreevent: false
-  event: true
-slack:
-  channel: '#YOUR_CHANNEL'
-  token: 'xoxb-YOUR_TOKEN'
+extraEnvVars:
+  - name: LOG_LEVEL
+    value: debug
 ```
 
-And use that:
+Alternatively, you can use a ConfigMap or a Secret with the environment variables. To do so, use the `extraEnvVarsCM` or the `extraEnvVarsSecret` values.
 
-```console
-$ helm upgrade --install diffwatcher --namespace kube-system kubernetes-diffwatcher --values=values-file.yml helm/diffwatcher
+### Sidecars and Init Containers
+
+If you have a need for additional containers to run within the same pod as the diffwatcher app (e.g. an additional metrics or logging exporter), you can do so via the `sidecars` config parameter. Simply define your container according to the Kubernetes container spec.
+
+```yaml
+sidecars:
+  - name: your-image-name
+    image: your-image
+    imagePullPolicy: Always
+    ports:
+      - name: portname
+       containerPort: 1234
 ```
 
-#### Using kubectl:
+Similarly, you can add extra init containers using the `initContainers` parameter.
 
-In order to run diffwatcher in a Kubernetes cluster quickly, the easiest way is for you to create a [ConfigMap](https://github.com/marvasgit/kubernetes-diffwatcher/blob/master/diffwatcher-configmap.yaml) to hold diffwatcher configuration.
-
-An example is provided at [`diffwatcher-configmap.yaml`](https://github.com/marvasgit/kubernetes-diffwatcher/blob/master/diffwatcher-configmap.yaml), do not forget to update your own slack channel and token parameters. Alternatively, you could use secrets.
-
-Create k8s configmap:
-
-```console
-$ kubectl create -f diffwatcher-configmap.yaml
+```yaml
+initContainers:
+  - name: your-image-name
+    image: your-image
+    imagePullPolicy: Always
+    ports:
+      - name: portname
+        containerPort: 1234
 ```
 
-Create the [Pod](https://github.com/marvasgit/kubernetes-diffwatcher/blob/master/diffwatcher.yaml) directly, or creakubernetes-diffwatcherte your own deployment:
+### Deploying extra resources
 
-```console
-$ kubectl create -f diffwatcher.yaml
-```
+There are cases where you may want to deploy extra objects, such a ConfigMap containing your app's configuration or some extra deployment with a micro service used by your app. For covering this case, the chart allows adding the full specification of other objects using the `extraDeploy` parameter.
 
-A `diffwatcher` container will be created along with `kubectl` sidecar container in order to reach the API server.
+### Setting Pod's affinity
 
-Once the Pod is running, you will start seeing Kubernetes events in your configured Slack channel. Here is a screenshot:
+This chart allows you to set your custom affinity using the `affinity` parameter. Find more information about Pod's affinity in the [kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).
 
-![slack](./docs/slack.png)
+As an alternative, you can use of the preset configurations for pod affinity, pod anti-affinity, and node affinity available at the [bitnami/common](https://github.com/bitnami/charts/tree/master/bitnami/common#affinities) chart. To do so, set the `podAffinityPreset`, `podAntiAffinityPreset`, or `nodeAffinityPreset` parameters.
 
-To modify what notifications you get, update the `diffwatcher` ConfigMap and turn on and off (true/false) resources:
-
-```
-resource:
-  deployment: false
-  replicationcontroller: false
-  replicaset: false
-  daemonset: false
-  services: true
-  pod: true
-  job: false
-  node: false
-  clusterrole: false
-  clusterrolebinding: false
-  serviceaccount: false
-  persistentvolume: false
-  namespace: false
-  secret: false
-  configmap: false
-  ingress: false
-  coreevent: false
-  event: true
-```
-
-#### Working with RBAC
-
-Kubernetes Engine clusters running versions 1.6 or higher introduced Role-Based Access Control (RBAC). We can create `ServiceAccount` for it to work with RBAC.
-
-```console
-$ kubectl create -f diffwatcher-service-account.yaml
-```
-
-If you do not have permission to create it, you need to become an admin first. For example, in GKE you would run:
-
-```
-$ kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=REPLACE_EMAIL_HERE
-```
-
-Edit `diffwatcher.yaml`, and create a new field under `spec` with `serviceAccountName: diffwatcher`, you can achieve this by running:
-
-```console
-$ sed -i '/spec:/a\ \ serviceAccountName: diffwatcher' diffwatcher.yaml
-```
-
-Then just create `pod` as usual with:
-
-```console
-$ kubectl create -f diffwatcher.yaml
-```
 
 ### Local Installation
 #### Using go package installer:
@@ -342,7 +453,7 @@ data:
       event: true
       coreevent: false
     ```
-
+```
 ### flock:
 
 - Create a [flock bot](https://docs.flock.com/display/flockos/Bots).
@@ -425,6 +536,23 @@ resource:
   event: true
   coreevent: false
 namespace: ""
+message:
+  title: "XXXX"
+diff:
+  ignore:
+  - "metadata.creationTimestamp"
+  - "metadata.resourceVersion"
+  - "metadata.selfLink"
+  - "metadata.uid"
+  - "status"
+  - "metadata.managedFields"
+  - "metadata.generation"
+  - "metadata.annotations.kubectl.kubernetes.io/last-applied-configuration"
+  - "metadata.annotations.deployment.kubernetes.io/revision"
+  - "metadata.annotations.kubernetes.io/change-cause"
+  - "metadata.annotations.kubernetes.io/psp"
+  - "metadata.annotations.kubernetes.io/psp-spec"
+  - "metadata.annotations.kubernetes.io/psp-status"
 
 ```
 
