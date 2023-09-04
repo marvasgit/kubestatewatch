@@ -6,8 +6,11 @@ There is way too many changes happening in a Kubernetes cluster, and it is not a
 When there is an update on any of the watched components there is a Diff component in the notification.Run it in your k8s cluster, and you will get event notifications through webhooks. Because of the diff nature of the notifications, you can easily see what has changed. You can also use it to watch for new resources and get notified when they are created. Because of k8s nature and its regular updates, there is a possiblity to ignore some of the changes, like metadata changes, status changes, etc. *This is configurable in the config file.
 
 <img src="./docs/diffwatcher-logo.jpeg">
+
+[![Build Status](https://travis-ci.org/marvasgit/kubernetes-diffwatcher.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-diffwatcher) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubernetes-diffwatcher)](https://goreportcard.com/report/github.com/marvasgit/kubernetes-diffwatcher) 
-[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-diffwatcher.svg)](https://hub.docker.com/repository/docker/docmarr/kubernetes-diffwatcher/) 
+[![codecov](https://codecov.io/gh/marvasgit/kubernetes-diffwatcher/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubernetes-diffwatcher)
+[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-diffwatcher.svg)](https://hub.docker.com/repository/docker/docmarr/kubernetes-diffwatcher) 
 ![GitHub release](https://img.shields.io/github/release/marvasgit/kubernetes-diffwatcher.svg)
 </div>
 
