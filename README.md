@@ -1,8 +1,15 @@
+<style>
+    .enchance {
+        color: red
+    }
+</style>
+
 <div align="center">
 
 **This porject started as fork of kubewatch project maintained by [Robusta.dev](https://home.robusta.dev/) [originally by Bitnami](https://github.com/bitnami-labs/kubewatch/),**
 
-There is way too many changes happening in a Kubernetes cluster, and it is not always easy to keep track of them. diffwatcher is a Kubernetes watcher that publishes notifications to available collaboration hubs/notification channels.When there is an update on any of the watched components there is a diff as notification. Run it in your k8s cluster, and you will get event notifications through webhooks. Because of the diff nature of the notifications, you can easily see what has changed. You can also use it to watch for new resources and get notified when they are created. Because of k8s nature and its regular updates, there is a possiblity to ignore some of the changes, like metadata changes, status changes, etc. This is configurable in the config file.
+There is way too many changes happening in a Kubernetes cluster, and it is not always easy to keep track of them. diffwatcher is a Kubernetes watcher that publishes notifications to available collaboration hubs/notification channels.
+When there is an update on any of the watched components there is a Diff component in the notification.Run it in your k8s cluster, and you will get event notifications through webhooks. Because of the diff nature of the notifications, you can easily see what has changed. You can also use it to watch for new resources and get notified when they are created. Because of k8s nature and its regular updates, there is a possiblity to ignore some of the changes, like metadata changes, status changes, etc. *This is configurable in the config file.
 
 <img src="./docs/diffwatcher-logo.jpeg">
 
@@ -14,10 +21,11 @@ There is way too many changes happening in a Kubernetes cluster, and it is not a
 </div>
 
 There are basically two kind of notifications:
-**notifications for UPDATED items** The whole idea behind is to track the **usefull** differences made on the items we watch, ignoring things like metadata changes, status changes, etc. Not only a simple msg that something was changed.
-**notifications for ADDED/DELETED items** this is the original idea behind kubewatch, to track the added/deleted items and notify about them.
+- **notifications for UPDATED items** The whole idea behind is to track the **usefull** differences made on the items we watch, ignoring things like metadata changes, status changes, etc. Not only a simple msg that something was changed.
+- **notifications for ADDED/DELETED items** this is the original idea behind kubewatch, to track the added/deleted items and notify about them.
 
-
+The usecase we are mainly intrested is the first one. We want to track the changes made on the items we watch (mainly deployments,rs,hpa,configmaps), and get notified about any changes made on them.
+Image you have a cluster with many namespaces, with different shareholders. You want to track any changes made to the watched items, without using CI/CD pipelines (using kubectl, lens, k9s etc.). You want to get notified about such changes, and you want to see the diff of the changes. This is what diffwatcher is for.
 # Latest image
 
 ```
@@ -96,6 +104,8 @@ The command removes all the Kubernetes components associated with the chart and 
 | `image.pullPolicy`                       | diffwatcher image pull policy                                                      | `IfNotPresent`         |
 | `image.pullSecrets`                      | Specify docker-registry secret names as an array                                 | `[]`                   |
 | `hostAliases`                            | Add deployment host aliases                                                      | `[]`                   |
+| `message.title`                     |<div class="enchance"> Message Title used for MsTeams and others</div>                                 | `"XXXX"`                   |
+| `diff.ignore`                     |<div class="enchance"> List of Json path to ignore during compare process</div>                                | `""`                   |
 | `slack.enabled`                          | Enable Slack notifications                                                       | `true`                 |
 | `slack.channel`                          | Slack channel to notify                                                          | `XXXX`                 |
 | `slack.token`                            | Slack API token                                                                  | `XXXX`                 |
@@ -696,6 +706,17 @@ diffwatcher           latest              919896d3cd90        3 minutes ago     
 #### Prerequisites
 
 - you need to have [docker](https://docs.docker.com/) installed.
+
+# Things for future version
+
+- Add support for ignoring specific namespaces and watching more than one namespace
+- Change config source file from yaml to json
+- Add metrics
+- Deeper Diff for configmaps (currently it drops the new configmap as a whole)
+- Add regex support for path ignorance in diff 
+
+
+
 
 # Contribution
 
