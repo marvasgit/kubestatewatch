@@ -532,15 +532,18 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			if !ok {
 				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for add on %v", obj)
 			}
+			if err != nil {
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for add on %v", obj)
+				return
+			}
+
 			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
-				logrus.Infof("Skipping adding  %v for %s", resourceType, newEvent.key)
+				logrus.Debugf("Skipping adding (namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
 				return
 			}
 
 			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
-			if err == nil {
-				queue.Add(newEvent)
-			}
+			queue.Add(newEvent)
 		},
 		UpdateFunc: func(old, new interface{}) {
 			var ok bool
@@ -557,10 +560,19 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			if !ok {
 				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert old to runtime.Object for update on %v", old)
 			}
-			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
-			if err == nil {
-				queue.Add(newEvent)
+
+			if err != nil {
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for update on %v", old)
+				return
 			}
+
+			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
+				logrus.Debugf("Skipping updating(namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
+				return
+			}
+
+			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
+			queue.Add(newEvent)
 		},
 		DeleteFunc: func(obj interface{}) {
 			var ok bool
@@ -573,10 +585,19 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			if !ok {
 				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for delete on %v", obj)
 			}
-			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
-			if err == nil {
-				queue.Add(newEvent)
+
+			if err != nil {
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for delete on %v", obj)
+				return
 			}
+
+			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
+				logrus.Debugf("Skipping deletion (namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
+				return
+			}
+
+			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
+			queue.Add(newEvent)
 		},
 	})
 
