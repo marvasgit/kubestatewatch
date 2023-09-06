@@ -346,6 +346,7 @@ func getConfigFile() string {
 }
 
 func configDir() string {
+
 	if configDir := os.Getenv("KW_CONFIG"); configDir != "" {
 		return configDir
 	}

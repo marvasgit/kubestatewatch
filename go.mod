@@ -19,6 +19,7 @@ require (
 	github.com/spf13/cobra v0.0.1
 	github.com/spf13/jwalterweatherman v0.0.0-20180109140146-7c0cea34c8ec // indirect
 	github.com/spf13/viper v1.0.0
+	github.com/stretchr/testify v1.6.1
 	github.com/tbruyelle/hipchat-go v0.0.0-20160921153256-749fb9e14beb
 	github.com/wI2L/jsondiff v0.4.0
 	golang.org/x/crypto v0.8.0 // indirect
@@ -28,4 +29,5 @@ require (
 	k8s.io/api v0.20.15
 	k8s.io/apimachinery v0.20.15
 	k8s.io/client-go v0.20.15
+	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 )
