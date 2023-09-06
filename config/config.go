@@ -83,14 +83,21 @@ type Config struct {
 	// Resources to watch.
 	Resource Resource `yaml:"resource"`
 
-	// For watching specific namespace, leave it empty for watching all.
-	// this config is ignored when watching namespaces
-	Namespace string `yaml:"namespace,omitempty"`
+	// Configurations for namespaces ot watch or ignore
+	NamespacesConfig NamespacesConfig `yaml:"namespacesconfig"`
 
 	// Message properties .
 	Message Message `yaml:"message"`
 	// Diff properties .
 	Diff Diff `yaml:"diff"`
+}
+
+type NamespacesConfig struct {
+	// For watching specific namespaces, leave it empty for watching all.
+	// this config is ignored when watching namespaces as resource
+	Include []string `yaml:"include"`
+	// For ignoring specific namespaces
+	Exclude []string `yaml:"exclude"`
 }
 
 type Diff struct {
