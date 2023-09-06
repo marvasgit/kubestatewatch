@@ -768,9 +768,22 @@ func (c *Controller) processItem(newEvent Event) error {
 	return nil
 }
 
+// compareObjects compares two objects and returns the diff
 func compareObjects(e Event) string {
+	var patch jsondiff.Patch
+	var err error
+	oldObjj := e.oldObj
+	objj := e.obj
+
+	if e.resourceType == "ConfigMap" {
+		patch, err = compareConfigMaps(oldObjj, objj)
+	}
+
+	if patch == nil || err != nil {
+		patch, err = jsondiff.Compare(oldObjj, objj, jsondiff.Ignores(confDiff.IgnorePath...))
+	}
+
 	//jsondiff.CompareJSON(source, target)
-	patch, err := jsondiff.Compare(e.oldObj.DeepCopyObject(), e.obj.DeepCopyObject(), jsondiff.Ignores(confDiff.IgnorePath...))
 	if err != nil {
 		logrus.Printf("Error in comparing objects %s", err)
 	}
@@ -781,10 +794,26 @@ func compareObjects(e Event) string {
 	if b == nil || string(b) == "null" {
 		return ""
 	}
-
 	return string(b)
 }
 
+func compareConfigMaps(old runtime.Object, new runtime.Object) (jsondiff.Patch, error) {
+
+	//Extracting data string from configmap
+	//TODO: extract name from config or even better from deployment
+	oldData, oldSuccess := old.(*api_v1.ConfigMap).Data["appsettings.json"]
+	newData, newSuccess := new.(*api_v1.ConfigMap).Data["appsettings.json"]
+
+	if !oldSuccess || !newSuccess {
+		return nil, fmt.Errorf("error in extracting data from configmap")
+	}
+
+	oldDataStr := strings.ReplaceAll(oldData, "\\", "")
+	newDataStr := strings.ReplaceAll(newData, "\\", "")
+	return jsondiff.CompareJSON([]byte(oldDataStr), []byte(newDataStr))
+}
+
+// getNamespaces returns the namespaces to watch based on the configiration provided *NamespacesConfig
 func getNamespaces(clientset kubernetes.Interface, namespacesConfig *config.NamespacesConfig) []string {
 
 	if namespacesConfig != nil && len(namespacesConfig.Include) > 0 {
