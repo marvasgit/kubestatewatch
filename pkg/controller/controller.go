@@ -24,6 +24,7 @@ import (
 	"os/signal"
 	"reflect"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -31,6 +32,8 @@ import (
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/utils"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
 	"github.com/wI2L/jsondiff"
 
@@ -65,6 +68,8 @@ const EVENTS_V1 = "events.k8s.io/v1"
 var serverStartTime time.Time
 var confDiff config.Diff
 var namespaces []string
+var metric *prometheus.CounterVec
+var mu sync.Mutex
 
 // Event indicate the informerEvent
 type Event struct {
@@ -88,6 +93,13 @@ type Controller struct {
 
 func objName(obj interface{}) string {
 	return reflect.TypeOf(obj).Name()
+}
+func init() {
+	metric = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "diffwatcher_processed_changes_total",
+		Help: "The total number of processed changes",
+	},
+		[]string{"Action", "Name", "Namespace", "Type"})
 }
 
 // TODO: we don't need the informer to be indexed
@@ -726,6 +738,7 @@ func (c *Controller) processItem(newEvent Event) error {
 				Reason:     "Created",
 			}
 			c.eventHandler.Handle(kbEvent)
+			handleMetric(newEvent)
 			return nil
 		}
 	case "update":
@@ -748,10 +761,12 @@ func (c *Controller) processItem(newEvent Event) error {
 
 		if kbEvent.Diff == "" {
 			logrus.Printf("No diff( or ingored paths) found for %s", newEvent.key)
+			//skipping metrics here as there is no valuable diff
 			return nil
 		}
 
 		c.eventHandler.Handle(kbEvent)
+		handleMetric(newEvent)
 		return nil
 	case "delete":
 		kbEvent := event.DiffWatchEvent{
@@ -763,6 +778,7 @@ func (c *Controller) processItem(newEvent Event) error {
 			Reason:     "Deleted",
 		}
 		c.eventHandler.Handle(kbEvent)
+		handleMetric(newEvent)
 		return nil
 	}
 	return nil
@@ -846,4 +862,9 @@ func getNamespaces(clientset kubernetes.Interface, namespacesConfig *config.Name
 
 	logrus.Infof("Namespaces to watch %v", namespaces)
 	return namespaces
+}
+func handleMetric(newEvent Event) {
+	mu.Lock()
+	defer mu.Unlock()
+	metric.WithLabelValues([]string{newEvent.eventType, newEvent.key, newEvent.namespace, newEvent.resourceType}...).Inc()
 }
