@@ -1,10 +1,12 @@
+
+# DiffWatcher is a state Monitor for k8s 
+
+DiffWatcher started as fork from [kubewatch](https://github.com/robusta-dev/kubewatch)
+**Diffwatcher** is state Monitor for k8s. It monitors changes to various resources and notifies the user what was changed 
+It can be used standalone or deployed in Kubernetes.
+
+<i>Image you have a cluster with many namespaces, with different shareholders. You want to track any changes made to the watched items, without using CI/CD pipelines (using kubectl, lens, k9s etc.). You want to get notified about such changes,you also want to see what exactly was changed. This is what diffwatcher is for.</i>
 <div align="center">
-
-**This porject started as fork of kubewatch project maintained by [Robusta.dev](https://home.robusta.dev/) [originally by Bitnami](https://github.com/bitnami-labs/kubewatch/),**
-
-There is way too many changes happening in a Kubernetes cluster, and it is not always easy to keep track of them. diffwatcher is a Kubernetes watcher that publishes notifications to available collaboration hubs/notification channels.
-When there is an update on any of the watched components there is a Diff component in the notification.Run it in your k8s cluster, and you will get event notifications through webhooks. Because of the diff nature of the notifications, you can easily see what has changed. You can also use it to watch for new resources and get notified when they are created. Because of k8s nature and its regular updates, there is a possiblity to ignore some of the changes, like metadata changes, status changes, etc. *This is configurable in the config file.
-
 <img src="./docs/diffwatcher-logo.jpeg">
 
 [![Build Status](https://travis-ci.org/marvasgit/kubernetes-diffwatcher.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-diffwatcher) 
@@ -19,7 +21,10 @@ There are basically two kind of notifications:
 - **notifications for ADDED/DELETED items** this is the original idea behind kubewatch, to track the added/deleted items and notify about them.
 
 The usecase we are mainly intrested is the first one. We want to track the changes made on the items we watch (mainly deployments,rs,hpa,configmaps), and get notified about any changes made on them.
-Image you have a cluster with many namespaces, with different shareholders. You want to track any changes made to the watched items, without using CI/CD pipelines (using kubectl, lens, k9s etc.). You want to get notified about such changes, and you want to see the diff of the changes. This is what diffwatcher is for.
+
+<div align="center">
+<img src="./docs/msteams.png">
+</div>
 # Latest image
 
 ```
