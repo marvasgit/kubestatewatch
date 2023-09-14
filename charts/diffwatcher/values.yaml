@@ -60,7 +60,7 @@ extraDeploy: []
 ## @param image.pullSecrets Specify docker-registry secret names as an array
 ##
 image:
-  registry: docker
+  registry:
   repository: docmarr/kubernetes-diffwatcher
   tag: 1.0.0
   ## Specify a imagePullPolicy
@@ -88,13 +88,12 @@ message:
   ## @param message.title Used msg title in slack and msteams
   title: "XXXX"
 diff:
-enabled: false
-ignore:
-##- "/metadata"
-##- "/status"
-##- "/metadata/replicas"
+  ignore:
+  # - "/metadata"
+  # - "/status"
+  # - "/metadata/replicas"
 slack:
-  enabled: true
+  enabled: false
   channel: "XXXX"
   ## Create using: https://my.slack.com/services/new/bot and invite the bot to your channel using: /join @botname
   ##
@@ -141,8 +140,8 @@ flock:
 ## @param msteams.webhookurl Microsoft Teams webhook URL
 ##
 msteams:
-  enabled: false
-  webhookurl: ""
+  enabled: true
+  webhookurl: "XXXX"
 ## @param webhook.enabled Enable Webhook notifications
 ## @param webhook.url Webhook URL
 ##
@@ -198,10 +197,13 @@ smtp:
 
 ## @param extraHandlers Manual handlers declaration
 extraHandlers: {}
+## @param namespacesconfig Manual namespaces config
+## @param namespacesconfig.include Namespaces to include, leave empty to include all namespaces
+namespacesconfig:
+  include:
 
-## @param namespaceToWatch Namespace to watch, leave it empty for watching all
-##
-namespaceToWatch: ""
+  exclude:
+  - "kube-system"
 ## Resources to watch
 ## @param resourcesToWatch.deployment Watch changes to Deployments
 ## @param resourcesToWatch.replicationcontroller Watch changes to ReplicationControllers
@@ -214,15 +216,20 @@ namespaceToWatch: ""
 ## @param resourcesToWatch.event Watch changes to Events
 ##
 resourcesToWatch:
+  configmap: true
+  daemonset: true
   deployment: true
-  replicationcontroller: false
-  replicaset: false
-  daemonset: false
-  services: false
-  pod: true
+  event: false
+  coreevent: false
+  hpa: true
   job: false
   persistentvolume: false
-  event: true
+  pod: false
+  replicaset: true
+  replicationcontroller: false
+  node: false
+  services: false
+
 ## @param command Override default container command (useful when using custom images)
 ##
 command: []
@@ -465,3 +472,28 @@ serviceAccount:
   name: ""
   automountServiceAccountToken: true
   annotations: {}
+
+  ## @section Prometheus Exporter parameters
+  ## @param metrics.podMonitor.enabled Specify if a PodMonitor should be created
+  ## @param metrics.podMonitor.namespace Namespace in which Prometheus is running
+  ## @param metrics.podMonitor.interval How frequently to scrape metrics
+  ## @param metrics.podMonitor.scrapeTimeout How long until a scrape request times out
+  ## @param metrics.podMonitor.relabelings Additional relabelings to apply to samples before ingestion
+  ## @param metrics.podMonitor.additionalLabels Additional labels to add to the PodMonitor
+  ## @param metrics.podMonitor.endpoint Path to diffwatcher metrics endpoint
+  additionalLabels: {}
+podMonitor:
+  enabled: true
+  endpoint: "/metrics"
+  interval: 30s
+  scrapeTimeout: 10s
+  namespace: monitoring
+  additionalLabels:
+    release: "kube-prometheus-stack"
+  relabelings:
+  - sourceLabels: [__meta_kubernetes_pod_node_name]
+    separator: ;
+    targetLabel: instance
+    replacement: $1
+    action: replace
+

@@ -47,10 +47,20 @@ data:
       lark: {{- toYaml .Values.lark | nindent 8 }}
       {{- end }}
     resource: {{- toYaml .Values.resourcesToWatch | nindent 6 }}
-    namespace: {{ .Values.namespaceToWatch | quote }}
     message: 
       title: {{ .Values.message.title | quote }}
-    {{- if .Values.dff.enabled -}}
     diff:
       ignore: {{- toYaml .Values.diff.ignore | nindent 8 }}
-    {{- end }}
+    namespacesconfig:
+      {{- if .Values.namespacesconfig.include }}
+      include:
+      {{- range .Values.namespacesconfig.include }}
+        - {{ . | toString }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.namespacesconfig.exclude }}
+      exclude:
+      {{- range .Values.namespacesconfig.exclude }}
+          - {{ . | toString }}
+      {{- end }}
+      {{- end }}
