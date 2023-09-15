@@ -25,10 +25,18 @@ The usecase we are mainly intrested is the first one. We want to track the chang
 <div align="center">
 <img src="./docs/msteams.png">
 </div>
+
+## TL;DR
+#Latest Release:
+ 1.0.1- [Release Notes]
+- Add support for ignoring specific namespaces and watching more than one namespace
+- Add metrics
+- Deeper Diff for configmaps (currently it drops the new configmap as a whole). its Work for me atm. It needs more work to be more generic.
+
 # Latest image
 
 ```
-docmarr/kubernetes-diffwatcher:1.0.0
+docmarr/kubernetes-diffwatcher:1.0.1
 ```
 
 # Install
@@ -708,11 +716,13 @@ diffwatcher           latest              919896d3cd90        3 minutes ago     
 
 # Things for future version
 
-- Add support for ignoring specific namespaces and watching more than one namespace
-- Change config source file from yaml to json
-- Add metrics
-- Deeper Diff for configmaps (currently it drops the new configmap as a whole)
+- Add support for ignoring specific namespaces and watching more than one namespace (1.0.1)
+- Add metrics (1.0.1)
+- Deeper Diff for configmaps (currently it drops the new configmap as a whole)(1.0.1)
 - Add regex support for path ignorance in diff 
+
+- Change config source file from yaml to json
+- Dissable processing during deployment 
 
 
 

@@ -23,6 +23,7 @@ import (
 	"os"
 	"os/signal"
 	"reflect"
+	"sort"
 	"strings"
 	"sync"
 	"syscall"
@@ -815,17 +816,27 @@ func compareObjects(e Event) string {
 
 func compareConfigMaps(old runtime.Object, new runtime.Object) (jsondiff.Patch, error) {
 
-	//Extracting data string from configmap
-	//TODO: extract name from config or even better from deployment
-	oldData, oldSuccess := old.(*api_v1.ConfigMap).Data["appsettings.json"]
-	newData, newSuccess := new.(*api_v1.ConfigMap).Data["appsettings.json"]
+	//Dynamic extraction of data from configmap
+	keys := make([]string, 0)
+	for k, _ := range old.(*api_v1.ConfigMap).Data {
+		keys = append(keys, k)
+	}
 
+	sort.Strings(keys)
+	k := keys[0]
+	if !strings.Contains(k, ".json") {
+		return nil, fmt.Errorf("error in extracting data from configmap")
+	}
+
+	oldData, oldSuccess := old.(*api_v1.ConfigMap).Data[k]
+	newData, newSuccess := new.(*api_v1.ConfigMap).Data[k]
 	if !oldSuccess || !newSuccess {
 		return nil, fmt.Errorf("error in extracting data from configmap")
 	}
 
 	oldDataStr := strings.ReplaceAll(oldData, "\\", "")
 	newDataStr := strings.ReplaceAll(newData, "\\", "")
+
 	return jsondiff.CompareJSON([]byte(oldDataStr), []byte(newDataStr))
 }
 
