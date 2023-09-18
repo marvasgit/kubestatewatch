@@ -1,27 +1,42 @@
+
+# DiffWatcher is a state Monitor for k8s 
+
+DiffWatcher started as fork from [kubewatch](https://github.com/robusta-dev/kubewatch)
+**Diffwatcher** is state Monitor for k8s. It monitors changes to various resources and notifies the user what was changed 
+It can be used standalone or deployed in Kubernetes.
+
+<i>Image you have a cluster with many namespaces, with different shareholders. You want to track any changes made to the watched items, without using CI/CD pipelines (using kubectl, lens, k9s etc.). You want to get notified about such changes,you also want to see what exactly was changed. This is what diffwatcher is for.</i>
 <div align="center">
-
-**This porject started as fork of kubewatch project maintained by [Robusta.dev](https://home.robusta.dev/) [originally by Bitnami](https://github.com/bitnami-labs/kubewatch/),**
-
-There is way too many changes happening in a Kubernetes cluster, and it is not always easy to keep track of them. diffwatcher is a Kubernetes watcher that publishes notifications to available collaboration hubs/notification channels.When there is an update on any of the watched components there is a diff as notification. Run it in your k8s cluster, and you will get event notifications through webhooks. Because of the diff nature of the notifications, you can easily see what has changed. You can also use it to watch for new resources and get notified when they are created. Because of k8s nature and its regular updates, there is a possiblity to ignore some of the changes, like metadata changes, status changes, etc. This is configurable in the config file.
-
 <img src="./docs/diffwatcher-logo.jpeg">
 
 [![Build Status](https://travis-ci.org/marvasgit/kubernetes-diffwatcher.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-diffwatcher) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubernetes-diffwatcher)](https://goreportcard.com/report/github.com/marvasgit/kubernetes-diffwatcher) 
 [![codecov](https://codecov.io/gh/marvasgit/kubernetes-diffwatcher/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubernetes-diffwatcher)
-[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-diffwatcher.svg)](https://hub.docker.com/r/marvasgit/kubernetes-diffwatcher/) 
+[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-diffwatcher.svg)](https://hub.docker.com/repository/docker/docmarr/kubernetes-diffwatcher) 
 ![GitHub release](https://img.shields.io/github/release/marvasgit/kubernetes-diffwatcher.svg)
 </div>
 
 There are basically two kind of notifications:
-**notifications for UPDATED items** The whole idea behind is to track the **usefull** differences made on the items we watch, ignoring things like metadata changes, status changes, etc. Not only a simple msg that something was changed.
-**notifications for ADDED/DELETED items** this is the original idea behind kubewatch, to track the added/deleted items and notify about them.
+- **notifications for UPDATED items** The whole idea behind is to track the **usefull** differences made on the items we watch, ignoring things like metadata changes, status changes, etc. Not only a simple msg that something was changed.
+- **notifications for ADDED/DELETED items** this is the original idea behind kubewatch, to track the added/deleted items and notify about them.
 
+The usecase we are mainly intrested is the first one. We want to track the changes made on the items we watch (mainly deployments,rs,hpa,configmaps), and get notified about any changes made on them.
+
+<div align="center">
+<img src="./docs/msteams.png">
+</div>
+
+## TL;DR
+#Latest Release:
+ 1.0.1- [Release Notes]
+- Add support for ignoring specific namespaces and watching more than one namespace
+- Add metrics
+- Deeper Diff for configmaps (currently it drops the new configmap as a whole). its Work for me atm. It needs more work to be more generic.
 
 # Latest image
 
 ```
-docmarr/kubernetes-diffwatcher:1.0.0
+docmarr/kubernetes-diffwatcher:1.0.1
 ```
 
 # Install
@@ -96,6 +111,8 @@ The command removes all the Kubernetes components associated with the chart and 
 | `image.pullPolicy`                       | diffwatcher image pull policy                                                      | `IfNotPresent`         |
 | `image.pullSecrets`                      | Specify docker-registry secret names as an array                                 | `[]`                   |
 | `hostAliases`                            | Add deployment host aliases                                                      | `[]`                   |
+| `message.title`                     | Message Title used for MsTeams and others                                 | `"XXXX"`                   |
+| `diff.ignore`                     | List of Json path to ignore during compare process                                | `""`                   |
 | `slack.enabled`                          | Enable Slack notifications                                                       | `true`                 |
 | `slack.channel`                          | Slack channel to notify                                                          | `XXXX`                 |
 | `slack.token`                            | Slack API token                                                                  | `XXXX`                 |
@@ -696,6 +713,19 @@ diffwatcher           latest              919896d3cd90        3 minutes ago     
 #### Prerequisites
 
 - you need to have [docker](https://docs.docker.com/) installed.
+
+# Things for future version
+
+- Add support for ignoring specific namespaces and watching more than one namespace (1.0.1)
+- Add metrics (1.0.1)
+- Deeper Diff for configmaps (currently it drops the new configmap as a whole)(1.0.1)
+- Add regex support for path ignorance in diff 
+
+- Change config source file from yaml to json
+- Dissable processing during deployment 
+
+
+
 
 # Contribution
 

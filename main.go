@@ -16,8 +16,18 @@ limitations under the License.
 
 package main
 
-import "github.com/marvasgit/kubernetes-diffwatcher/cmd"
+import (
+	"net/http"
+
+	"github.com/marvasgit/kubernetes-diffwatcher/cmd"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+)
 
 func main() {
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		http.ListenAndServe(":2112", nil)
+	}()
+
 	cmd.Execute()
 }

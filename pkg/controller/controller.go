@@ -23,7 +23,9 @@ import (
 	"os"
 	"os/signal"
 	"reflect"
+	"sort"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -31,6 +33,8 @@ import (
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/utils"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
 	"github.com/wI2L/jsondiff"
 
@@ -50,6 +54,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
+	"k8s.io/utils/strings/slices"
 )
 
 const maxRetries = 5
@@ -63,6 +68,9 @@ const EVENTS_V1 = "events.k8s.io/v1"
 
 var serverStartTime time.Time
 var confDiff config.Diff
+var namespaces []string
+var metric *prometheus.CounterVec
+var mu sync.Mutex
 
 // Event indicate the informerEvent
 type Event struct {
@@ -87,6 +95,13 @@ type Controller struct {
 func objName(obj interface{}) string {
 	return reflect.TypeOf(obj).Name()
 }
+func init() {
+	metric = promauto.NewCounterVec(prometheus.CounterOpts{
+		Name: "diffwatcher_processed_changes_total",
+		Help: "The total number of processed changes",
+	},
+		[]string{"Action", "Name", "Namespace", "Type"})
+}
 
 // TODO: we don't need the informer to be indexed
 // Start prepares watchers and run their controllers, then waits for process termination signals
@@ -100,18 +115,20 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 	}
 
 	confDiff = conf.Diff
-
-	// User Configured Events
+	namespaces = getNamespaces(kubeClient, &conf.NamespacesConfig)
+	stopCh := make(chan struct{})
+	ns := ""
+	defer close(stopCh)
 	if conf.Resource.CoreEvent {
 		allCoreEventsInformer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
 					options.FieldSelector = ""
-					return kubeClient.CoreV1().Events(conf.Namespace).List(context.Background(), options)
+					return kubeClient.CoreV1().Events(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
 					options.FieldSelector = ""
-					return kubeClient.CoreV1().Events(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.CoreV1().Events(ns).Watch(context.Background(), options)
 				},
 			},
 			&api_v1.Event{},
@@ -119,23 +136,22 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		allCoreEventsController := newResourceController(kubeClient, eventHandler, allCoreEventsInformer, objName(api_v1.Event{}), V1)
-		stopAllCoreEventsCh := make(chan struct{})
-		defer close(stopAllCoreEventsCh)
+		c := newResourceController(kubeClient, eventHandler, allCoreEventsInformer, objName(api_v1.Event{}), V1)
 
-		go allCoreEventsController.Run(stopAllCoreEventsCh)
+		go c.Run(stopCh)
 	}
 
 	if conf.Resource.Event {
+
 		allEventsInformer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
 					options.FieldSelector = ""
-					return kubeClient.EventsV1().Events(conf.Namespace).List(context.Background(), options)
+					return kubeClient.EventsV1().Events(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
 					options.FieldSelector = ""
-					return kubeClient.EventsV1().Events(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.EventsV1().Events(ns).Watch(context.Background(), options)
 				},
 			},
 			&events_v1.Event{},
@@ -143,21 +159,19 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		allEventsController := newResourceController(kubeClient, eventHandler, allEventsInformer, objName(events_v1.Event{}), EVENTS_V1)
-		stopAllEventsCh := make(chan struct{})
-		defer close(stopAllEventsCh)
+		c := newResourceController(kubeClient, eventHandler, allEventsInformer, objName(events_v1.Event{}), EVENTS_V1)
 
-		go allEventsController.Run(stopAllEventsCh)
+		go c.Run(stopCh)
 	}
 
 	if conf.Resource.Pod {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.CoreV1().Pods(conf.Namespace).List(context.Background(), options)
+					return kubeClient.CoreV1().Pods(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.CoreV1().Pods(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.CoreV1().Pods(ns).Watch(context.Background(), options)
 				},
 			},
 			&api_v1.Pod{},
@@ -166,8 +180,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.Pod{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -176,10 +188,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.AutoscalingV1().HorizontalPodAutoscalers(conf.Namespace).List(context.Background(), options)
+					return kubeClient.AutoscalingV1().HorizontalPodAutoscalers(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.AutoscalingV1().HorizontalPodAutoscalers(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.AutoscalingV1().HorizontalPodAutoscalers(ns).Watch(context.Background(), options)
 				},
 			},
 			&autoscaling_v1.HorizontalPodAutoscaler{},
@@ -188,8 +200,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(autoscaling_v1.HorizontalPodAutoscaler{}), AUTOSCALING_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 
@@ -199,10 +209,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.AppsV1().DaemonSets(conf.Namespace).List(context.Background(), options)
+					return kubeClient.AppsV1().DaemonSets(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.AppsV1().DaemonSets(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.AppsV1().DaemonSets(ns).Watch(context.Background(), options)
 				},
 			},
 			&apps_v1.DaemonSet{},
@@ -211,8 +221,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(apps_v1.DaemonSet{}), APPS_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -221,10 +229,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.AppsV1().StatefulSets(conf.Namespace).List(context.Background(), options)
+					return kubeClient.AppsV1().StatefulSets(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.AppsV1().StatefulSets(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.AppsV1().StatefulSets(ns).Watch(context.Background(), options)
 				},
 			},
 			&apps_v1.StatefulSet{},
@@ -233,9 +241,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(apps_v1.StatefulSet{}), APPS_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
-
 		go c.Run(stopCh)
 	}
 
@@ -243,10 +248,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.AppsV1().ReplicaSets(conf.Namespace).List(context.Background(), options)
+					return kubeClient.AppsV1().ReplicaSets(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.AppsV1().ReplicaSets(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.AppsV1().ReplicaSets(ns).Watch(context.Background(), options)
 				},
 			},
 			&apps_v1.ReplicaSet{},
@@ -255,8 +260,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(apps_v1.ReplicaSet{}), APPS_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -265,10 +268,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.CoreV1().Services(conf.Namespace).List(context.Background(), options)
+					return kubeClient.CoreV1().Services(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.CoreV1().Services(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.CoreV1().Services(ns).Watch(context.Background(), options)
 				},
 			},
 			&api_v1.Service{},
@@ -277,8 +280,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.Service{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -287,10 +288,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.AppsV1().Deployments(conf.Namespace).List(context.Background(), options)
+					return kubeClient.AppsV1().Deployments(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.AppsV1().Deployments(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.AppsV1().Deployments(ns).Watch(context.Background(), options)
 				},
 			},
 			&apps_v1.Deployment{},
@@ -299,8 +300,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(apps_v1.Deployment{}), APPS_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -321,8 +320,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.Namespace{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -331,10 +328,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.CoreV1().ReplicationControllers(conf.Namespace).List(context.Background(), options)
+					return kubeClient.CoreV1().ReplicationControllers(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.CoreV1().ReplicationControllers(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.CoreV1().ReplicationControllers(ns).Watch(context.Background(), options)
 				},
 			},
 			&api_v1.ReplicationController{},
@@ -343,8 +340,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.ReplicationController{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -353,10 +348,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.BatchV1().Jobs(conf.Namespace).List(context.Background(), options)
+					return kubeClient.BatchV1().Jobs(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.BatchV1().Jobs(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.BatchV1().Jobs(ns).Watch(context.Background(), options)
 				},
 			},
 			&batch_v1.Job{},
@@ -365,8 +360,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(batch_v1.Job{}), BATCH_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -387,8 +380,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.Node{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -397,10 +388,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.CoreV1().ServiceAccounts(conf.Namespace).List(context.Background(), options)
+					return kubeClient.CoreV1().ServiceAccounts(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.CoreV1().ServiceAccounts(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.CoreV1().ServiceAccounts(ns).Watch(context.Background(), options)
 				},
 			},
 			&api_v1.ServiceAccount{},
@@ -409,8 +400,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.ServiceAccount{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -431,8 +420,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(rbac_v1.ClusterRole{}), RBAC_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -453,8 +440,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(rbac_v1.ClusterRoleBinding{}), RBAC_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -475,8 +460,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.PersistentVolume{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -485,10 +468,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.CoreV1().Secrets(conf.Namespace).List(context.Background(), options)
+					return kubeClient.CoreV1().Secrets(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.CoreV1().Secrets(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.CoreV1().Secrets(ns).Watch(context.Background(), options)
 				},
 			},
 			&api_v1.Secret{},
@@ -497,8 +480,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.Secret{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -507,10 +488,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.CoreV1().ConfigMaps(conf.Namespace).List(context.Background(), options)
+					return kubeClient.CoreV1().ConfigMaps(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.CoreV1().ConfigMaps(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.CoreV1().ConfigMaps(ns).Watch(context.Background(), options)
 				},
 			},
 			&api_v1.ConfigMap{},
@@ -519,8 +500,6 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(api_v1.ConfigMap{}), V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
@@ -529,10 +508,10 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.NetworkingV1().Ingresses(conf.Namespace).List(context.Background(), options)
+					return kubeClient.NetworkingV1().Ingresses(ns).List(context.Background(), options)
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.NetworkingV1().Ingresses(conf.Namespace).Watch(context.Background(), options)
+					return kubeClient.NetworkingV1().Ingresses(ns).Watch(context.Background(), options)
 				},
 			},
 			&networking_v1.Ingress{},
@@ -541,18 +520,16 @@ func Start(conf *config.Config, eventHandler handlers.Handler) {
 		)
 
 		c := newResourceController(kubeClient, eventHandler, informer, objName(networking_v1.Ingress{}), NETWORKING_V1)
-		stopCh := make(chan struct{})
-		defer close(stopCh)
 
 		go c.Run(stopCh)
 	}
-
 	sigterm := make(chan os.Signal, 1)
 	signal.Notify(sigterm, syscall.SIGTERM)
 	signal.Notify(sigterm, syscall.SIGINT)
 	<-sigterm
 }
 
+// TODO: proper implementation of this function without the hack of multi ns
 func newResourceController(client kubernetes.Interface, eventHandler handlers.Handler, informer cache.SharedIndexInformer, resourceType string, apiVersion string) *Controller {
 	queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
 	var newEvent Event
@@ -569,10 +546,18 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			if !ok {
 				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for add on %v", obj)
 			}
-			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
-			if err == nil {
-				queue.Add(newEvent)
+			if err != nil {
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for add on %v", obj)
+				return
 			}
+
+			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
+				logrus.Debugf("Skipping adding (namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
+				return
+			}
+
+			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
+			queue.Add(newEvent)
 		},
 		UpdateFunc: func(old, new interface{}) {
 			var ok bool
@@ -589,10 +574,19 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			if !ok {
 				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert old to runtime.Object for update on %v", old)
 			}
-			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
-			if err == nil {
-				queue.Add(newEvent)
+
+			if err != nil {
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for update on %v", old)
+				return
 			}
+
+			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
+				logrus.Debugf("Skipping updating(namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
+				return
+			}
+
+			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
+			queue.Add(newEvent)
 		},
 		DeleteFunc: func(obj interface{}) {
 			var ok bool
@@ -605,10 +599,19 @@ func newResourceController(client kubernetes.Interface, eventHandler handlers.Ha
 			if !ok {
 				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for delete on %v", obj)
 			}
-			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
-			if err == nil {
-				queue.Add(newEvent)
+
+			if err != nil {
+				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for delete on %v", obj)
+				return
 			}
+
+			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
+				logrus.Debugf("Skipping deletion (namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
+				return
+			}
+
+			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
+			queue.Add(newEvent)
 		},
 	})
 
@@ -736,6 +739,7 @@ func (c *Controller) processItem(newEvent Event) error {
 				Reason:     "Created",
 			}
 			c.eventHandler.Handle(kbEvent)
+			handleMetric(newEvent)
 			return nil
 		}
 	case "update":
@@ -758,10 +762,12 @@ func (c *Controller) processItem(newEvent Event) error {
 
 		if kbEvent.Diff == "" {
 			logrus.Printf("No diff( or ingored paths) found for %s", newEvent.key)
+			//skipping metrics here as there is no valuable diff
 			return nil
 		}
 
 		c.eventHandler.Handle(kbEvent)
+		handleMetric(newEvent)
 		return nil
 	case "delete":
 		kbEvent := event.DiffWatchEvent{
@@ -773,14 +779,28 @@ func (c *Controller) processItem(newEvent Event) error {
 			Reason:     "Deleted",
 		}
 		c.eventHandler.Handle(kbEvent)
+		handleMetric(newEvent)
 		return nil
 	}
 	return nil
 }
 
+// compareObjects compares two objects and returns the diff
 func compareObjects(e Event) string {
+	var patch jsondiff.Patch
+	var err error
+	oldObjj := e.oldObj
+	objj := e.obj
+
+	if e.resourceType == "ConfigMap" {
+		patch, err = compareConfigMaps(oldObjj, objj)
+	}
+
+	if patch == nil || err != nil {
+		patch, err = jsondiff.Compare(oldObjj, objj, jsondiff.Ignores(confDiff.IgnorePath...))
+	}
+
 	//jsondiff.CompareJSON(source, target)
-	patch, err := jsondiff.Compare(e.oldObj.DeepCopyObject(), e.obj.DeepCopyObject(), jsondiff.Ignores(confDiff.IgnorePath...))
 	if err != nil {
 		logrus.Printf("Error in comparing objects %s", err)
 	}
@@ -791,6 +811,71 @@ func compareObjects(e Event) string {
 	if b == nil || string(b) == "null" {
 		return ""
 	}
-
 	return string(b)
+}
+
+func compareConfigMaps(old runtime.Object, new runtime.Object) (jsondiff.Patch, error) {
+
+	//Dynamic extraction of data from configmap
+	keys := make([]string, 0)
+	for k, _ := range old.(*api_v1.ConfigMap).Data {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+	k := keys[0]
+	if !strings.Contains(k, ".json") {
+		return nil, fmt.Errorf("error in extracting data from configmap")
+	}
+
+	oldData, oldSuccess := old.(*api_v1.ConfigMap).Data[k]
+	newData, newSuccess := new.(*api_v1.ConfigMap).Data[k]
+	if !oldSuccess || !newSuccess {
+		return nil, fmt.Errorf("error in extracting data from configmap")
+	}
+
+	oldDataStr := strings.ReplaceAll(oldData, "\\", "")
+	newDataStr := strings.ReplaceAll(newData, "\\", "")
+
+	return jsondiff.CompareJSON([]byte(oldDataStr), []byte(newDataStr))
+}
+
+// getNamespaces returns the namespaces to watch based on the configiration provided *NamespacesConfig
+func getNamespaces(clientset kubernetes.Interface, namespacesConfig *config.NamespacesConfig) []string {
+
+	if namespacesConfig != nil && len(namespacesConfig.Include) > 0 {
+		return namespacesConfig.Include
+	}
+
+	//Get all namespaces
+	var namespaces []string
+	nsList, err := clientset.CoreV1().Namespaces().List(context.Background(), meta_v1.ListOptions{})
+	if err != nil {
+		logrus.Errorf("Error in getting namespaces %s", err)
+	}
+
+	for _, ns := range nsList.Items {
+		namespaces = append(namespaces, ns.Name)
+	}
+
+	//Exclude namespaces from all namespaces
+	if namespacesConfig != nil && len(namespacesConfig.Exclude) > 0 {
+		for _, ns := range namespacesConfig.Exclude {
+			for i, n := range namespaces {
+				if ns == n {
+					logrus.Infof("Removing namespace %s from watchlist", ns)
+					namespaces[i] = namespaces[len(namespaces)-1]
+					namespaces = namespaces[:len(namespaces)-1]
+				}
+			}
+		}
+	}
+
+	logrus.Infof("Namespaces to watch %v", namespaces)
+	return namespaces
+}
+func handleMetric(newEvent Event) {
+	mu.Lock()
+	defer mu.Unlock()
+	metric.WithLabelValues([]string{newEvent.eventType, newEvent.key, newEvent.namespace, newEvent.resourceType}...).Inc()
 }
