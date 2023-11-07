@@ -18,81 +18,77 @@ package cmd
 
 import (
 	"fmt"
-	"net/http"
 	"os"
 
 	_ "net/http/pprof"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	c "github.com/marvasgit/kubernetes-diffwatcher/pkg/client"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
-var RootCmd = &cobra.Command{
-	Use:   "diffwatcher",
-	Short: "A watcher for Kubernetes",
-	Long: `
-diffwatcher: A watcher for Kubernetes
+// var RootCmd = &cobra.Command{
+// 	Use:   "diffwatcher",
+// 	Short: "A watcher for Kubernetes",
+// 	Long: `
+// diffwatcher: A watcher for Kubernetes
 
-diffwatcher is a Kubernetes watcher that could publishes notification
-to Slack/hipchat/mattermost/flock channels. It watches the cluster
-for resource changes and notifies them through webhooks.
+// diffwatcher is a Kubernetes watcher that could publishes notification
+// to Slack/hipchat/mattermost/flock channels. It watches the cluster
+// for resource changes and notifies them through webhooks.
 
-supported webhooks:
- - slack
- - hipchat
- - mattermost
- - flock
- - webhook
- - lark
-`,
+// supported webhooks:
+//  - slack
+//  - hipchat
+//  - mattermost
+//  - flock
+//  - webhook
+//  - lark
+// `,
 
-	Run: func(cmd *cobra.Command, args []string) {
-		config := &config.Config{}
-		if err := config.Load(); err != nil {
-			logrus.Fatal(err)
-		}
-		config.CheckMissingResourceEnvvars()
-		c.Run(config)
-	},
-}
+// 	Run: func(cmd *cobra.Command, args []string) {
+// 		config := &config.Config{}
+// 		if err := config.Load(); err != nil {
+// 			logrus.Fatal(err)
+// 		}
+// 		config.CheckMissingResourceEnvvars()
+// 		c.Run(config)
+// 	},
+// }
 
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
-	}
-}
+// func Execute() {
+// 	if err := RootCmd.Execute(); err != nil {
+// 		fmt.Println(err)
+// 		os.Exit(-1)
+// 	}
+// }
 
-func init() {
-	cobra.OnInitialize(initConfig)
+// func init() {
+// 	cobra.OnInitialize(initConfig)
 
-	initLogger()
+// 	initLogger()
 
-	// Disable Help subcommand
-	RootCmd.SetHelpCommand(&cobra.Command{
-		Use:    "no-help",
-		Hidden: true,
-	})
-	//RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.diffwatcher.yaml)")
-	if os.Getenv("ENABLE_PPROF") == "True" {
-		go func() {
-			pprofAddr := "localhost:6060"
-			logrus.Infof("Initializing pprof %s", pprofAddr)
-			err := http.ListenAndServe(pprofAddr, nil)
-			if err != nil {
-				logrus.Errorf("Failed to initialize pprof %s", err)
-			}
-		}()
-	}
-}
+// 	// Disable Help subcommand
+// 	RootCmd.SetHelpCommand(&cobra.Command{
+// 		Use:    "no-help",
+// 		Hidden: true,
+// 	})
+// 	//RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.diffwatcher.yaml)")
+// 	if os.Getenv("ENABLE_PPROF") == "True" {
+// 		go func() {
+// 			pprofAddr := "localhost:6060"
+// 			logrus.Infof("Initializing pprof %s", pprofAddr)
+// 			err := http.ListenAndServe(pprofAddr, nil)
+// 			if err != nil {
+// 				logrus.Errorf("Failed to initialize pprof %s", err)
+// 			}
+// 		}()
+// 	}
+// }
 
 func initLogger() {
 	logLevel := os.Getenv("LOG_LEVEL")
