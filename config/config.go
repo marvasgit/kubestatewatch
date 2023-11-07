@@ -1,39 +1,4 @@
-/*
-Copyright 2016 Skippbox, Ltd.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
-//go:generate bash -c "go install ../tools/yannotated && yannotated -o sample.go -format go -package config -type Config"
-
 package config
-
-import (
-	"io"
-	"os"
-	"path/filepath"
-	"runtime"
-
-	"gopkg.in/yaml.v3"
-)
-
-var (
-	// ConfigFileName stores file of config
-	ConfigFileName = ".diffwatcher.yaml"
-
-	// ConfigSample is a sample configuration file.
-	ConfigSample = yannotated
-)
 
 // Handler contains handler configuration
 type Handler struct {
@@ -211,154 +176,54 @@ type SMTPAuth struct {
 	Secret string `yaml:"secret" yaml:"secret,omitempty"`
 }
 
-// New creates new config object
-func New() (*Config, error) {
-	c := &Config{}
-	if err := c.Load(); err != nil {
-		return c, err
-	}
-
-	return c, nil
-}
-
-func createIfNotExist() error {
-	// create file if not exist
-	configFile := filepath.Join(configDir(), ConfigFileName)
-	_, err := os.Stat(configFile)
-	if err != nil {
-		if os.IsNotExist(err) {
-			file, err := os.Create(configFile)
-			if err != nil {
-				return err
-			}
-			file.Close()
-		} else {
-			return err
-		}
-	}
-	return nil
-}
-
-// Load loads configuration from config file
-func (c *Config) Load() error {
-	err := createIfNotExist()
-	if err != nil {
-		return err
-	}
-
-	file, err := os.Open(getConfigFile())
-	if err != nil {
-		return err
-	}
-
-	b, err := io.ReadAll(file)
-	if err != nil {
-		return err
-	}
-
-	if len(b) != 0 {
-		return yaml.Unmarshal(b, c)
-	}
-
-	return nil
-}
-
 // CheckMissingResourceEnvvars will read the environment for equivalent config variables to set
 func (c *Config) CheckMissingResourceEnvvars() {
-	if !c.Resource.DaemonSet && os.Getenv("KW_DAEMONSET") == "true" {
+	if !c.Resource.DaemonSet {
 		c.Resource.DaemonSet = true
 	}
-	if !c.Resource.ReplicaSet && os.Getenv("KW_REPLICASET") == "true" {
+	if !c.Resource.ReplicaSet {
 		c.Resource.ReplicaSet = true
 	}
-	if !c.Resource.Namespace && os.Getenv("KW_NAMESPACE") == "true" {
+	if !c.Resource.Namespace {
 		c.Resource.Namespace = true
 	}
-	if !c.Resource.Deployment && os.Getenv("KW_DEPLOYMENT") == "true" {
+	if !c.Resource.Deployment {
 		c.Resource.Deployment = true
 	}
-	if !c.Resource.Pod && os.Getenv("KW_POD") == "true" {
+	if !c.Resource.Pod {
 		c.Resource.Pod = true
 	}
-	if !c.Resource.ReplicationController && os.Getenv("KW_REPLICATION_CONTROLLER") == "true" {
+	if !c.Resource.ReplicationController {
 		c.Resource.ReplicationController = true
 	}
-	if !c.Resource.Services && os.Getenv("KW_SERVICE") == "true" {
+	if !c.Resource.Services {
 		c.Resource.Services = true
 	}
-	if !c.Resource.Job && os.Getenv("KW_JOB") == "true" {
+	if !c.Resource.Job {
 		c.Resource.Job = true
 	}
-	if !c.Resource.PersistentVolume && os.Getenv("KW_PERSISTENT_VOLUME") == "true" {
+	if !c.Resource.PersistentVolume {
 		c.Resource.PersistentVolume = true
 	}
-	if !c.Resource.Secret && os.Getenv("KW_SECRET") == "true" {
+	if !c.Resource.Secret {
 		c.Resource.Secret = true
 	}
-	if !c.Resource.ConfigMap && os.Getenv("KW_CONFIGMAP") == "true" {
+	if !c.Resource.ConfigMap {
 		c.Resource.ConfigMap = true
 	}
-	if !c.Resource.Ingress && os.Getenv("KW_INGRESS") == "true" {
+	if !c.Resource.Ingress {
 		c.Resource.Ingress = true
 	}
-	if !c.Resource.Node && os.Getenv("KW_NODE") == "true" {
+	if !c.Resource.Node {
 		c.Resource.Node = true
 	}
-	if !c.Resource.ServiceAccount && os.Getenv("KW_SERVICE_ACCOUNT") == "true" {
+	if !c.Resource.ServiceAccount {
 		c.Resource.ServiceAccount = true
 	}
-	if !c.Resource.ClusterRole && os.Getenv("KW_CLUSTER_ROLE") == "true" {
+	if !c.Resource.ClusterRole {
 		c.Resource.ClusterRole = true
 	}
-	if !c.Resource.ClusterRoleBinding && os.Getenv("KW_CLUSTER_ROLE_BINDING") == "true" {
+	if !c.Resource.ClusterRoleBinding {
 		c.Resource.ClusterRoleBinding = true
 	}
-	if (c.Handler.Slack.Channel == "") && (os.Getenv("SLACK_CHANNEL") != "") {
-		c.Handler.Slack.Channel = os.Getenv("SLACK_CHANNEL")
-	}
-	if (c.Handler.Slack.Token == "") && (os.Getenv("SLACK_TOKEN") != "") {
-		c.Handler.Slack.Token = os.Getenv("SLACK_TOKEN")
-	}
-	if (c.Handler.SlackWebhook.Slackwebhookurl == "") && (os.Getenv("KW_SLACK_WEBHOOK_URL") != "") {
-		c.Handler.SlackWebhook.Slackwebhookurl = os.Getenv("KW_SLACK_WEBHOOK_URL")
-	}
-}
-
-func (c *Config) Write() error {
-	f, err := os.OpenFile(getConfigFile(), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	enc := yaml.NewEncoder(f)
-	enc.SetIndent(2) // compat with old versions of diffwatcher
-	return enc.Encode(c)
-}
-
-func getConfigFile() string {
-	configFile := filepath.Join(configDir(), ConfigFileName)
-	if _, err := os.Stat(configFile); err == nil {
-		return configFile
-	}
-
-	return ""
-}
-
-func configDir() string {
-
-	if configDir := os.Getenv("KW_CONFIG"); configDir != "" {
-		return configDir
-	}
-
-	if runtime.GOOS == "windows" {
-		home := os.Getenv("USERPROFILE")
-		return home
-	}
-	return os.Getenv("HOME")
-	//path := "/etc/diffwatcher"
-	//if _, err := os.Stat(path); os.IsNotExist(err) {
-	//	os.Mkdir(path, 755)
-	//}
-	//return path
 }

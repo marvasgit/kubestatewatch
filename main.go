@@ -17,21 +17,43 @@ limitations under the License.
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
 
+	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/parsers/json"
+	"github.com/knadh/koanf/providers/file"
+	"github.com/marvasgit/kubernetes-diffwatcher/config"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/client"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
+
+// Global koanf instance. Use "." as the key path delimiter. This can be "/" or any character.
+var k = koanf.New(".")
 
 func main() {
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())
 		http.ListenAndServe(":2112", nil)
 	}()
+	initLogger()
+	conf := loadConfig()
+	client.RunWithConfig(&conf)
+}
 
-	client.RunWithConfig()
+func loadConfig() config.Config {
+	// Load JSON config.
+	if err := k.Load(file.Provider("appsettings.json"), json.Parser()); err != nil {
+		log.Fatalf("error loading config: %v", err)
+	}
+
+	var config config.Config
+	if err := k.Unmarshal("", &config); err != nil {
+		log.Fatalf("error loading config: %v", err)
+	}
+	return config
 }
 
 func initLogger() {
