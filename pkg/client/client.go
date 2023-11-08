@@ -15,7 +15,7 @@ import (
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/msteam"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slack"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slackwebhook"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/smtp"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/smtpClient"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/webhook"
 	"github.com/sirupsen/logrus"
 )
@@ -65,7 +65,7 @@ func parseEventHandler(conf *config.Config) []handlers.Handler {
 	case conf.Handler.MSTeams.Enabled && len(conf.Handler.MSTeams.WebhookURL) > 0:
 		eventHandlers = append(eventHandlers, new(msteam.MSTeams))
 	case conf.Handler.SMTP.Enabled && len(conf.Handler.SMTP.Smarthost) > 0 || len(conf.Handler.SMTP.To) > 0:
-		eventHandlers = append(eventHandlers, new(smtp.SMTP))
+		eventHandlers = append(eventHandlers, new(smtpClient.SMTP))
 	case conf.Handler.Lark.Enabled && len(conf.Handler.Lark.WebhookURL) > 0:
 		eventHandlers = append(eventHandlers, new(lark.Webhook))
 	default:

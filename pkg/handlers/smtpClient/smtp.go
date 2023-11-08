@@ -19,7 +19,7 @@ Package smtp implements an email notification handler for diffwatcher.
 
 See example configuration in the ConfigExample constant.
 */
-package smtp
+package smtpClient
 
 import (
 	"fmt"

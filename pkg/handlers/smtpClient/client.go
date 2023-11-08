@@ -18,7 +18,7 @@ limitations under the License.
  This code is adapted from https://github.com/prometheus/alertmanager/blob/a75cd02786dfecd25e2469fc4df5d920e6b9c226/notify/email/email.go
 */
 
-package smtp
+package smtpClient
 
 import (
 	"bytes"

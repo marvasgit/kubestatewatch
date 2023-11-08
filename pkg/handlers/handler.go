@@ -26,7 +26,7 @@ import (
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/msteam"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slack"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slackwebhook"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/smtp"
+	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/smtpClient"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/webhook"
 )
 
@@ -47,7 +47,7 @@ var Map = map[string]interface{}{
 	"flock":        &flock.Flock{},
 	"webhook":      &webhook.Webhook{},
 	"ms-teams":     &msteam.MSTeams{},
-	"smtp":         &smtp.SMTP{},
+	"smtp":         &smtpClient.SMTP{},
 	"lark":         &lark.Webhook{},
 }
 
