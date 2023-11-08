@@ -76,6 +76,8 @@ type Message struct {
 
 // Slack contains slack configuration
 type Slack struct {
+	// Enable slack notifications.
+	Enabled bool `yaml:"enabled"`
 	// Slack "legacy" API token.
 	Token string `yaml:"token"`
 	// Slack channel.
@@ -86,6 +88,7 @@ type Slack struct {
 
 // SlackWebhook contains slack configuration
 type SlackWebhook struct {
+	Enabled bool `yaml:"enabled"`
 	// Slack channel.
 	Channel string `yaml:"channel"`
 	// Slack Username.
@@ -98,6 +101,7 @@ type SlackWebhook struct {
 
 // Hipchat contains hipchat configuration
 type Hipchat struct {
+	Enabled bool `yaml:"enabled"`
 	// Hipchat token.
 	Token string `yaml:"token"`
 	// Room name.
@@ -108,6 +112,7 @@ type Hipchat struct {
 
 // Mattermost contains mattermost configuration
 type Mattermost struct {
+	Enabled  bool   `yaml:"enabled"`
 	Channel  string `yaml:"room"`
 	Url      string `yaml:"url"`
 	Username string `yaml:"username"`
@@ -115,12 +120,14 @@ type Mattermost struct {
 
 // Flock contains flock configuration
 type Flock struct {
+	Enabled bool `yaml:"enabled"`
 	// URL of the flock API.
 	Url string `yaml:"url"`
 }
 
 // Webhook contains webhook configuration
 type Webhook struct {
+	Enabled bool `yaml:"enabled"`
 	// Webhook URL.
 	Url     string `yaml:"url"`
 	Cert    string `yaml:"cert"`
@@ -129,23 +136,27 @@ type Webhook struct {
 
 // Lark contains lark configuration
 type Lark struct {
+	Enabled bool `yaml:"enabled"`
 	// Webhook URL.
 	WebhookURL string `yaml:"webhookurl"`
 }
 
 // CloudEvent contains CloudEvent configuration
 type CloudEvent struct {
-	Url string `yaml:"url"`
+	Enabled bool   `yaml:"enabled"`
+	Url     string `yaml:"url"`
 }
 
 // MSTeams contains MSTeams configuration
 type MSTeams struct {
+	Enabled bool `yaml:"enabled"`
 	// MSTeams API Webhook URL.
 	WebhookURL string `yaml:"webhookurl"`
 }
 
 // SMTP contains SMTP configuration.
 type SMTP struct {
+	Enabled bool `yaml:"enabled"`
 	// Destination e-mail address.
 	To string `yaml:"to" yaml:"to,omitempty"`
 	// Sender e-mail address .
@@ -165,6 +176,7 @@ type SMTP struct {
 }
 
 type SMTPAuth struct {
+	Enabled bool `yaml:"enabled"`
 	// Username for PLAN and LOGIN auth mechanisms.
 	Username string `yaml:"username" yaml:"username,omitempty"`
 	// Password for PLAIN and LOGIN auth mechanisms.

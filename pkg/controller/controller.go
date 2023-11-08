@@ -532,7 +532,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 }
 
 // TODO: proper implementation of this function without the hack of multi ns
-func newResourceController(client kubernetes.Interface, eventHandler []handlers.Handler, informer cache.SharedIndexInformer, resourceType string, apiVersion string) *Controller {
+func newResourceController(client kubernetes.Interface, eventHandlers []handlers.Handler, informer cache.SharedIndexInformer, resourceType string, apiVersion string) *Controller {
 	queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
 	var newEvent Event
 	var err error
@@ -622,7 +622,7 @@ func newResourceController(client kubernetes.Interface, eventHandler []handlers.
 		clientset:     client,
 		informer:      informer,
 		queue:         queue,
-		eventHandlers: eventHandler,
+		eventHandlers: eventHandlers,
 	}
 }
 

@@ -18,21 +18,7 @@ limitations under the License.
 
 import (
 	"os"
-
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/spf13/cobra"
 )
-
-// SetTitleCmd sets the title of the message
-func SetTitleCmd(cmd *cobra.Command, args []string, conf *config.Config) {
-
-	title, err := cmd.Flags().GetString("title")
-	if err == nil {
-		if len(title) > 0 {
-			conf.Message.Title = title
-		}
-	}
-}
 
 // GetTitle gets the title of the message from the config file or environment variable or default
 func GetTitle(configName string, envVariableName string) string {
