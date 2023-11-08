@@ -50,7 +50,6 @@ type Config struct {
 
 	// Configurations for namespaces ot watch or ignore
 	NamespacesConfig NamespacesConfig `yaml:"namespacesconfig"`
-
 	// Message properties .
 	Message Message `yaml:"message"`
 	// Diff properties .

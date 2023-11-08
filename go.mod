@@ -20,7 +20,6 @@ require (
 	github.com/tbruyelle/hipchat-go v0.0.0-20160921153256-749fb9e14beb
 	github.com/wI2L/jsondiff v0.4.0
 	golang.org/x/sys v0.14.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/api v0.20.15
 	k8s.io/apimachinery v0.20.15
 	k8s.io/client-go v0.20.15

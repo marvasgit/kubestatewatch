@@ -1,37 +1,13 @@
-/*
-Copyright 2016 Skippbox, Ltd.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 
-	"github.com/knadh/koanf"
-	"github.com/knadh/koanf/parsers/json"
-	"github.com/knadh/koanf/providers/file"
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/client"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
-
-// Global koanf instance. Use "." as the key path delimiter. This can be "/" or any character.
-var k = koanf.New(".")
 
 func main() {
 	go func() {
@@ -39,21 +15,7 @@ func main() {
 		http.ListenAndServe(":2112", nil)
 	}()
 	initLogger()
-	conf := loadConfig()
-	client.RunWithConfig(&conf)
-}
-
-func loadConfig() config.Config {
-	// Load JSON config.
-	if err := k.Load(file.Provider("appsettings.json"), json.Parser()); err != nil {
-		log.Fatalf("error loading config: %v", err)
-	}
-
-	var config config.Config
-	if err := k.Unmarshal("", &config); err != nil {
-		log.Fatalf("error loading config: %v", err)
-	}
-	return config
+	client.Start()
 }
 
 func initLogger() {
