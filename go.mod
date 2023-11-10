@@ -3,6 +3,7 @@ module github.com/marvasgit/kubernetes-diffwatcher
 go 1.14
 
 require (
+	github.com/cloudevents/sdk-go/v2 v2.14.0
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/google/go-querystring v0.0.0-20170111101155-53e6ce116135 // indirect

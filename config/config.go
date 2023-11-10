@@ -12,6 +12,7 @@ type Handler struct {
 	MSTeams      MSTeams      `yaml:"msteams"`
 	SMTP         SMTP         `yaml:"smtp"`
 	Lark         Lark         `yaml:"lark"`
+	Discord      Discord      `yaml:"discord"`
 }
 
 // Resource contains resource configuration
@@ -72,6 +73,12 @@ type Diff struct {
 type Message struct {
 	// Message title.
 	Title string `yaml:"title"`
+}
+
+type Discord struct {
+	Enabled bool   `yaml:"enabled"`
+	Token   string `yaml:"token"`
+	Channel string `yaml:"channel"`
 }
 
 // Slack contains slack configuration
