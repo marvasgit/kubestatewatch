@@ -2,195 +2,195 @@ package config
 
 // Handler contains handler configuration
 type Handler struct {
-	Slack        Slack        `yaml:"slack"`
-	SlackWebhook SlackWebhook `yaml:"slackwebhook"`
-	Hipchat      Hipchat      `yaml:"hipchat"`
-	Mattermost   Mattermost   `yaml:"mattermost"`
-	Flock        Flock        `yaml:"flock"`
-	Webhook      Webhook      `yaml:"webhook"`
-	CloudEvent   CloudEvent   `yaml:"cloudevent"`
-	MSTeams      MSTeams      `yaml:"msteams"`
-	SMTP         SMTP         `yaml:"smtp"`
-	Lark         Lark         `yaml:"lark"`
-	Discord      Discord      `yaml:"discord"`
+	Slack        Slack
+	SlackWebhook SlackWebhook
+	Hipchat      Hipchat
+	Mattermost   Mattermost
+	Flock        Flock
+	Webhook      Webhook
+	CloudEvent   CloudEvent
+	MSTeams      MSTeams
+	SMTP         SMTP
+	Lark         Lark
+	Discord      Discord
 }
 
 // Resource contains resource configuration
 type Resource struct {
-	Deployment            bool `yaml:"deployment"`
-	ReplicationController bool `yaml:"rc"`
-	ReplicaSet            bool `yaml:"rs"`
-	DaemonSet             bool `yaml:"ds"`
-	StatefulSet           bool `yaml:"statefulset"`
-	Services              bool `yaml:"svc"`
-	Pod                   bool `yaml:"po"`
-	Job                   bool `yaml:"job"`
-	Node                  bool `yaml:"node"`
-	ClusterRole           bool `yaml:"clusterrole"`
-	ClusterRoleBinding    bool `yaml:"clusterrolebinding"`
-	ServiceAccount        bool `yaml:"sa"`
-	PersistentVolume      bool `yaml:"pv"`
-	Namespace             bool `yaml:"ns"`
-	Secret                bool `yaml:"secret"`
-	ConfigMap             bool `yaml:"configmap"`
-	Ingress               bool `yaml:"ing"`
-	HPA                   bool `yaml:"hpa"`
-	Event                 bool `yaml:"event"`
-	CoreEvent             bool `yaml:"coreevent"`
+	Deployment            bool
+	ReplicationController bool
+	ReplicaSet            bool
+	DaemonSet             bool
+	StatefulSet           bool
+	Services              bool
+	Pod                   bool
+	Job                   bool
+	Node                  bool
+	ClusterRole           bool
+	ClusterRoleBinding    bool
+	ServiceAccount        bool
+	PersistentVolume      bool
+	Namespace             bool
+	Secret                bool
+	ConfigMap             bool
+	Ingress               bool
+	HPA                   bool
+	Event                 bool
+	CoreEvent             bool
 }
 
 // Config struct contains diffwatcher configuration
 type Config struct {
 	// Handlers know how to send notifications to specific services.
-	Handler Handler `yaml:"handler"`
+	Handler Handler
 
-	//Reason   []string `yaml:"reason"`
+	//Reason   []string
 
 	// Resources to watch.
-	Resource Resource `yaml:"resource"`
+	Resource Resource
 
 	// Configurations for namespaces ot watch or ignore
-	NamespacesConfig NamespacesConfig `yaml:"namespacesconfig"`
+	NamespacesConfig NamespacesConfig
 	// Message properties .
-	Message Message `yaml:"message"`
+	Message Message
 	// Diff properties .
-	Diff Diff `yaml:"diff"`
+	Diff Diff
 }
 
 type NamespacesConfig struct {
 	// For watching specific namespaces, leave it empty for watching all.
 	// this config is ignored when watching namespaces as resource
-	Include []string `yaml:"include"`
+	Include []string
 	// For ignoring specific namespaces
-	Exclude []string `yaml:"exclude"`
+	Exclude []string
 }
 
 type Diff struct {
-	IgnorePath []string `yaml:"ignore"`
+	IgnorePath []string
 }
 
 // Message contains message configuration.
 type Message struct {
 	// Message title.
-	Title string `yaml:"title"`
+	Title string
 }
 
 type Discord struct {
-	Enabled    bool   `yaml:"enabled"`
-	WebhookURL string `yaml:"webhookurl"`
+	Enabled    bool
+	WebhookURL string
 }
 
 // Slack contains slack configuration
 type Slack struct {
 	// Enable slack notifications.
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// Slack "legacy" API token.
-	Token string `yaml:"token"`
+	Token string
 	// Slack channel.
-	Channel string `yaml:"channel"`
+	Channel string
 	// Title of the message.
-	//Title string `yaml:"title"` // moved to Message
+	//Title string  // moved to Message
 }
 
 // SlackWebhook contains slack configuration
 type SlackWebhook struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// Slack channel.
-	Channel string `yaml:"channel"`
+	Channel string
 	// Slack Username.
-	Username string `yaml:"username"`
+	Username string
 	// Slack Emoji.
-	Emoji string `yaml:"emoji"`
+	Emoji string
 	// Slack Webhook Url.
-	Slackwebhookurl string `yaml:"slackwebhookurl"`
+	Slackwebhookurl string
 }
 
 // Hipchat contains hipchat configuration
 type Hipchat struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// Hipchat token.
-	Token string `yaml:"token"`
+	Token string
 	// Room name.
-	Room string `yaml:"room"`
+	Room string
 	// URL of the hipchat server.
-	Url string `yaml:"url"`
+	Url string
 }
 
 // Mattermost contains mattermost configuration
 type Mattermost struct {
-	Enabled  bool   `yaml:"enabled"`
-	Channel  string `yaml:"room"`
-	Url      string `yaml:"url"`
-	Username string `yaml:"username"`
+	Enabled  bool
+	Channel  string
+	Url      string
+	Username string
 }
 
 // Flock contains flock configuration
 type Flock struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// URL of the flock API.
-	Url string `yaml:"url"`
+	Url string
 }
 
 // Webhook contains webhook configuration
 type Webhook struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// Webhook URL.
-	Url     string `yaml:"url"`
-	Cert    string `yaml:"cert"`
-	TlsSkip bool   `yaml:"tlsskip"`
+	Url     string
+	Cert    string
+	TlsSkip bool
 }
 
 // Lark contains lark configuration
 type Lark struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// Webhook URL.
-	WebhookURL string `yaml:"webhookurl"`
+	WebhookURL string
 }
 
 // CloudEvent contains CloudEvent configuration
 type CloudEvent struct {
-	Enabled bool   `yaml:"enabled"`
-	Url     string `yaml:"url"`
+	Enabled bool
+	Url     string
 }
 
 // MSTeams contains MSTeams configuration
 type MSTeams struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// MSTeams API Webhook URL.
-	WebhookURL string `yaml:"webhookurl"`
+	WebhookURL string
 }
 
 // SMTP contains SMTP configuration.
 type SMTP struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// Destination e-mail address.
-	To string `yaml:"to" yaml:"to,omitempty"`
+	To string
 	// Sender e-mail address .
-	From string `yaml:"from" yaml:"from,omitempty"`
+	From string
 	// Smarthost, aka "SMTP server"; address of server used to send email.
-	Smarthost string `yaml:"smarthost" yaml:"smarthost,omitempty"`
+	Smarthost string
 	// Subject of the outgoing emails.
-	Subject string `yaml:"subject" yaml:"subject,omitempty"`
+	Subject string
 	// Extra e-mail headers to be added to all outgoing messages.
-	Headers map[string]string `yaml:"headers" yaml:"headers,omitempty"`
+	Headers map[string]string
 	// Authentication parameters.
-	Auth SMTPAuth `yaml:"auth" yaml:"auth,omitempty"`
+	Auth SMTPAuth
 	// If "true" forces secure SMTP protocol (AKA StartTLS).
-	RequireTLS bool `yaml:"requireTLS" yaml:"requireTLS"`
+	RequireTLS bool
 	// SMTP hello field (optional)
-	Hello string `yaml:"hello" yaml:"hello,omitempty"`
+	Hello string
 }
 
 type SMTPAuth struct {
-	Enabled bool `yaml:"enabled"`
+	Enabled bool
 	// Username for PLAN and LOGIN auth mechanisms.
-	Username string `yaml:"username" yaml:"username,omitempty"`
+	Username string
 	// Password for PLAIN and LOGIN auth mechanisms.
-	Password string `yaml:"password" yaml:"password,omitempty"`
+	Password string
 	// Identity for PLAIN auth mechanism
-	Identity string `yaml:"identity" yaml:"identity,omitempty"`
+	Identity string
 	// Secret for CRAM-MD5 auth mechanism
-	Secret string `yaml:"secret" yaml:"secret,omitempty"`
+	Secret string
 }
 
 // CheckMissingResourceEnvvars will read the environment for equivalent config variables to set
