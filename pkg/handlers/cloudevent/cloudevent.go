@@ -86,7 +86,7 @@ func (m *CloudEvent) Handle(e event.DiffWatchEvent) {
 	m.Counter++ // TODO: do we have to worry about threadsafety here?
 
 	event := cloudevents.NewEvent()
-	event.SetSource("https://github.com/robusta-dev/kubewatch")
+	event.SetSource("github.com/marvasgit/kubernetes-diffwatcher")
 	event.SetType("KUBERNETES_TOPOLOGY_CHANGE")
 	event.SetTime(time.Now())
 	event.SetID(fmt.Sprintf("%v-%v", m.StartTime, m.Counter))
