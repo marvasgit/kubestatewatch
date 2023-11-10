@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 
 	"github.com/marvasgit/kubernetes-diffwatcher/config"
 	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
