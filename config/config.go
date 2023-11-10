@@ -76,9 +76,8 @@ type Message struct {
 }
 
 type Discord struct {
-	Enabled bool   `yaml:"enabled"`
-	Token   string `yaml:"token"`
-	Channel string `yaml:"channel"`
+	Enabled    bool   `yaml:"enabled"`
+	WebhookURL string `yaml:"webhookurl"`
 }
 
 // Slack contains slack configuration
