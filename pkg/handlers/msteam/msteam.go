@@ -118,10 +118,6 @@ func (ms *MSTeams) Init(c *config.Config) error {
 	webhookURL := c.Handler.MSTeams.WebhookURL
 
 	if webhookURL == "" {
-		webhookURL = os.Getenv("KW_MSTEAMS_WEBHOOKURL")
-	}
-
-	if webhookURL == "" {
 		return fmt.Errorf(msteamsErrMsg, "Missing MS teams webhook URL")
 	}
 
