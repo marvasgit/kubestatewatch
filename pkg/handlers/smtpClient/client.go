@@ -37,7 +37,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
 	"github.com/mkmik/multierror"
 	"github.com/sirupsen/logrus"
 )

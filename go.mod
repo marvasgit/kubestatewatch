@@ -1,4 +1,4 @@
-module github.com/marvasgit/kubernetes-diffwatcher
+module github.com/marvasgit/kubernetes-statemonitor
 
 go 1.14
 

@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 /*
-Package smtp implements an email notification handler for diffwatcher.
+Package smtp implements an email notification handler for statemonitor.
 
 See example configuration in the ConfigExample constant.
 */
@@ -25,19 +25,19 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 	"github.com/sirupsen/logrus"
 )
 
 const (
-	defaultSubject = "diffwatcher notification"
+	defaultSubject = "statemonitor notification"
 
 	// ConfigExample is an example configuration.
 	ConfigExample = `handler:
   smtp:
     to: "myteam@mycompany.com"
-    from: "diffwatcher@mycluster.com"
+    from: "statemonitor@mycluster.com"
     smarthost: smtp.mycompany.com:2525
     subject: Test notification
     auth:
@@ -70,12 +70,12 @@ func (s *SMTP) Init(c *config.Config) error {
 }
 
 // Handle handles the notification.
-func (s *SMTP) Handle(e event.DiffWatchEvent) {
+func (s *SMTP) Handle(e event.StatemonitorEvent) {
 	send(s.cfg, e.Message())
 	logrus.Printf("Message successfully sent to %s at %s ", s.cfg.To, time.Now())
 }
 
-func formatEmail(e event.DiffWatchEvent) (string, error) {
+func formatEmail(e event.StatemonitorEvent) (string, error) {
 	return e.Message(), nil
 }
 

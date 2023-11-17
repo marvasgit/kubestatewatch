@@ -17,6 +17,6 @@ roleRef:
   name: {{ include "common.names.fullname" . }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "diffwatcher.serviceAccountName" . }}
+    name: {{ include "statemonitor.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- end }}

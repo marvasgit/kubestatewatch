@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/client"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/client"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )

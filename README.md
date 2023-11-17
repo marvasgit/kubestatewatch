@@ -1,19 +1,19 @@
 
-# DiffWatcher is a state Monitor for k8s 
+# statemonitor is a state Monitor for k8s 
 
-DiffWatcher started as fork from [kubewatch](https://github.com/robusta-dev/kubewatch)
-**Diffwatcher** is state Monitor for k8s. It monitors changes to various resources and notifies the user what was changed 
+statemonitor started as fork from [kubewatch](https://github.com/robusta-dev/kubewatch)
+**statemonitor** is state Monitor for k8s. It monitors changes to various resources and notifies the user what was changed 
 It can be used standalone or deployed in Kubernetes.
 
-<i>Image you have a cluster with many namespaces, with different shareholders. You want to track any changes made to the watched items, without using CI/CD pipelines (using kubectl, lens, k9s etc.). You want to get notified about such changes,you also want to see what exactly was changed. This is what diffwatcher is for.</i>
+<i>Image you have a cluster with many namespaces, with different shareholders. You want to track any changes made to the watched items, without using CI/CD pipelines (using kubectl, lens, k9s etc.). You want to get notified about such changes,you also want to see what exactly was changed. This is what statemonitor is for.</i>
 <div align="center">
-<img src="./docs/diffwatcher-logo.jpeg">
+<img src="./docs/statemonitor-logo.jpeg">
 
-[![Build Status](https://travis-ci.org/marvasgit/kubernetes-diffwatcher.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-diffwatcher) 
-[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubernetes-diffwatcher)](https://goreportcard.com/report/github.com/marvasgit/kubernetes-diffwatcher) 
-[![codecov](https://codecov.io/gh/marvasgit/kubernetes-diffwatcher/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubernetes-diffwatcher)
-[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-diffwatcher.svg)](https://hub.docker.com/repository/docker/docmarr/kubernetes-diffwatcher) 
-![GitHub release](https://img.shields.io/github/release/marvasgit/kubernetes-diffwatcher.svg)
+[![Build Status](https://travis-ci.org/marvasgit/kubernetes-statemonitor.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-statemonitor) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubernetes-statemonitor)](https://goreportcard.com/report/github.com/marvasgit/kubernetes-statemonitor) 
+[![codecov](https://codecov.io/gh/marvasgit/kubernetes-statemonitor/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubernetes-statemonitor)
+[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-statemonitor.svg)](https://hub.docker.com/repository/docker/docmarr/kubernetes-statemonitor) 
+![GitHub release](https://img.shields.io/github/release/marvasgit/kubernetes-statemonitor.svg)
 </div>
 
 There are basically two kind of notifications:
@@ -36,19 +36,19 @@ The usecase we are mainly intrested is the first one. We want to track the chang
 # Latest image
 
 ```
-docmarr/kubernetes-diffwatcher:1.0.1
+docmarr/kubernetes-statemonitor:1.0.1
 ```
 
 # Install
 
 ```console
-$ helm repo add diffwatcher https://marvasgit.github.io/kubernetes-diffwatcher/
-$ helm install my-release diffwatcher
+$ helm repo add statemonitor https://marvasgit.github.io/kubernetes-statemonitor/
+$ helm install my-release statemonitor
 ```
 
 ## Introduction
 
-This chart bootstraps a diffwatcher deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps a statemonitor deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
 
@@ -60,11 +60,11 @@ This chart bootstraps a diffwatcher deployment on a [Kubernetes](https://kuberne
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm repo add diffwatcher https://marvasgit.github.io/kubernetes-diffwatcher/
-$ helm install my-release diffwatcher
+$ helm repo add statemonitor https://marvasgit.github.io/kubernetes-statemonitor/
+$ helm install my-release statemonitor
 ```
 
-The command deploys diffwatcher on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+The command deploys statemonitor on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
 ## Uninstalling the Chart
 
@@ -101,14 +101,14 @@ The command removes all the Kubernetes components associated with the chart and 
 | `extraDeploy`            | Array of extra objects to deploy with the release                                       | `[]`           |
 
 
-### diffwatcher parameters
+### statemonitor parameters
 
 | Name                                     | Description                                                                      | Value                  |
 | ---------------------------------------- | -------------------------------------------------------------------------------- | ---------------------- |
-| `image.registry`                         | diffwatcher image registry                                                         | `docker.io`            |
-| `image.repository`                       | diffwatcher image repository                                                       | `bitnami/diffwatcher`    |
-| `image.tag`                              | diffwatcher image tag (immutable tags are recommended)                             | `0.1.0-debian-10-r513` |
-| `image.pullPolicy`                       | diffwatcher image pull policy                                                      | `IfNotPresent`         |
+| `image.registry`                         | statemonitor image registry                                                         | `docker.io`            |
+| `image.repository`                       | statemonitor image repository                                                       | `bitnami/statemonitor`    |
+| `image.tag`                              | statemonitor image tag (immutable tags are recommended)                             | `0.1.0-debian-10-r513` |
+| `image.pullPolicy`                       | statemonitor image pull policy                                                      | `IfNotPresent`         |
 | `image.pullSecrets`                      | Specify docker-registry secret names as an array                                 | `[]`                   |
 | `hostAliases`                            | Add deployment host aliases                                                      | `[]`                   |
 | `message.title`                     | Message Title used for MsTeams and others                                 | `"XXXX"`                   |
@@ -152,24 +152,24 @@ The command removes all the Kubernetes components associated with the chart and 
 | `resourcesToWatch.persistentvolume`      | Watch changes to PersistentVolumes                                               | `false`                |
 | `command`                                | Override default container command (useful when using custom images)             | `[]`                   |
 | `args`                                   | Override default container args (useful when using custom images)                | `[]`                   |
-| `lifecycleHooks`                         | for the diffwatcher container(s) to automate configuration before or after startup | `{}`                   |
-| `extraEnvVars`                           | Extra environment variables to be set on diffwatcher container                     | `[]`                   |
+| `lifecycleHooks`                         | for the statemonitor container(s) to automate configuration before or after startup | `{}`                   |
+| `extraEnvVars`                           | Extra environment variables to be set on statemonitor container                     | `[]`                   |
 | `extraEnvVarsCM`                         | Name of existing ConfigMap containing extra env vars                             | `""`                   |
 | `extraEnvVarsSecret`                     | Name of existing Secret containing extra env vars                                | `""`                   |
 
 
-### diffwatcher deployment parameters
+### statemonitor deployment parameters
 
 | Name                                    | Description                                                                               | Value           |
 | --------------------------------------- | ----------------------------------------------------------------------------------------- | --------------- |
-| `replicaCount`                          | Number of diffwatcher replicas to deploy                                                    | `1`             |
-| `podSecurityContext.enabled`            | Enable diffwatcher containers' SecurityContext                                              | `false`         |
-| `podSecurityContext.fsGroup`            | Set diffwatcher containers' SecurityContext fsGroup                                         | `""`            |
-| `containerSecurityContext.enabled`      | Enable diffwatcher pods' Security Context                                                   | `false`         |
-| `containerSecurityContext.runAsUser`    | Set diffwatcher pods' SecurityContext runAsUser                                             | `""`            |
-| `containerSecurityContext.runAsNonRoot` | Set diffwatcher pods' SecurityContext runAsNonRoot                                          | `""`            |
-| `resources.limits`                      | The resources limits for the diffwatcher container                                          | `{}`            |
-| `resources.requests`                    | The requested resources for the diffwatcher container                                       | `{}`            |
+| `replicaCount`                          | Number of statemonitor replicas to deploy                                                    | `1`             |
+| `podSecurityContext.enabled`            | Enable statemonitor containers' SecurityContext                                              | `false`         |
+| `podSecurityContext.fsGroup`            | Set statemonitor containers' SecurityContext fsGroup                                         | `""`            |
+| `containerSecurityContext.enabled`      | Enable statemonitor pods' Security Context                                                   | `false`         |
+| `containerSecurityContext.runAsUser`    | Set statemonitor pods' SecurityContext runAsUser                                             | `""`            |
+| `containerSecurityContext.runAsNonRoot` | Set statemonitor pods' SecurityContext runAsNonRoot                                          | `""`            |
+| `resources.limits`                      | The resources limits for the statemonitor container                                          | `{}`            |
+| `resources.requests`                    | The requested resources for the statemonitor container                                       | `{}`            |
 | `startupProbe.enabled`                  | Enable startupProbe                                                                       | `false`         |
 | `startupProbe.initialDelaySeconds`      | Initial delay seconds for startupProbe                                                    | `10`            |
 | `startupProbe.periodSeconds`            | Period seconds for startupProbe                                                           | `10`            |
@@ -202,13 +202,13 @@ The command removes all the Kubernetes components associated with the chart and 
 | `priorityClassName`                     | Controller priorityClassName                                                              | `""`            |
 | `schedulerName`                         | Name of the k8s scheduler (other than default)                                            | `""`            |
 | `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment                                            | `[]`            |
-| `podLabels`                             | Extra labels for diffwatcher pods                                                           | `{}`            |
-| `podAnnotations`                        | Annotations for diffwatcher pods                                                            | `{}`            |
-| `extraVolumes`                          | Optionally specify extra list of additional volumes for diffwatcher pods                    | `[]`            |
-| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for diffwatcher container(s)       | `[]`            |
+| `podLabels`                             | Extra labels for statemonitor pods                                                           | `{}`            |
+| `podAnnotations`                        | Annotations for statemonitor pods                                                            | `{}`            |
+| `extraVolumes`                          | Optionally specify extra list of additional volumes for statemonitor pods                    | `[]`            |
+| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for statemonitor container(s)       | `[]`            |
 | `updateStrategy.type`                   | Deployment strategy type.                                                                 | `RollingUpdate` |
-| `initContainers`                        | Add additional init containers to the diffwatcher pods                                      | `[]`            |
-| `sidecars`                              | Add additional sidecar containers to the diffwatcher pods                                   | `[]`            |
+| `initContainers`                        | Add additional init containers to the statemonitor pods                                      | `[]`            |
+| `sidecars`                              | Add additional sidecar containers to the statemonitor pods                                   | `[]`            |
 
 
 ### RBAC parameters
@@ -225,14 +225,14 @@ The command removes all the Kubernetes components associated with the chart and 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```console
-$ helm install my-release bitnami/diffwatcher \
+$ helm install my-release bitnami/statemonitor \
   --set=slack.channel="#bots",slack.token="XXXX-XXXX-XXXX"
 ```
 
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install my-release -f values.yaml bitnami/diffwatcher
+$ helm install my-release -f values.yaml bitnami/statemonitor
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -266,7 +266,7 @@ Alternatively, you can use a ConfigMap or a Secret with the environment variable
 
 ### Sidecars and Init Containers
 
-If you have a need for additional containers to run within the same pod as the diffwatcher app (e.g. an additional metrics or logging exporter), you can do so via the `sidecars` config parameter. Simply define your container according to the Kubernetes container spec.
+If you have a need for additional containers to run within the same pod as the statemonitor app (e.g. an additional metrics or logging exporter), you can do so via the `sidecars` config parameter. Simply define your container according to the Kubernetes container spec.
 
 ```yaml
 sidecars:
@@ -305,81 +305,81 @@ As an alternative, you can use of the preset configurations for pod affinity, po
 #### Using go package installer:
 
 ```console
-# Download and install diffwatcher
-$ go get -u github.com/marvasgit/kubernetes-diffwatcher
+# Download and install statemonitor
+$ go get -u github.com/marvasgit/kubernetes-statemonitor
 
 # Configure the notification channel
-$ diffwatcher config add slack --channel <slack_channel> --token <slack_token>
+$ statemonitor config add slack --channel <slack_channel> --token <slack_token>
 
 # Add resources to be watched
-$ diffwatcher resource add --po --svc
+$ statemonitor resource add --po --svc
 INFO[0000] resource svc configured
 INFO[0000] resource po configured
 
-# start diffwatcher server
-$ diffwatcher
-INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-service
-INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-pod
-INFO[0000] Processing add to service: default/kubernetes  pkg=diffwatcher-service
-INFO[0000] Processing add to service: kube-system/tiller-deploy  pkg=diffwatcher-service
-INFO[0000] Processing add to pod: kube-system/tiller-deploy-69ffbf64bc-h8zxm  pkg=diffwatcher-pod
-INFO[0000] diffwatcher controller synced and ready         pkg=diffwatcher-service
-INFO[0000] diffwatcher controller synced and ready         pkg=diffwatcher-pod
+# start statemonitor server
+$ statemonitor
+INFO[0000] Starting statemonitor controller                 pkg=statemonitor-service
+INFO[0000] Starting statemonitor controller                 pkg=statemonitor-pod
+INFO[0000] Processing add to service: default/kubernetes  pkg=statemonitor-service
+INFO[0000] Processing add to service: kube-system/tiller-deploy  pkg=statemonitor-service
+INFO[0000] Processing add to pod: kube-system/tiller-deploy-69ffbf64bc-h8zxm  pkg=statemonitor-pod
+INFO[0000] statemonitor controller synced and ready         pkg=statemonitor-service
+INFO[0000] statemonitor controller synced and ready         pkg=statemonitor-pod
 
 ```
 #### Using Docker:
 
-To Run diffwatcher Container interactively, place the config file in `$HOME/.diffwatcher.yaml` location and use the following command.
+To Run statemonitor Container interactively, place the config file in `$HOME/.statemonitor.yaml` location and use the following command.
 
 ```
-docker run --rm -it --network host -v $HOME/.diffwatcher.yaml:/root/.diffwatcher.yaml -v $HOME/.kube/config:/opt/bitnami/diffwatcher/.kube/config --name <container-name> us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher
+docker run --rm -it --network host -v $HOME/.statemonitor.yaml:/root/.statemonitor.yaml -v $HOME/.kube/config:/opt/bitnami/statemonitor/.kube/config --name <container-name> us-central1-docker.pkg.dev/genuine-flight-317411/devel/statemonitor
 ```
 
 Example:
 
 ```
-$ docker run --rm -it --network host -v $HOME/.diffwatcher.yaml:/root/.diffwatcher.yaml -v $HOME/.kube/config:/opt/bitnami/diffwatcher/.kube/config --name diffwatcher-app us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher
+$ docker run --rm -it --network host -v $HOME/.statemonitor.yaml:/root/.statemonitor.yaml -v $HOME/.kube/config:/opt/bitnami/statemonitor/.kube/config --name statemonitor-app us-central1-docker.pkg.dev/genuine-flight-317411/devel/statemonitor
 
 ==> Writing config file...
-INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-service
-INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-pod
-INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-deployment
-INFO[0000] Starting diffwatcher controller                 pkg=diffwatcher-namespace
-INFO[0000] Processing add to namespace: kube-node-lease  pkg=diffwatcher-namespace
-INFO[0000] Processing add to namespace: kube-public      pkg=diffwatcher-namespace
-INFO[0000] Processing add to namespace: kube-system      pkg=diffwatcher-namespace
-INFO[0000] Processing add to namespace: default          pkg=diffwatcher-namespace
+INFO[0000] Starting statemonitor controller                 pkg=statemonitor-service
+INFO[0000] Starting statemonitor controller                 pkg=statemonitor-pod
+INFO[0000] Starting statemonitor controller                 pkg=statemonitor-deployment
+INFO[0000] Starting statemonitor controller                 pkg=statemonitor-namespace
+INFO[0000] Processing add to namespace: kube-node-lease  pkg=statemonitor-namespace
+INFO[0000] Processing add to namespace: kube-public      pkg=statemonitor-namespace
+INFO[0000] Processing add to namespace: kube-system      pkg=statemonitor-namespace
+INFO[0000] Processing add to namespace: default          pkg=statemonitor-namespace
 ....
 ```
 
-To Demonise diffwatcher container use
+To Demonise statemonitor container use
 
 ```
-$ docker run --rm -d --network host -v $HOME/.diffwatcher.yaml:/root/.diffwatcher.yaml -v $HOME/.kube/config:/opt/bitnami/diffwatcher/.kube/config --name diffwatcher-app us-central1-docker.pkg.dev/genuine-flight-317411/devel/diffwatcher
+$ docker run --rm -d --network host -v $HOME/.statemonitor.yaml:/root/.statemonitor.yaml -v $HOME/.kube/config:/opt/bitnami/statemonitor/.kube/config --name statemonitor-app us-central1-docker.pkg.dev/genuine-flight-317411/devel/statemonitor
 ```
 
 # Configure
 
-diffwatcher supports `config` command for configuration. Config file will be saved at `$HOME/.diffwatcher.yaml`
+statemonitor supports `config` command for configuration. Config file will be saved at `$HOME/.statemonitor.yaml`
 
 ```
-$ diffwatcher config -h
+$ statemonitor config -h
 
-config command allows admin setup his own configuration for running diffwatcher
+config command allows admin setup his own configuration for running statemonitor
 
 Usage:
-  diffwatcher config [flags]
-  diffwatcher config [command]
+  statemonitor config [flags]
+  statemonitor config [command]
 
 Available Commands:
-  add         add webhook config to .diffwatcher.yaml
-  test        test handler config present in .diffwatcher.yaml
-  view        view .diffwatcher.yaml
+  add         add webhook config to .statemonitor.yaml
+  test        test handler config present in .statemonitor.yaml
+  view        view .statemonitor.yaml
 
 Flags:
   -h, --help   help for config
 
-Use "diffwatcher config [command] --help" for more information about a command.
+Use "statemonitor config [command] --help" for more information about a command.
 ```
 ### Example:
 
@@ -391,10 +391,10 @@ Use "diffwatcher config [command] --help" for more information about a command.
 
 - Invite the Bot into your channel by typing: `/invite @name_of_your_bot` in the Slack message area.
 
-- Add Api token to diffwatcher config using the following steps
+- Add Api token to statemonitor config using the following steps
 
   ```console
-  $ diffwatcher config add slack --channel <slack_channel> --token <slack_token>
+  $ statemonitor config add slack --channel <slack_channel> --token <slack_token>
   ```
   You have an altenative choice to set your SLACK token, channel via environment variables:
 
@@ -414,10 +414,10 @@ Use "diffwatcher config [command] --help" for more information about a command.
 - Pick a channel that the app will post to, and then click to Authorize your app. You will get back your webhook URL.  
   The Slack Webhook URL will look like: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX
 
-- Add slack webhook url to diffwatcher config using the following steps
+- Add slack webhook url to statemonitor config using the following steps
 
   ```console
-  $ diffwatcher config add slackwebhookurl --username <slack_username> --emoji <slack_emoji> --channel <slack_channel> --slackwebhookurl <slack_webhook_url>
+  $ statemonitor config add slackwebhookurl --username <slack_username> --emoji <slack_emoji> --channel <slack_channel> --slackwebhookurl <slack_webhook_url>
   ```
   Or, you have an altenative choice to set your SLACK channel, username, emoji and webhook URL via environment variables:
 
@@ -431,18 +431,18 @@ Use "diffwatcher config [command] --help" for more information about a command.
  - Example apply done in a bash script:  
   
  ```console
- $ cat diffwatcher-configmap-slackwebhook.yaml | sed "s|<slackchannel>|"\"$SlackChannel"\"|g;s|<slackusername>|"\"$SlackUsesrName"\"|g;s|<slackemoji>|"\"$SlackEmoji"\"|g;s|<SlackWebhookUrl>|"\"$WebhookUrl"\"|g" | kubectl create -f -
+ $ cat statemonitor-configmap-slackwebhook.yaml | sed "s|<slackchannel>|"\"$SlackChannel"\"|g;s|<slackusername>|"\"$SlackUsesrName"\"|g;s|<slackemoji>|"\"$SlackEmoji"\"|g;s|<SlackWebhookUrl>|"\"$WebhookUrl"\"|g" | kubectl create -f -
  ```
  
- - An example diffwatcher-configmap-slackwebhook.yaml YAML File:  
+ - An example statemonitor-configmap-slackwebhook.yaml YAML File:  
   
  ```yaml
  apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: diffwatcher
+  name: statemonitor
 data:
-  .diffwatcher.yaml: |
+  .statemonitor.yaml: |
     namespace: ""
     handler:
       slackwebhook:
@@ -477,7 +477,7 @@ data:
 
 - Add flock webhook url to config using the following command.
   ```console
-  $ diffwatcher config add flock --url <flock_webhook_url>
+  $ statemonitor config add flock --url <flock_webhook_url>
   ```
   You have an altenative choice to set your FLOCK URL
 
@@ -489,12 +489,12 @@ data:
 
 To test the handler config by send test messages use the following command.
 ```
-$ diffwatcher config test -h
+$ statemonitor config test -h
 
-Tests handler configs present in .diffwatcher.yaml by sending test messages
+Tests handler configs present in .statemonitor.yaml by sending test messages
 
 Usage:
-  diffwatcher config test [flags]
+  statemonitor config test [flags]
 
 Flags:
   -h, --help   help for test
@@ -503,17 +503,17 @@ Flags:
 #### Example:
 
 ```
-$ diffwatcher config test
+$ statemonitor config test
 
-Testing Handler configs from .diffwatcher.yaml
+Testing Handler configs from .statemonitor.yaml
 2019/06/03 12:29:23 Message successfully sent to channel ABCD at 1559545162.000100
 ```
 
 ## Viewing config
-To view the entire config file `$HOME/.diffwatcher.yaml` use the following command.
+To view the entire config file `$HOME/.statemonitor.yaml` use the following command.
 ```
-$ diffwatcher config view
-Contents of .diffwatcher.yaml
+$ statemonitor config view
+Contents of .statemonitor.yaml
 
 handler:
   slack:
@@ -576,16 +576,16 @@ diff:
 
 ## Resources
 
-To manage the resources being watched, use the following command, changes will be saved to `$HOME/.diffwatcher.yaml`.
+To manage the resources being watched, use the following command, changes will be saved to `$HOME/.statemonitor.yaml`.
 
 ```
-$ diffwatcher resource -h
+$ statemonitor resource -h
 
 manage resources to be watched
 
 Usage:
-  diffwatcher resource [flags]
-  diffwatcher resource [command]
+  statemonitor resource [flags]
+  statemonitor resource [command]
 
 Available Commands:
   add         adds specific resources to be watched
@@ -612,18 +612,18 @@ Flags:
       --svc                     watch for services
       --coreevent               watch for events from the kubernetes core api. (Old events api, replaced in kubernetes 1.19)
 
-Use "diffwatcher resource [command] --help" for more information about a command.
+Use "statemonitor resource [command] --help" for more information about a command.
 
 ```
 
 ### Add/Remove resource:
 ```
-$ diffwatcher resource add -h
+$ statemonitor resource add -h
 
 adds specific resources to be watched
 
 Usage:
-  diffwatcher resource add [flags]
+  statemonitor resource add [flags]
 
 Flags:
   -h, --help   help for add
@@ -653,10 +653,10 @@ Global Flags:
 
 ```console
 # rc, po and svc will be watched
-$ diffwatcher resource add --rc --po --svc
+$ statemonitor resource add --rc --po --svc
 
 # rc, po and svc will be stopped from being watched
-$ diffwatcher resource remove --rc --po --svc
+$ statemonitor resource remove --rc --po --svc
 ```
 
 ### Changing log level
@@ -685,8 +685,8 @@ env:
 
 Clone the repository anywhere:
 ```console
-$ git clone https://github.com/marvasgit/kubernetes-diffwatcher.git
-$ cd diffwatcher
+$ git clone https://github.com/marvasgit/kubernetes-statemonitor.git
+$ cd statemonitor
 $ go build
 ```
 or
@@ -708,7 +708,7 @@ $ make build
 $ make docker-image
 $ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED              SIZE
-diffwatcher           latest              919896d3cd90        3 minutes ago       27.9MB
+statemonitor           latest              919896d3cd90        3 minutes ago       27.9MB
 ```
 #### Prerequisites
 

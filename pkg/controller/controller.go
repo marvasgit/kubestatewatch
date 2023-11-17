@@ -29,10 +29,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/utils"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/utils"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/sirupsen/logrus"
@@ -97,7 +97,7 @@ func objName(obj interface{}) string {
 }
 func init() {
 	metric = promauto.NewCounterVec(prometheus.CounterOpts{
-		Name: "diffwatcher_processed_changes_total",
+		Name: "statemonitor_processed_changes_total",
 		Help: "The total number of processed changes",
 	},
 		[]string{"Action", "Name", "Namespace", "Type"})
@@ -546,10 +546,10 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 			newEvent.apiVersion = apiVersion
 			newEvent.obj, ok = obj.(runtime.Object)
 			if !ok {
-				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for add on %v", obj)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for add on %v", obj)
 			}
 			if err != nil {
-				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for add on %v", obj)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for add on %v", obj)
 				return
 			}
 
@@ -558,7 +558,7 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 				return
 			}
 
-			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
+			logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
 			queue.Add(newEvent)
 		},
 		UpdateFunc: func(old, new interface{}) {
@@ -570,15 +570,15 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 			newEvent.apiVersion = apiVersion
 			newEvent.obj, ok = new.(runtime.Object)
 			if !ok {
-				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for update on %v", new)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for update on %v", new)
 			}
 			newEvent.oldObj, ok = old.(runtime.Object)
 			if !ok {
-				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert old to runtime.Object for update on %v", old)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert old to runtime.Object for update on %v", old)
 			}
 
 			if err != nil {
-				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for update on %v", old)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for update on %v", old)
 				return
 			}
 
@@ -587,7 +587,7 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 				return
 			}
 
-			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
+			logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
 			queue.Add(newEvent)
 		},
 		DeleteFunc: func(obj interface{}) {
@@ -599,11 +599,11 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 			newEvent.apiVersion = apiVersion
 			newEvent.obj, ok = obj.(runtime.Object)
 			if !ok {
-				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot convert to runtime.Object for delete on %v", obj)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for delete on %v", obj)
 			}
 
 			if err != nil {
-				logrus.WithField("pkg", "diffwatcher-"+resourceType).Errorf("cannot get key for delete on %v", obj)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for delete on %v", obj)
 				return
 			}
 
@@ -612,13 +612,13 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 				return
 			}
 
-			logrus.WithField("pkg", "diffwatcher-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
+			logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
 			queue.Add(newEvent)
 		},
 	})
 
 	return &Controller{
-		logger:        logrus.WithField("pkg", "diffwatcher-"+resourceType),
+		logger:        logrus.WithField("pkg", "statemonitor-"+resourceType),
 		clientset:     client,
 		informer:      informer,
 		queue:         queue,
@@ -626,12 +626,12 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 	}
 }
 
-// Run starts the diffwatcher controller
+// Run starts the statemonitor controller
 func (c *Controller) Run(stopCh <-chan struct{}) {
 	defer utilruntime.HandleCrash()
 	defer c.queue.ShutDown()
 
-	c.logger.Info("Starting diffwatcher controller")
+	c.logger.Info("Starting statemonitor controller")
 	serverStartTime = time.Now().Local()
 
 	go c.informer.Run(stopCh)
@@ -641,7 +641,7 @@ func (c *Controller) Run(stopCh <-chan struct{}) {
 		return
 	}
 
-	c.logger.Info("diffwatcher controller synced and ready")
+	c.logger.Info("statemonitor controller synced and ready")
 
 	wait.Until(c.runWorker, time.Second, stopCh)
 }
@@ -732,7 +732,7 @@ func (c *Controller) processItem(newEvent Event) error {
 			default:
 				status = "Normal"
 			}
-			kbEvent := event.DiffWatchEvent{
+			kbEvent := event.StatemonitorEvent{
 				Name:       newEvent.key,
 				Namespace:  newEvent.namespace,
 				Kind:       newEvent.resourceType,
@@ -756,7 +756,7 @@ func (c *Controller) processItem(newEvent Event) error {
 			status = "Warning"
 		}
 
-		kbEvent := event.DiffWatchEvent{
+		kbEvent := event.StatemonitorEvent{
 			Name:       newEvent.key,
 			Namespace:  newEvent.namespace,
 			Kind:       newEvent.resourceType,
@@ -778,7 +778,7 @@ func (c *Controller) processItem(newEvent Event) error {
 		handleMetric(newEvent)
 		return nil
 	case "delete":
-		kbEvent := event.DiffWatchEvent{
+		kbEvent := event.StatemonitorEvent{
 			Name:       newEvent.key,
 			Namespace:  newEvent.namespace,
 			Kind:       newEvent.resourceType,
@@ -834,6 +834,9 @@ func compareConfigMaps(old runtime.Object, new runtime.Object) (jsondiff.Patch, 
 	}
 
 	sort.Strings(keys)
+	if len(keys) == 0 {
+		return nil, fmt.Errorf("error in extracting data from configmap")
+	}
 	k := keys[0]
 	if !strings.Contains(k, ".json") {
 		return nil, fmt.Errorf("error in extracting data from configmap")

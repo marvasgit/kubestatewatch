@@ -26,7 +26,7 @@ func GetTitle(configName string, envVariableName string) string {
 	if title == "" {
 		title = os.Getenv(envVariableName)
 		if title == "" {
-			title = "diffwatcher"
+			title = "statemonitor"
 		}
 	}
 	return title

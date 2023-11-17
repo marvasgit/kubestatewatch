@@ -23,9 +23,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/message"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/message"
 	"github.com/sirupsen/logrus"
 )
 
@@ -126,7 +126,7 @@ func (ms *MSTeams) Init(c *config.Config) error {
 }
 
 // Handle handles notification.
-func (ms *MSTeams) Handle(e event.DiffWatchEvent) {
+func (ms *MSTeams) Handle(e event.StatemonitorEvent) {
 	card := &TeamsMessageCard{
 		Type:    messageType,
 		Context: context,

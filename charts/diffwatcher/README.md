@@ -1,21 +1,21 @@
-<!--- app-name: diffwatcher -->
+<!--- app-name: statemonitor -->
 
-# diffwatcher 
+# statemonitor 
 
-diffwatcher is a Kubernetes watcher that currently publishes notification to Slack. Run it in your k8s cluster, and you will get event notifications in a slack channel.
+statemonitor is a Kubernetes watcher that currently publishes notification to Slack. Run it in your k8s cluster, and you will get event notifications in a slack channel.
 
-[Overview of diffwatcher](https://github.com/marvasgit/kubernetes-diffwatcher)
+[Overview of statemonitor](https://github.com/marvasgit/kubernetes-statemonitor)
 
 ## TL;DR
 
 ```console
 $ helm repo add bitnami https://charts.bitnami.com/bitnami
-$ helm install my-release bitnami/diffwatcher
+$ helm install my-release bitnami/statemonitor
 ```
 
 ## Introduction
 
-This chart bootstraps a diffwatcher deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps a statemonitor deployment on a [Kubernetes](https://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Prerequisites
 
@@ -27,11 +27,11 @@ This chart bootstraps a diffwatcher deployment on a [Kubernetes](https://kuberne
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm repo add diffwatcher https://marvasgit.github.io/kubernetes-diffwatcher/
-$ helm install my-release diffwatcher
+$ helm repo add statemonitor https://marvasgit.github.io/kubernetes-statemonitor/
+$ helm install my-release statemonitor
 ```
 
-The command deploys diffwatcher on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
+The command deploys statemonitor on the Kubernetes cluster in the default configuration. The [Parameters](#parameters) section lists the parameters that can be configured during installation.
 
 ## Uninstalling the Chart
 
@@ -68,14 +68,14 @@ The command removes all the Kubernetes components associated with the chart and 
 | `extraDeploy`            | Array of extra objects to deploy with the release                                       | `[]`           |
 
 
-### diffwatcher parameters
+### statemonitor parameters
 
 | Name                                     | Description                                                                      | Value                  |
 | ---------------------------------------- | -------------------------------------------------------------------------------- | ---------------------- |
-| `image.registry`                         | diffwatcher image registry                                                         | `docker.io`            |
-| `image.repository`                       | diffwatcher image repository                                                       | `bitnami/diffwatcher`    |
-| `image.tag`                              | diffwatcher image tag (immutable tags are recommended)                             | `0.1.0-debian-10-r513` |
-| `image.pullPolicy`                       | diffwatcher image pull policy                                                      | `IfNotPresent`         |
+| `image.registry`                         | statemonitor image registry                                                         | `docker.io`            |
+| `image.repository`                       | statemonitor image repository                                                       | `bitnami/statemonitor`    |
+| `image.tag`                              | statemonitor image tag (immutable tags are recommended)                             | `0.1.0-debian-10-r513` |
+| `image.pullPolicy`                       | statemonitor image pull policy                                                      | `IfNotPresent`         |
 | `image.pullSecrets`                      | Specify docker-registry secret names as an array                                 | `[]`                   |
 | `hostAliases`                            | Add deployment host aliases                                                      | `[]`                   |
 | `slack.enabled`                          | Enable Slack notifications                                                       | `true`                 |
@@ -117,24 +117,24 @@ The command removes all the Kubernetes components associated with the chart and 
 | `resourcesToWatch.persistentvolume`      | Watch changes to PersistentVolumes                                               | `false`                |
 | `command`                                | Override default container command (useful when using custom images)             | `[]`                   |
 | `args`                                   | Override default container args (useful when using custom images)                | `[]`                   |
-| `lifecycleHooks`                         | for the diffwatcher container(s) to automate configuration before or after startup | `{}`                   |
-| `extraEnvVars`                           | Extra environment variables to be set on diffwatcher container                     | `[]`                   |
+| `lifecycleHooks`                         | for the statemonitor container(s) to automate configuration before or after startup | `{}`                   |
+| `extraEnvVars`                           | Extra environment variables to be set on statemonitor container                     | `[]`                   |
 | `extraEnvVarsCM`                         | Name of existing ConfigMap containing extra env vars                             | `""`                   |
 | `extraEnvVarsSecret`                     | Name of existing Secret containing extra env vars                                | `""`                   |
 
 
-### diffwatcher deployment parameters
+### statemonitor deployment parameters
 
 | Name                                    | Description                                                                               | Value           |
 | --------------------------------------- | ----------------------------------------------------------------------------------------- | --------------- |
-| `replicaCount`                          | Number of diffwatcher replicas to deploy                                                    | `1`             |
-| `podSecurityContext.enabled`            | Enable diffwatcher containers' SecurityContext                                              | `false`         |
-| `podSecurityContext.fsGroup`            | Set diffwatcher containers' SecurityContext fsGroup                                         | `""`            |
-| `containerSecurityContext.enabled`      | Enable diffwatcher pods' Security Context                                                   | `false`         |
-| `containerSecurityContext.runAsUser`    | Set diffwatcher pods' SecurityContext runAsUser                                             | `""`            |
-| `containerSecurityContext.runAsNonRoot` | Set diffwatcher pods' SecurityContext runAsNonRoot                                          | `""`            |
-| `resources.limits`                      | The resources limits for the diffwatcher container                                          | `{}`            |
-| `resources.requests`                    | The requested resources for the diffwatcher container                                       | `{}`            |
+| `replicaCount`                          | Number of statemonitor replicas to deploy                                                    | `1`             |
+| `podSecurityContext.enabled`            | Enable statemonitor containers' SecurityContext                                              | `false`         |
+| `podSecurityContext.fsGroup`            | Set statemonitor containers' SecurityContext fsGroup                                         | `""`            |
+| `containerSecurityContext.enabled`      | Enable statemonitor pods' Security Context                                                   | `false`         |
+| `containerSecurityContext.runAsUser`    | Set statemonitor pods' SecurityContext runAsUser                                             | `""`            |
+| `containerSecurityContext.runAsNonRoot` | Set statemonitor pods' SecurityContext runAsNonRoot                                          | `""`            |
+| `resources.limits`                      | The resources limits for the statemonitor container                                          | `{}`            |
+| `resources.requests`                    | The requested resources for the statemonitor container                                       | `{}`            |
 | `startupProbe.enabled`                  | Enable startupProbe                                                                       | `false`         |
 | `startupProbe.initialDelaySeconds`      | Initial delay seconds for startupProbe                                                    | `10`            |
 | `startupProbe.periodSeconds`            | Period seconds for startupProbe                                                           | `10`            |
@@ -167,13 +167,13 @@ The command removes all the Kubernetes components associated with the chart and 
 | `priorityClassName`                     | Controller priorityClassName                                                              | `""`            |
 | `schedulerName`                         | Name of the k8s scheduler (other than default)                                            | `""`            |
 | `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment                                            | `[]`            |
-| `podLabels`                             | Extra labels for diffwatcher pods                                                           | `{}`            |
-| `podAnnotations`                        | Annotations for diffwatcher pods                                                            | `{}`            |
-| `extraVolumes`                          | Optionally specify extra list of additional volumes for diffwatcher pods                    | `[]`            |
-| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for diffwatcher container(s)       | `[]`            |
+| `podLabels`                             | Extra labels for statemonitor pods                                                           | `{}`            |
+| `podAnnotations`                        | Annotations for statemonitor pods                                                            | `{}`            |
+| `extraVolumes`                          | Optionally specify extra list of additional volumes for statemonitor pods                    | `[]`            |
+| `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts for statemonitor container(s)       | `[]`            |
 | `updateStrategy.type`                   | Deployment strategy type.                                                                 | `RollingUpdate` |
-| `initContainers`                        | Add additional init containers to the diffwatcher pods                                      | `[]`            |
-| `sidecars`                              | Add additional sidecar containers to the diffwatcher pods                                   | `[]`            |
+| `initContainers`                        | Add additional init containers to the statemonitor pods                                      | `[]`            |
+| `sidecars`                              | Add additional sidecar containers to the statemonitor pods                                   | `[]`            |
 
 
 ### RBAC parameters
@@ -190,14 +190,14 @@ The command removes all the Kubernetes components associated with the chart and 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```console
-$ helm install my-release bitnami/diffwatcher \
+$ helm install my-release bitnami/statemonitor \
   --set=slack.channel="#bots",slack.token="XXXX-XXXX-XXXX"
 ```
 
 Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
 
 ```console
-$ helm install my-release -f values.yaml bitnami/diffwatcher
+$ helm install my-release -f values.yaml bitnami/statemonitor
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
@@ -231,7 +231,7 @@ Alternatively, you can use a ConfigMap or a Secret with the environment variable
 
 ### Sidecars and Init Containers
 
-If you have a need for additional containers to run within the same pod as the diffwatcher app (e.g. an additional metrics or logging exporter), you can do so via the `sidecars` config parameter. Simply define your container according to the Kubernetes container spec.
+If you have a need for additional containers to run within the same pod as the statemonitor app (e.g. an additional metrics or logging exporter), you can do so via the `sidecars` config parameter. Simply define your container according to the Kubernetes container spec.
 
 ```yaml
 sidecars:
@@ -278,7 +278,7 @@ Find more information about how to deal with common errors related to Bitnami's 
 
 Consequences:
 
-- Backwards compatibility is not guaranteed. To upgrade to `3.0.0`, install a new release of the diffwatcher chart.
+- Backwards compatibility is not guaranteed. To upgrade to `3.0.0`, install a new release of the statemonitor chart.
 
 ### To 2.0.0
 

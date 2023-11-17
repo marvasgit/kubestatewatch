@@ -46,8 +46,8 @@ import (
 
 	"github.com/slack-go/slack"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 )
 
 var webhookErrMsg = `
@@ -103,7 +103,7 @@ func (m *SlackWebhook) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (m *SlackWebhook) Handle(e event.DiffWatchEvent) {
+func (m *SlackWebhook) Handle(e event.StatemonitorEvent) {
 
 	webhookMessage := slack.WebhookMessage{
 		Channel:   m.Channel,

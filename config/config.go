@@ -39,7 +39,7 @@ type Resource struct {
 	CoreEvent             bool
 }
 
-// Config struct contains diffwatcher configuration
+// Config struct contains statemonitor configuration
 type Config struct {
 	// Handlers know how to send notifications to specific services.
 	Handler Handler

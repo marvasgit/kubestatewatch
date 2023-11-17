@@ -1,220 +1,102 @@
-## @section Global parameters
-## Global Docker image parameters
-## Please, note that this will override the image parameters, including dependencies, configured to use the global value
-## Current available global Docker image parameters: imageRegistry, imagePullSecrets and storageClass
-
-## @param global.imageRegistry Global Docker image registry
-## @param global.imagePullSecrets Global Docker registry secret names as an array
-##
 global:
   imageRegistry: ""
-  ## E.g.
-  ## imagePullSecrets:
-  ##   - myRegistryKeySecretName
-  ##
   imagePullSecrets: []
-
-## @section Common parameters
-
-## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
-##
 kubeVersion: ""
-## @param nameOverride String to partially override common.names.fullname template
-##
 nameOverride: ""
-## @param fullnameOverride String to fully override common.names.fullname template
-##
 fullnameOverride: ""
-## @param commonLabels Labels to add to all deployed objects
-##
 commonLabels: {}
-## @param commonAnnotations Annotations to add to all deployed objects
-##
 commonAnnotations: {}
-## Enable diagnostic mode in the deployment(s)/statefulset(s)
-##
 diagnosticMode:
-  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
-  ##
   enabled: false
-  ## @param diagnosticMode.command Command to override all containers in the the deployment(s)/statefulset(s)
-  ##
   command:
   - sleep
-  ## @param diagnosticMode.args Args to override all containers in the the deployment(s)/statefulset(s)
-  ##
   args:
   - infinity
-## @param extraDeploy Array of extra objects to deploy with the release
-##
 extraDeploy: []
+mountpath: /config
+volumes:
+  items:
+  - key: appsettings.json
+    path: appsettings.json
 
-## @section diffwatcher parameters
-
-## Bitnami diffwatcher image version
-## ref: https://hub.docker.com/r/bitnami/diffwatcher/tags/
-## @param image.registry diffwatcher image registry
-## @param image.repository diffwatcher image repository
-## @param image.tag diffwatcher image tag (immutable tags are recommended)
-## @param image.pullPolicy diffwatcher image pull policy
-## @param image.pullSecrets Specify docker-registry secret names as an array
-##
 image:
   registry:
-  repository: docmarr/kubernetes-diffwatcher
+  repository: docmarr/kubernetes-statemonitor
   tag: 1.0.0
-  ## Specify a imagePullPolicy
-  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
-  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
-  ##
   pullPolicy: IfNotPresent
-  ## Optionally specify an array of imagePullSecrets.
-  ## Secrets must be manually created in the namespace.
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
-  ## Example:
-  ## pullSecrets:
-  ##   - myRegistryKeySecretName
-  ##
   pullSecrets: []
-## @param hostAliases Add deployment host aliases
-## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
-##
 hostAliases: []
-## @param slack.enabled Enable Slack notifications
-## @param slack.channel Slack channel to notify
-## @param slack.token Slack API token
-##
-message:
-  ## @param message.title Used msg title in slack and msteams
-  title: "XXXX"
-diff:
-  ignore:
-  # - "/metadata"
-  # - "/status"
-  # - "/metadata/replicas"
 slack:
   enabled: false
   channel: "XXXX"
-  ## Create using: https://my.slack.com/services/new/bot and invite the bot to your channel using: /join @botname
-  ##
   token: "XXXX"
-## @param slackwebhook.enabled Enable SlackWebhook notifications
-## @param slackwebhook.channel Slack channel to notify
-## @param slackwebhook.username Slack username
-## @param slackwebhook.emoji Slack emoji
-## @param slackwebhook.slackwebhookurl Slack Webhook Url
-##
 slackwebhook:
   enabled: false
   channel: "XXXX"
   username: ""
   emoji: ""
   slackwebhookurl: "XXXX"
-## @param hipchat.enabled Enable HipChat notifications
-## @param hipchat.room HipChat room to notify
-## @param hipchat.token HipChat token
-## @param hipchat.url HipChat URL
-##
 hipchat:
   enabled: false
   room: ""
   token: ""
   url: ""
-## @param mattermost.enabled Enable Mattermost notifications
-## @param mattermost.channel Mattermost channel to notify
-## @param mattermost.url Mattermost URL
-## @param mattermost.username Mattermost user to notify
-##
 mattermost:
   enabled: false
   channel: ""
   url: ""
   username: ""
-## @param flock.enabled Enable Flock notifications
-## @param flock.url Flock URL
-##
 flock:
   enabled: false
   url: ""
-## @param msteams.enabled Enable Microsoft Teams notifications
-## @param msteams.webhookurl Microsoft Teams webhook URL
-##
 msteams:
   enabled: true
   webhookurl: "XXXX"
-## @param webhook.enabled Enable Webhook notifications
-## @param webhook.url Webhook URL
-##
 webhook:
   enabled: false
   url: ""
-## @param cloudevent.enabled Enable Cloudevent notifications
-## @param cloudevent.url Cloudevent URL
-##
 cloudevent:
   enabled: false
   url: ""
-## @param lark.enabled Enable Lark notifications
-## @param lark.url lark webhook URL
-## See: https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN
-##
 lark:
   enabled: false
   webhookurl: ""
 
 smtp:
-  ## @param smtp.enabled Enable SMTP (email) notifications
-  ##
   enabled: false
-  ## @param smtp.to Destination email address (required)
-  ##
   to: ""
-  ## @param smtp.from Source email address (required)
-  ##
   from: ""
-  ## @param smtp.hello SMTP hello field (optional)
-  ##
   hello: ""
-  ## @param smtp.smarthost SMTP server address (name:port) (required)
-  ##
   smarthost: ""
-  ## @param smtp.subject Source email subject
-  ##
   subject: ""
-  ## @param smtp.auth.username Username for LOGIN and PLAIN auth mech
-  ## @param smtp.auth.password Password for LOGIN and PLAIN auth mech
-  ## @param smtp.auth.secret Secret for CRAM-MD5 auth mech
-  ## @param smtp.auth.identity Identity for PLAIN auth mech
-  ##
   auth:
     username: ""
     password: ""
     secret: ""
     identity: ""
-  ## @param smtp.requireTLS Force STARTTLS. Set to `true` or `false`
-  ##
   requireTLS: ""
 
-## @param extraHandlers Manual handlers declaration
 extraHandlers: {}
-## @param namespacesconfig Manual namespaces config
-## @param namespacesconfig.include Namespaces to include, leave empty to include all namespaces
+message:
+  title: "XXXX"
+diff:
+  ignorePath:
+  - "/metadata"
+  - "/spec/template/metadata"
+  - "/status"
+  - "/spec/replicas"
+  - "/lastTimestamp"
+  - "/data/status"
+  - "/count"
+
+  # - "/metadata"
+  # - "/status"
+  # - "/metadata/replicas"
 namespacesconfig:
   include:
-
   exclude:
   - "kube-system"
-## Resources to watch
-## @param resourcesToWatch.deployment Watch changes to Deployments
-## @param resourcesToWatch.replicationcontroller Watch changes to ReplicationControllers
-## @param resourcesToWatch.replicaset Watch changes to ReplicaSets
-## @param resourcesToWatch.daemonset Watch changes to DaemonSets
-## @param resourcesToWatch.services Watch changes to Services
-## @param resourcesToWatch.pod Watch changes to Pods
-## @param resourcesToWatch.job Watch changes to Jobs
-## @param resourcesToWatch.persistentvolume Watch changes to PersistentVolumes
-## @param resourcesToWatch.event Watch changes to Events
-##
+  - "cattle-fleet-system"
 resourcesToWatch:
   configmap: true
   daemonset: true
@@ -229,62 +111,18 @@ resourcesToWatch:
   replicationcontroller: false
   node: false
   services: false
-
-## @param command Override default container command (useful when using custom images)
-##
-command: []
-## @param args Override default container args (useful when using custom images)
-##
-args: []
-## @param lifecycleHooks for the diffwatcher container(s) to automate configuration before or after startup
-##
 lifecycleHooks: {}
-## @param extraEnvVars Extra environment variables to be set on diffwatcher container
-## Example:
-## extraEnvVars:
-##   - name: FOO
-##     value: "bar"
-##
 extraEnvVars: []
-## @param extraEnvVarsCM Name of existing ConfigMap containing extra env vars
-##
 extraEnvVarsCM: ""
-## @param extraEnvVarsSecret Name of existing Secret containing extra env vars
-##
 extraEnvVarsSecret: ""
-
-## @section diffwatcher deployment parameters
-
-## @param replicaCount Number of diffwatcher replicas to deploy
-##
 replicaCount: 1
-## diffwatcher containers' SecurityContext
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext.enabled Enable diffwatcher containers' SecurityContext
-## @param podSecurityContext.fsGroup Set diffwatcher containers' SecurityContext fsGroup
-##
 podSecurityContext:
   enabled: false
   fsGroup: ""
-## diffwatcher pods' Security Context
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-## @param containerSecurityContext.enabled Enable diffwatcher pods' Security Context
-## @param containerSecurityContext.runAsUser Set diffwatcher pods' SecurityContext runAsUser
-## @param containerSecurityContext.runAsNonRoot Set diffwatcher pods' SecurityContext runAsNonRoot
-##
 containerSecurityContext:
   enabled: false
   runAsUser: ""
   runAsNonRoot: ""
-## diffwatcher resource requests and limits
-## ref: https://kubernetes.io/docs/user-guide/compute-resources/
-## We usually recommend not to specify default resources and to leave this as a conscious
-## choice for the user. This also increases chances charts run on environments with little
-## resources, such as Minikube. If you do want to specify resources, uncomment the following
-## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-## @param resources.limits The resources limits for the diffwatcher container
-## @param resources.requests The requested resources for the diffwatcher container
-##
 resources:
   ## Example:
   ## limits:
@@ -296,15 +134,6 @@ resources:
   ##    cpu: 100m
   ##    memory: 10Mi
   requests: {}
-## Configure extra options for startup probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param startupProbe.enabled Enable startupProbe
-## @param startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
-## @param startupProbe.periodSeconds Period seconds for startupProbe
-## @param startupProbe.timeoutSeconds Timeout seconds for startupProbe
-## @param startupProbe.failureThreshold Failure threshold for startupProbe
-## @param startupProbe.successThreshold Success threshold for startupProbe
-##
 startupProbe:
   enabled: false
   initialDelaySeconds: 10
@@ -312,15 +141,6 @@ startupProbe:
   timeoutSeconds: 1
   failureThreshold: 3
   successThreshold: 1
-## Configure extra options for liveness probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param livenessProbe.enabled Enable livenessProbe
-## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
-## @param livenessProbe.periodSeconds Period seconds for livenessProbe
-## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
-## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
-## @param livenessProbe.successThreshold Success threshold for livenessProbe
-##
 livenessProbe:
   enabled: false
   initialDelaySeconds: 10
@@ -328,15 +148,6 @@ livenessProbe:
   timeoutSeconds: 1
   failureThreshold: 3
   successThreshold: 1
-## Configure extra options for readiness probe
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
-## @param readinessProbe.enabled Enable readinessProbe
-## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
-## @param readinessProbe.periodSeconds Period seconds for readinessProbe
-## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
-## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
-## @param readinessProbe.successThreshold Success threshold for readinessProbe
-##
 readinessProbe:
   enabled: false
   initialDelaySeconds: 10
@@ -344,143 +155,17 @@ readinessProbe:
   timeoutSeconds: 1
   failureThreshold: 3
   successThreshold: 1
-## @param customStartupProbe Override default startup probe
-##
-customStartupProbe: {}
-## @param customLivenessProbe Override default liveness probe
-##
-customLivenessProbe: {}
-## @param customReadinessProbe Override default readiness probe
-##
-customReadinessProbe: {}
-## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-##
-podAffinityPreset: ""
-## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-##
-podAntiAffinityPreset: soft
-## Node affinity preset
-## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
-##
-nodeAffinityPreset:
-  ## @param nodeAffinityPreset.type Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
-  ##
-  type: ""
-  ## @param nodeAffinityPreset.key Node label key to match. Ignored if `affinity` is set.
-  ## E.g.
-  ## key: "kubernetes.io/e2e-az-name"
-  ##
-  key: ""
-  ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
-  ## E.g.
-  ## values:
-  ##   - e2e-az1
-  ##   - e2e-az2
-  ##
-  values: []
-## @param affinity Affinity for pod assignment
-## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-## Note: podAffinityPreset, podAntiAffinityPreset, and nodeAffinityPreset will be ignored when it's set
-##
-affinity: {}
-## @param nodeSelector Node labels for pod assignment
-## ref: https://kubernetes.io/docs/user-guide/node-selection/
-##
-nodeSelector: {}
-## @param tolerations Tolerations for pod assignment
-## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-##
-tolerations: []
-## @param priorityClassName Controller priorityClassName
-## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
-##
-priorityClassName: ""
-## @param schedulerName Name of the k8s scheduler (other than default)
-## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
-##
-schedulerName: ""
-## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
-## https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
-## The value is evaluated as a template
-##
-topologySpreadConstraints: []
-## @param podLabels Extra labels for diffwatcher pods
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-##
-podLabels: {}
-## @param podAnnotations Annotations for diffwatcher pods
-## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-##
-podAnnotations: {}
-## @param extraVolumes Optionally specify extra list of additional volumes for diffwatcher pods
-##
-extraVolumes: []
-## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts for diffwatcher container(s)
-##
-extraVolumeMounts: []
-## @param updateStrategy.type Deployment strategy type.
-## ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
-## e.g:
-## updateStrategy:
-##  type: RollingUpdate
-##  rollingUpdate:
-##    maxSurge: 25%
-##    maxUnavailable: 25%
-##
 updateStrategy:
   type: RollingUpdate
-## @param initContainers Add additional init containers to the diffwatcher pods
-## Example:
-## initContainers:
-##   - name: your-image-name
-##     image: your-image
-##     imagePullPolicy: Always
-##     ports:
-##       - name: portname
-##         containerPort: 1234
-##
 initContainers: []
-## @param sidecars Add additional sidecar containers to the diffwatcher pods
-## Example:
-## sidecars:
-##   - name: your-image-name
-##     image: your-image
-##     imagePullPolicy: Always
-##     ports:
-##       - name: portname
-##         containerPort: 1234
-##
 sidecars: []
-
-## @section RBAC parameters
-
-## @param rbac.create Whether to create & use RBAC resources or not
-##
 rbac:
-  create: false
-## Pods Service Account
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-## @param serviceAccount.create Specifies whether a ServiceAccount should be created
-## @param serviceAccount.name Name of the service account to use. If not set and create is true, a name is generated using the fullname template.
-## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
-## @param serviceAccount.annotations Annotations for service account. Evaluated as a template. Only used if `create` is `true`.
-##
+  create: true
 serviceAccount:
   create: true
   name: ""
   automountServiceAccountToken: true
   annotations: {}
-
-  ## @section Prometheus Exporter parameters
-  ## @param metrics.podMonitor.enabled Specify if a PodMonitor should be created
-  ## @param metrics.podMonitor.namespace Namespace in which Prometheus is running
-  ## @param metrics.podMonitor.interval How frequently to scrape metrics
-  ## @param metrics.podMonitor.scrapeTimeout How long until a scrape request times out
-  ## @param metrics.podMonitor.relabelings Additional relabelings to apply to samples before ingestion
-  ## @param metrics.podMonitor.additionalLabels Additional labels to add to the PodMonitor
-  ## @param metrics.podMonitor.endpoint Path to diffwatcher metrics endpoint
   additionalLabels: {}
 podMonitor:
   enabled: true

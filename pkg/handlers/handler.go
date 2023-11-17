@@ -17,24 +17,24 @@ limitations under the License.
 package handlers
 
 import (
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/flock"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/hipchat"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/lark"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/mattermost"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/msteam"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slack"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slackwebhook"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/smtpClient"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/webhook"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/flock"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/hipchat"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/lark"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/mattermost"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/msteam"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/slack"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/slackwebhook"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/smtpClient"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/webhook"
 )
 
 // Handler is implemented by any handler.
 // The Handle method is used to process event
 type Handler interface {
 	Init(c *config.Config) error
-	Handle(e event.DiffWatchEvent)
+	Handle(e event.StatemonitorEvent)
 }
 
 // Map maps each event handler function to a name for easily lookup
@@ -63,5 +63,5 @@ func (d *Default) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (d *Default) Handle(e event.DiffWatchEvent) {
+func (d *Default) Handle(e event.StatemonitorEvent) {
 }

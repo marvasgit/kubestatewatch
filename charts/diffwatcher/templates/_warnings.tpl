@@ -6,7 +6,7 @@ Usage:
 */}}
 {{- define "common.warnings.rollingTag" -}}
 
-{{- if and (contains "docmarr/kubernetes-diffwatcher/" .repository) (not (.tag | toString | regexFind "-r\\d+$|sha256:")) }}
+{{- if and (contains "docmarr/kubernetes-statemonitor/" .repository) (not (.tag | toString | regexFind "-r\\d+$|sha256:")) }}
 WARNING: Rolling tag detected ({{ .repository }}:{{ .tag }}), please note that it is strongly recommended to avoid using rolling tags in a production environment.
 +info https://docs.bitnami.com/containers/how-to/understand-rolling-tags-containers/
 {{- end }}

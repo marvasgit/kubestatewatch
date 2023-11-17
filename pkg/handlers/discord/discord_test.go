@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 )
 
 func TestInit(t *testing.T) {
@@ -59,7 +59,7 @@ func TestObjectCreated(t *testing.T) {
 	}))
 
 	ms := &Discord{DcWebhookURL: ts.URL}
-	p := event.DiffWatchEvent{
+	p := event.StatemonitorEvent{
 		Name:      "foo",
 		Kind:      "pod",
 		Namespace: "new",
@@ -98,7 +98,7 @@ func TestObjectDeleted(t *testing.T) {
 
 	ms := &Discord{DcWebhookURL: ts.URL}
 
-	p := event.DiffWatchEvent{
+	p := event.StatemonitorEvent{
 		Name:      "foo",
 		Namespace: "new",
 		Kind:      "pod",
@@ -137,7 +137,7 @@ func TestObjectUpdated(t *testing.T) {
 
 	ms := &Discord{DcWebhookURL: ts.URL}
 
-	oldP := event.DiffWatchEvent{
+	oldP := event.StatemonitorEvent{
 		Name:      "foo",
 		Namespace: "new",
 		Kind:      "pod",
@@ -145,7 +145,7 @@ func TestObjectUpdated(t *testing.T) {
 		Status:    "Warning",
 	}
 
-	newP := event.DiffWatchEvent{
+	newP := event.StatemonitorEvent{
 		Name:      "foo-new",
 		Namespace: "new",
 		Kind:      "pod",

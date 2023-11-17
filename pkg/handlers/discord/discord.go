@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers"
 	"github.com/sirupsen/logrus"
 )
 
@@ -62,7 +62,7 @@ func (dc *Discord) Init(c *config.Config) error {
 	return nil
 }
 
-func (dc *Discord) Handle(e event.DiffWatchEvent) {
+func (dc *Discord) Handle(e event.StatemonitorEvent) {
 	msg := &DiscordMsg{}
 
 	var embed DiscordEmbed

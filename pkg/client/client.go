@@ -4,19 +4,19 @@ import (
 	"github.com/knadh/koanf/parsers/json"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/controller"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/cloudevent"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/flock"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/hipchat"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/lark"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/mattermost"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/msteam"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slack"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/slackwebhook"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/smtpClient"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/handlers/webhook"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/controller"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/cloudevent"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/flock"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/hipchat"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/lark"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/mattermost"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/msteam"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/slack"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/slackwebhook"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/smtpClient"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/webhook"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,7 +32,7 @@ var k = koanf.New(".")
 
 func loadConfig() config.Config {
 	// Load JSON config.
-	if err := k.Load(file.Provider("appsettings.json"), json.Parser()); err != nil {
+	if err := k.Load(file.Provider("/config/appsettings.json"), json.Parser()); err != nil {
 		logrus.Fatalf("error loading config: %v", err)
 	}
 

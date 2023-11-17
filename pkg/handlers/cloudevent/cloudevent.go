@@ -23,8 +23,8 @@ import (
 	"time"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 	"github.com/sirupsen/logrus"
 )
 
@@ -82,11 +82,11 @@ func (m *CloudEvent) Init(c *config.Config) error {
 	return nil
 }
 
-func (m *CloudEvent) Handle(e event.DiffWatchEvent) {
+func (m *CloudEvent) Handle(e event.StatemonitorEvent) {
 	m.Counter++ // TODO: do we have to worry about threadsafety here?
 
 	event := cloudevents.NewEvent()
-	event.SetSource("github.com/marvasgit/kubernetes-diffwatcher")
+	event.SetSource("github.com/marvasgit/kubernetes-statemonitor")
 	event.SetType("KUBERNETES_TOPOLOGY_CHANGE")
 	event.SetTime(time.Now())
 	event.SetID(fmt.Sprintf("%v-%v", m.StartTime, m.Counter))
@@ -104,7 +104,7 @@ func (m *CloudEvent) Handle(e event.DiffWatchEvent) {
 	logrus.Printf("Message successfully sent to %s at %s ", m.Url, time.Now())
 }
 
-func (m *CloudEvent) prepareMessage(e event.DiffWatchEvent) *CloudEventMessageData {
+func (m *CloudEvent) prepareMessage(e event.StatemonitorEvent) *CloudEventMessageData {
 	return &CloudEventMessageData{
 		Operation:   m.formatReason(e),
 		Kind:        e.Kind,
@@ -115,7 +115,7 @@ func (m *CloudEvent) prepareMessage(e event.DiffWatchEvent) *CloudEventMessageDa
 	}
 }
 
-func (m *CloudEvent) formatReason(e event.DiffWatchEvent) string {
+func (m *CloudEvent) formatReason(e event.StatemonitorEvent) string {
 	switch e.Reason {
 	case "Created":
 		return "create"
