@@ -15,7 +15,10 @@ Create the name of the service account to use
 Return the proper statemonitor image name
 */}}
 {{- define "statemonitor.image" -}}
-{{ include "common.images.image" (dict "imageRoot" .Values.image "global" .Values.global) }}
+{{- $registry := .Values.image.registry -}}
+{{- $repository := .Values.image.repository -}}
+{{- $tag := .Values.image.tag -}}
+{{- printf "%s/%s:%s" $registry $repository $tag -}}
 {{- end -}}
 
 {{/*
