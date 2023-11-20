@@ -20,9 +20,9 @@ volumes:
     path: appsettings.json
 
 image:
-  registry:
-  repository: docmarr/kubernetes-statemonitor
-  tag: 1.0.0
+  registry: #default is Docker
+  repository: docmarr/kubestatewatch
+  tag: 1.0.2
   pullPolicy: IfNotPresent
   pullSecrets: []
 hostAliases: []
@@ -50,7 +50,7 @@ flock:
   enabled: false
   url: ""
 msteams:
-  enabled: true
+  enabled: false
   webhookurl: "XXXX"
 webhook:
   enabled: false
@@ -81,13 +81,13 @@ message:
   title: "XXXX"
 diff:
   ignorePath:
-  - "/metadata"
-  - "/spec/template/metadata"
-  - "/status"
-  - "/spec/replicas"
-  - "/lastTimestamp"
-  - "/data/status"
-  - "/count"
+  #- "/metadata"
+  #- "/spec/template/metadata"
+  #- "/status"
+  #- "/spec/replicas"
+  #- "/lastTimestamp"
+  #- "/data/status"
+  #- "/count"
 
   # - "/metadata"
   # - "/status"
@@ -95,8 +95,8 @@ diff:
 namespacesconfig:
   include:
   exclude:
-  - "kube-system"
-  - "cattle-fleet-system"
+  #- "kube-system"
+  #- "cattle-fleet-system"
 resourcesToWatch:
   configmap: true
   daemonset: true
