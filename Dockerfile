@@ -16,7 +16,4 @@ FROM cgr.dev/chainguard/static:latest-glibc
 
 COPY --from=builder /statemonitor /bin/statemonitor
 
-# Propably should be default value and not in the image
-ENV KW_CONFIG=/config
-
 ENTRYPOINT ["/bin/statemonitor"]
