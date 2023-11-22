@@ -35,7 +35,7 @@ Although this aspect is important, our primary focus is on the first scenario: t
 # Latest image
 
 ```
-docmarr/kubernetes-statemonitor:1.0.1
+docmarr/kubestatewatch:1.0.2
 ```
 
 ## Installing the Chart
@@ -53,7 +53,7 @@ The command deploys statemonitor on the Kubernetes cluster in the default config
 $ helm install my-release -f values.yaml statemonitor
 ```
 
-> **Tip**: You can use the default [values.yaml](/charts/diffwatcher/values.yaml)
+> **Tip**: You can use the default [values.yaml](/charts/kubestatewatch/values.yaml)
 ## Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
@@ -80,19 +80,126 @@ Once you have a Teams account and have created a team to work with, take the fol
 
 > **IMPORTANT Note**: There is a msg rate limit per webhook per minute. If you exceed the limit, you will receive a 429 error code. Here is a link for more information on [rate limits](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook#rate-limits).
 
-### Setting Pod's affinity
+### Configure important chart values in `values.yaml`
 
-This chart allows you to set your custom affinity using the `affinity` parameter. Find more information about Pod's affinity in the [kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity).
+Based on the desired communication channel, you need to configure the following values in the `values.yaml` file:
+- Channel .enabled  - where the channel is your desired communication channel (slack, msteams, discord, etc.)
+- Relevant values for the channel (slack.token, msteams.webhook, etc.)
+- `namespaceconfig.include & namespaceconfig.exclude` - the namespaces you want to monitor, By default you monitor everything. If you want to monitor only specific namespaces, you can use the include and exclude options. If you use both, the exclude option will be ignored. You probably want to exclude the kube-system namespace.
+- `resources` - the resources you want to monitor
+- `ignore` - the resources you want to ignore
+- `diff.ignorePath` - the paths you want to ignore in the diff ( Usually /metadata, /status, and everything that is not relevant to you)
 
-As an alternative, you can use of the preset configurations for pod affinity, pod anti-affinity, and node affinity available at the [bitnami/common](https://github.com/bitnami/charts/tree/master/bitnami/common#affinities) chart. To do so, set the `podAffinityPreset`, `podAntiAffinityPreset`, or `nodeAffinityPreset` parameters.
+``` yaml
+message:
+  title: "XXXX"
+diff:
+  ignorePath:
+  #- "/metadata"
+  #- "/spec/template/metadata"
+  #- "/status"
+  #- "/spec/replicas"
+  #- "/lastTimestamp"
+  #- "/data/status"
+  #- "/count"
 
-#### Using Docker:
+  # - "/metadata"
+  # - "/status"
+  # - "/metadata/replicas"
+namespacesconfig:
+  include:
+  exclude:
+  #- "kube-system"
+  #- "cattle-fleet-system"
+resourcesToWatch:
+  configmap: true
+  daemonset: true
+  deployment: true
+  event: false
+  coreevent: false
+  hpa: true
+  job: false
+  persistentvolume: false
+  pod: false
+  replicaset: true
+  replicationcontroller: false
+  node: false
+  services: false
+  ```
+> #### Configure connectors 
 
-To Run statemonitor Container interactively, place the config file in `$HOME/.statemonitor.yaml` location and use the following command.
+You can configure multiple connectors, for example slack and msteams, or slack and smtp, or slack and webhook, etc.
+
+``` yaml
+slack:
+  enabled: false
+  channel: "XXXX"
+  token: "XXXX"
+slackwebhook:
+  enabled: false
+  channel: "XXXX"
+  username: ""
+  emoji: ""
+  slackwebhookurl: "XXXX"
+hipchat:
+  enabled: false
+  room: ""
+  token: ""
+  url: ""
+mattermost:
+  enabled: false
+  channel: ""
+  url: ""
+  username: ""
+flock:
+  enabled: false
+  url: ""
+msteams:
+  enabled: false
+  webhookurl: "XXXX"
+webhook:
+  enabled: false
+  url: ""
+cloudevent:
+  enabled: false
+  url: ""
+lark:
+  enabled: false
+  webhookurl: ""
+smtp:
+  enabled: false
+  to: ""
+  from: ""
+  hello: ""
+  smarthost: ""
+  subject: ""
+  auth:
+    username: ""
+    password: ""
+    secret: ""
+    identity: ""
+  requireTLS: ""
 
 ```
-//TODO: Fix it for json config file
-docker run --rm -it --network host -v $HOME/.statemonitor.yaml:/root/.statemonitor.yaml -v $HOME/.kube/config:/opt/bitnami/statemonitor/.kube/config --name <container-name> us-central1-docker.pkg.dev/genuine-flight-317411/devel/statemonitor
+#### Using Docker:
+
+To Run statemonitor Container interactively, place the config file in `/path/to/your/appsettings.json` location and use the following command.
+
+```
+docker run --rm -it --network host -v /path/to/your/appsettings.json:/config/appsettings.json --name <container-name> docmarr/kubestatewatch:1.0.2
+```
+### Using local docker container
+
+If you want to build the docker image locally, you can use the following commands:
+> clone repo 
+```sh
+git clone github.com/marvasgit/kubernetes-statemonitor.git
+```
+> build docker image and run it 
+```sh
+docker build -t <docker.tagname> .
+
+docker run --rm -it --network host -v /path/to/your/appsettings.json:/config/appsettings.json --name <container-name> <docker.tagname>
 ```
 
 
@@ -133,15 +240,7 @@ statemonitor           latest              919896d3cd90        3 minutes ago    
 
 # Things for future version
 
-- Add support for ignoring specific namespaces and watching more than one namespace (1.0.1)
-- Add metrics (1.0.1)
-- Deeper Diff for configmaps (currently it drops the new configmap as a whole)(1.0.1)
-- Add regex support for path ignorance in diff 
-
-- Change config source file from yaml to json
-- Dissable processing during deployment 
-
-
+- Dissable notification - regular during deployment 
 
 
 # Contribution
