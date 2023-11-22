@@ -36,6 +36,9 @@ slackwebhook:
   username: ""
   emoji: ""
   slackwebhookurl: "XXXX"
+discord:
+  enabled: false
+  webhookurl: "XXXX"
 hipchat:
   enabled: false
   room: ""
@@ -61,7 +64,6 @@ cloudevent:
 lark:
   enabled: false
   webhookurl: ""
-
 smtp:
   enabled: false
   to: ""
