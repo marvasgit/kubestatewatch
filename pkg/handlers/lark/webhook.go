@@ -27,8 +27,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 )
 
 var webhookErrMsg = `
@@ -70,7 +70,7 @@ func (m *Webhook) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (m *Webhook) Handle(e event.DiffWatchEvent) {
+func (m *Webhook) Handle(e event.StatemonitorEvent) {
 	webhookMessage := prepareWebhookMessage(e, m)
 
 	err := postMessage(m.Url, webhookMessage)
@@ -88,7 +88,7 @@ func checkMissingWebhookVars(s *Webhook) error {
 	return nil
 }
 
-func prepareWebhookMessage(e event.DiffWatchEvent, m *Webhook) *TextMessage {
+func prepareWebhookMessage(e event.StatemonitorEvent, m *Webhook) *TextMessage {
 	return &TextMessage{
 		MsgType: "text",
 		Content: &TextContent{Text: e.Message()},

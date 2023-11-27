@@ -18,10 +18,10 @@ import (
 	"strings"
 )
 
-// DiffWatchEvent represent an event got from k8s api server
-// Events from different endpoints need to be casted to DiffWatchEvent
+// StatemonitorEvent represent an event got from k8s api server
+// Events from different endpoints need to be casted to StatemonitorEvent
 // before being able to be handled by handler
-type DiffWatchEvent struct {
+type StatemonitorEvent struct {
 	Namespace  string
 	Kind       string
 	ApiVersion string
@@ -35,7 +35,7 @@ type DiffWatchEvent struct {
 
 // Message returns event message in standard format.
 // included as a part of event packege to enhance code resuablity across handlers.
-func (e *DiffWatchEvent) Message() (msg string) {
+func (e *StatemonitorEvent) Message() (msg string) {
 	// using switch over if..else, since the format could vary based on the kind of the object in future.
 	switch e.Kind {
 	case "namespace":
@@ -84,7 +84,7 @@ func (e *DiffWatchEvent) Message() (msg string) {
 	return msg
 }
 
-func createBoxlikeOutput(e *DiffWatchEvent) string {
+func createBoxlikeOutput(e *StatemonitorEvent) string {
 	var sb strings.Builder
 	sb.Grow(1200)
 

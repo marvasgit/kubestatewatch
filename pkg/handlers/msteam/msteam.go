@@ -22,11 +22,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/message"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/message"
 	"github.com/sirupsen/logrus"
 )
 
@@ -118,10 +117,6 @@ func (ms *MSTeams) Init(c *config.Config) error {
 	webhookURL := c.Handler.MSTeams.WebhookURL
 
 	if webhookURL == "" {
-		webhookURL = os.Getenv("KW_MSTEAMS_WEBHOOKURL")
-	}
-
-	if webhookURL == "" {
 		return fmt.Errorf(msteamsErrMsg, "Missing MS teams webhook URL")
 	}
 
@@ -131,7 +126,7 @@ func (ms *MSTeams) Init(c *config.Config) error {
 }
 
 // Handle handles notification.
-func (ms *MSTeams) Handle(e event.DiffWatchEvent) {
+func (ms *MSTeams) Handle(e event.StatemonitorEvent) {
 	card := &TeamsMessageCard{
 		Type:    messageType,
 		Context: context,

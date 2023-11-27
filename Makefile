@@ -1,11 +1,11 @@
 .PHONY: default build docker-image test stop clean-images clean
 
-BINARY = diffwatcher
+BINARY = statemonitor
 
 VERSION=
 BUILD=
 
-PKG            = github.com/marvasgit/kubernetes-diffwatcher
+PKG            = github.com/marvasgit/kubernetes-statemonitor
 TRAVIS_COMMIT ?= `git describe --tags`
 GOCMD          = go
 BUILD_DATE     = `date +%FT%T%z`

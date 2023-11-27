@@ -1,7 +1,5 @@
-package message
-
 /*
-Copyright 2016 Skippbox, Ltd.
+Copyright 2020 VMWare
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,18 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+package smtpClient
+
 import (
-	"os"
+	"testing"
 )
 
-// GetTitle gets the title of the message from the config file or environment variable or default
-func GetTitle(configName string, envVariableName string) string {
-	title := configName
-	if title == "" {
-		title = os.Getenv(envVariableName)
-		if title == "" {
-			title = "statemonitor"
-		}
-	}
-	return title
+func TestSMTP(t *testing.T) {
+	// TODO(mkmik): setup a in-memory smtp server like https://github.com/bradfitz/go-smtpd
 }

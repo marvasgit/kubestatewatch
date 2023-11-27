@@ -1,0 +1,186 @@
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+kubeVersion: ""
+nameOverride: ""
+fullnameOverride: ""
+commonLabels: {}
+commonAnnotations: {}
+diagnosticMode:
+  enabled: false
+  command:
+  - sleep
+  args:
+  - infinity
+extraDeploy: []
+mountpath: /config
+volumes:
+  items:
+  - key: appsettings.json
+    path: appsettings.json
+
+image:
+  registry: #default is Docker
+  repository: docmarr/kubestatewatch
+  tag: 1.0.2
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+hostAliases: []
+slack:
+  enabled: false
+  channel: "XXXX"
+  token: "XXXX"
+slackwebhook:
+  enabled: false
+  channel: "XXXX"
+  username: ""
+  emoji: ""
+  slackwebhookurl: "XXXX"
+discord:
+  enabled: false
+  webhookurl: "XXXX"
+hipchat:
+  enabled: false
+  room: ""
+  token: ""
+  url: ""
+mattermost:
+  enabled: false
+  channel: ""
+  url: ""
+  username: ""
+flock:
+  enabled: false
+  url: ""
+msteams:
+  enabled: false
+  webhookurl: "XXXX"
+webhook:
+  enabled: false
+  url: ""
+cloudevent:
+  enabled: false
+  url: ""
+lark:
+  enabled: false
+  webhookurl: ""
+smtp:
+  enabled: false
+  to: ""
+  from: ""
+  hello: ""
+  smarthost: ""
+  subject: ""
+  auth:
+    username: ""
+    password: ""
+    secret: ""
+    identity: ""
+  requireTLS: ""
+
+extraHandlers: {}
+message:
+  title: "XXXX"
+diff:
+  ignorePath:
+  #- "/metadata"
+  #- "/spec/template/metadata"
+  #- "/status"
+  #- "/spec/replicas"
+  #- "/lastTimestamp"
+  #- "/data/status"
+  #- "/count"
+
+  # - "/metadata"
+  # - "/status"
+  # - "/metadata/replicas"
+namespacesconfig:
+  include:
+  exclude:
+  #- "kube-system"
+  #- "cattle-fleet-system"
+resourcesToWatch:
+  configmap: true
+  daemonset: true
+  deployment: true
+  event: false
+  coreevent: false
+  hpa: true
+  job: false
+  persistentvolume: false
+  pod: false
+  replicaset: true
+  replicationcontroller: false
+  node: false
+  services: false
+lifecycleHooks: {}
+extraEnvVars: []
+extraEnvVarsCM: ""
+extraEnvVarsSecret: ""
+replicaCount: 1
+podSecurityContext:
+  enabled: false
+  fsGroup: ""
+containerSecurityContext:
+  enabled: false
+  runAsUser: ""
+  runAsNonRoot: ""
+resources:
+  ## Example:
+  ## limits:
+  ##    cpu: 200m
+  ##    memory: 256Mi
+  limits: {}
+  ## Examples:
+  ## requests:
+  ##    cpu: 100m
+  ##    memory: 10Mi
+  requests: {}
+startupProbe:
+  enabled: false
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 1
+  failureThreshold: 3
+  successThreshold: 1
+livenessProbe:
+  enabled: false
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 1
+  failureThreshold: 3
+  successThreshold: 1
+readinessProbe:
+  enabled: false
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 1
+  failureThreshold: 3
+  successThreshold: 1
+updateStrategy:
+  type: RollingUpdate
+initContainers: []
+sidecars: []
+rbac:
+  create: true
+serviceAccount:
+  create: true
+  name: ""
+  automountServiceAccountToken: true
+  annotations: {}
+  additionalLabels: {}
+podMonitor:
+  enabled: true
+  endpoint: "/metrics"
+  interval: 30s
+  scrapeTimeout: 10s
+  namespace: monitoring
+  additionalLabels:
+    release: "kube-prometheus-stack"
+  relabelings:
+  - sourceLabels: [__meta_kubernetes_pod_node_name]
+    separator: ;
+    targetLabel: instance
+    replacement: $1
+    action: replace
+
