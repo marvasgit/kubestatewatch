@@ -49,4 +49,29 @@ entries:
     urls:
     - https://github.com/marvasgit/kubernetes-diffwatcher/releases/download/diffwatcher-1.0.0/diffwatcher-1.0.0.tgz
     version: 1.0.0
-generated: "2023-09-15T19:33:10.590468663Z"
+  statemonitor:
+  - annotations:
+      category: Infrastructure
+    apiVersion: v2
+    appVersion: 1.0.1
+    created: "2023-11-28T04:26:01.823758969Z"
+    description: statemonitor is a Kubernetes Difference watcher that currently publishes
+      notification to needed channels. Run it in your k8s cluster, and you will get
+      event notifications in a configured channels.
+    digest: 8f922709f09dee274e31bd7388a6ad49f332fae87d3e6507d60f2e6bcfeccfc8
+    home: https://github.com/marvasgit/kubernetes-statemonitor
+    icon: https://github.com/marvasgit/kubernetes-statemonitor/docs/statemonitor-logo-240.png
+    keywords:
+    - kubernetes
+    - slack
+    - hipchat
+    - mattermost
+    - flock
+    - msteams
+    name: statemonitor
+    sources:
+    - https://github.com/marvasgit/kubernetes-statemonitor
+    urls:
+    - https://github.com/marvasgit/kubernetes-statemonitor/releases/download/statemonitor-1.0.1/statemonitor-1.0.1.tgz
+    version: 1.0.1
+generated: "2023-11-28T04:26:01.823779588Z"
