@@ -48,7 +48,7 @@ var configStr = `
 
 //func TestLoadOK(t *testing.T) {
 //	content := []byte(configStr)
-//	tmpConfigFile, err := ioutil.TempFile(homeDir(), "diffwatcher")
+//	tmpConfigFile, err := ioutil.TempFile(homeDir(), "statemonitor")
 //	if err != nil {
 //		t.Fatalf("TestLoad(): %+v", err)
 //	}
@@ -64,7 +64,7 @@ var configStr = `
 //		t.Fatalf("TestLoad(): %+v", err)
 //	}
 //
-//	ConfigFileName = "diffwatcher"
+//	ConfigFileName = "statemonitor"
 //
 //	c, err := New()
 //

@@ -27,8 +27,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 )
 
 var mattermostColors = map[string]string{
@@ -100,7 +100,7 @@ func (m *Mattermost) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (m *Mattermost) Handle(e event.DiffWatchEvent) {
+func (m *Mattermost) Handle(e event.StatemonitorEvent) {
 	mattermostMessage := prepareMattermostMessage(e, m)
 
 	err := postMessage(m.Url, mattermostMessage)
@@ -120,7 +120,7 @@ func checkMissingMattermostVars(s *Mattermost) error {
 	return nil
 }
 
-func prepareMattermostMessage(e event.DiffWatchEvent, m *Mattermost) *MattermostMessage {
+func prepareMattermostMessage(e event.StatemonitorEvent, m *Mattermost) *MattermostMessage {
 	return &MattermostMessage{
 		Channel:  m.Channel,
 		Username: m.Username,

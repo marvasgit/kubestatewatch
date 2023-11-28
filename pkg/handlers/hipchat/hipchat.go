@@ -26,8 +26,8 @@ import (
 
 	"net/url"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 )
 
 var hipchatColors = map[string]hipchat.Color{
@@ -84,7 +84,7 @@ func (s *Hipchat) Init(c *config.Config) error {
 }
 
 // Handle handles the notification.
-func (s *Hipchat) Handle(e event.DiffWatchEvent) {
+func (s *Hipchat) Handle(e event.StatemonitorEvent) {
 	client := hipchat.NewClient(s.Token)
 	if s.Url != "" {
 		baseUrl, err := url.Parse(s.Url)
@@ -113,11 +113,11 @@ func checkMissingHipchatVars(s *Hipchat) error {
 	return nil
 }
 
-func prepareHipchatNotification(e event.DiffWatchEvent) hipchat.NotificationRequest {
+func prepareHipchatNotification(e event.StatemonitorEvent) hipchat.NotificationRequest {
 	notification := hipchat.NotificationRequest{
 		Message: e.Message(),
 		Notify:  true,
-		From:    "diffwatcher",
+		From:    "statemonitor",
 	}
 
 	if color, ok := hipchatColors[e.Status]; ok {

@@ -9,8 +9,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 	"github.com/mohae/deepcopy"
 	"github.com/stretchr/testify/assert"
 )
@@ -24,8 +24,8 @@ func TestSendCard_Success(t *testing.T) {
 	initCard := &TeamsMessageCard{
 		Type:    messageType,
 		Context: context,
-		Summary: "diffwatcher notification received",
-		Title:   "diffwatcher",
+		Summary: "statemonitor notification received",
+		Title:   "statemonitor",
 
 		Sections: []TeamsMessageCardSection{
 			{
@@ -40,8 +40,8 @@ func TestSendCard_Success(t *testing.T) {
 	expectedCard := &TeamsMessageCard{
 		Type:    messageType,
 		Context: context,
-		Summary: "diffwatcher notification received",
-		Title:   "diffwatcher",
+		Summary: "statemonitor notification received",
+		Title:   "statemonitor",
 
 		Sections: []TeamsMessageCardSection{
 			{
@@ -52,7 +52,7 @@ func TestSendCard_Success(t *testing.T) {
 
 	ms := &MSTeams{
 		TeamsWebhookURL: server.URL,
-		Title:           "diffwatcher",
+		Title:           "statemonitor",
 	}
 
 	response, err := sendCard(ms, expectedCard)
@@ -132,7 +132,7 @@ func TestInit_MissingWebhookURL(t *testing.T) {
 	assert.Error(t, err)
 }
 
-var msTeamsTestMessage = event.DiffWatchEvent{
+var msTeamsTestMessage = event.StatemonitorEvent{
 	Name:      "foo",
 	Namespace: "new",
 	Kind:      "pod",
@@ -152,7 +152,7 @@ func TestInit(t *testing.T) {
 
 	for _, tt := range Tests {
 		c := &config.Config{}
-		c.Message.Title = "diffwatcher"
+		c.Message.Title = "statemonitor"
 		c.Handler.MSTeams = tt.ms
 		if err := s.Init(c); !reflect.DeepEqual(err, tt.err) {
 			t.Fatalf("Init(): %v", err)
@@ -162,7 +162,7 @@ func TestInit(t *testing.T) {
 
 // Tests ObjectCreated() by passing v1.Pod
 func TestObjectCreated(t *testing.T) {
-	e := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
+	e := deepcopy.Copy(msTeamsTestMessage).(event.StatemonitorEvent)
 	e.Reason = "Created"
 	e.Namespace = "new"
 	e.Status = "Normal"
@@ -171,8 +171,8 @@ func TestObjectCreated(t *testing.T) {
 		Type:       messageType,
 		Context:    context,
 		ThemeColor: msTeamsColors["Normal"],
-		Summary:    "diffwatcher notification received",
-		Title:      "diffwatcher",
+		Summary:    "statemonitor notification received",
+		Title:      "statemonitor",
 		Text:       "",
 
 		Sections: []TeamsMessageCardSection{
@@ -186,8 +186,8 @@ func TestObjectCreated(t *testing.T) {
 	ts := httptestConfig(t, expectedCard, "ObjectCreated")
 	defer ts.Close()
 
-	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
-	p := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
+	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "statemonitor"}
+	p := deepcopy.Copy(msTeamsTestMessage).(event.StatemonitorEvent)
 	p.Reason = e.Reason
 	p.Status = "Normal"
 	ms.Handle(p)
@@ -195,15 +195,15 @@ func TestObjectCreated(t *testing.T) {
 
 // Tests ObjectDeleted() by passing v1.Pod
 func TestObjectDeleted(t *testing.T) {
-	e := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
+	e := deepcopy.Copy(msTeamsTestMessage).(event.StatemonitorEvent)
 	e.Reason = "Deleted"
 	e.Status = "Danger"
 	expectedCard := TeamsMessageCard{
 		Type:       messageType,
 		Context:    context,
 		ThemeColor: msTeamsColors["Danger"],
-		Summary:    "diffwatcher notification received",
-		Title:      "diffwatcher",
+		Summary:    "statemonitor notification received",
+		Title:      "statemonitor",
 		Text:       "",
 		Sections: []TeamsMessageCardSection{
 			{
@@ -216,9 +216,9 @@ func TestObjectDeleted(t *testing.T) {
 	ts := httptestConfig(t, expectedCard, "ObjectDeleted")
 	defer ts.Close()
 
-	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
+	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "statemonitor"}
 
-	p := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
+	p := deepcopy.Copy(msTeamsTestMessage).(event.StatemonitorEvent)
 	p.Status = "Danger"
 	p.Reason = "Deleted"
 
@@ -227,7 +227,7 @@ func TestObjectDeleted(t *testing.T) {
 
 // Tests ObjectUpdated() by passing v1.Pod
 func TestObjectUpdated(t *testing.T) {
-	e := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
+	e := deepcopy.Copy(msTeamsTestMessage).(event.StatemonitorEvent)
 	e.Status = "Warning"
 	e.Reason = "Updated"
 
@@ -235,8 +235,8 @@ func TestObjectUpdated(t *testing.T) {
 		Type:       messageType,
 		Context:    context,
 		ThemeColor: msTeamsColors["Warning"],
-		Summary:    "diffwatcher notification received",
-		Title:      "diffwatcher",
+		Summary:    "statemonitor notification received",
+		Title:      "statemonitor",
 		Text:       "",
 		Sections: []TeamsMessageCardSection{
 			{
@@ -249,9 +249,9 @@ func TestObjectUpdated(t *testing.T) {
 	ts := httptestConfig(t, expectedCard, "ObjectUpdated")
 	defer ts.Close()
 
-	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "diffwatcher"}
+	ms := &MSTeams{TeamsWebhookURL: ts.URL, Title: "statemonitor"}
 
-	oldP := deepcopy.Copy(msTeamsTestMessage).(event.DiffWatchEvent)
+	oldP := deepcopy.Copy(msTeamsTestMessage).(event.StatemonitorEvent)
 	oldP.Reason = "Updated"
 	oldP.Status = "Warning"
 
@@ -274,7 +274,7 @@ func httptestConfig(t *testing.T, expectedCard TeamsMessageCard, action string) 
 		}
 	}))
 }
-func getFacts(e event.DiffWatchEvent) []TeamsMessageCardSectionFacts {
+func getFacts(e event.StatemonitorEvent) []TeamsMessageCardSectionFacts {
 	return []TeamsMessageCardSectionFacts{
 		{
 			Name:  "Type",

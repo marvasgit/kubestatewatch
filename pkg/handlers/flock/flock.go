@@ -27,8 +27,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/marvasgit/kubernetes-diffwatcher/config"
-	"github.com/marvasgit/kubernetes-diffwatcher/pkg/event"
+	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
 )
 
 var flockColors = map[string]string{
@@ -88,7 +88,7 @@ func (f *Flock) Init(c *config.Config) error {
 }
 
 // Handle handles an event.
-func (f *Flock) Handle(e event.DiffWatchEvent) {
+func (f *Flock) Handle(e event.StatemonitorEvent) {
 	flockMessage := prepareFlockMessage(e, f)
 
 	err := postMessage(f.Url, flockMessage)
@@ -108,10 +108,10 @@ func checkMissingFlockVars(s *Flock) error {
 	return nil
 }
 
-func prepareFlockMessage(e event.DiffWatchEvent, f *Flock) *FlockMessage {
+func prepareFlockMessage(e event.StatemonitorEvent, f *Flock) *FlockMessage {
 	return &FlockMessage{
-		Text:         "diffwatcher Alert",
-		Notification: "diffwatcher Alert",
+		Text:         "statemonitor Alert",
+		Notification: "statemonitor Alert",
 		Attachements: []FlockMessageAttachement{
 			{
 				Title: e.Message(),
