@@ -16,7 +16,7 @@ KubeStateWatch is an extended and simplified version of [kubewatch](https://gith
 [![Build Status](https://travis-ci.org/marvasgit/kubernetes-statemonitor.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-statemonitor) 
 [![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubernetes-statemonitor)](https://goreportcard.com/report/github.com/marvasgit/kubernetes-statemonitor) 
 [![codecov](https://codecov.io/gh/marvasgit/kubernetes-statemonitor/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubernetes-statemonitor)
-[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-statemonitor.svg)](https://hub.docker.com/repository/docker/docmarr/kubernetes-statemonitor) 
+[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-statemonitor.svg)](https://hub.docker.com/repository/docker/docmarr/kubestatewatch) 
 ![GitHub release](https://img.shields.io/github/release/marvasgit/kubernetes-statemonitor.svg)
 </div>
 
