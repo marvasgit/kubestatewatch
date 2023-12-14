@@ -18,9 +18,8 @@ volumes:
   items:
   - key: appsettings.json
     path: appsettings.json
-
 image:
-  registry: #default is Docker
+  registry: docker.io
   repository: docmarr/kubestatewatch
   tag: 1.0.2
   pullPolicy: IfNotPresent
@@ -53,7 +52,7 @@ flock:
   enabled: false
   url: ""
 msteams:
-  enabled: false
+  enabled: true
   webhookurl: "XXXX"
 webhook:
   enabled: false
@@ -82,23 +81,23 @@ extraHandlers: {}
 message:
   title: "XXXX"
 diff:
-  ignorePath:
-  #- "/metadata"
-  #- "/spec/template/metadata"
-  #- "/status"
-  #- "/spec/replicas"
-  #- "/lastTimestamp"
-  #- "/data/status"
-  #- "/count"
+  ignorePath: []
+  # - "/metadata"
+  # - "/spec/template/metadata"
+  # - "/status"
+  # - "/spec/replicas"
+  # - "/lastTimestamp"
+  # - "/data/status"
+  # - "/count"
 
   # - "/metadata"
   # - "/status"
   # - "/metadata/replicas"
 namespacesconfig:
-  include:
+  #include: []
   exclude:
-  #- "kube-system"
-  #- "cattle-fleet-system"
+  - "kube-system"
+  - "cattle-fleet-system"
 resourcesToWatch:
   configmap: true
   daemonset: true
