@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"strings"
 	"sync"
 	"time"
@@ -98,25 +97,4 @@ func (l *TTLList) removeExpired() {
 		}
 	}
 	l.items = validItems
-}
-
-func main() {
-	list := NewTTLList()
-
-	list.Add("Hello", 5*time.Second)
-	list.Add("World", 10*time.Second)
-	list.Contains("Hello")
-
-	// Wait for some time and then remove an item
-	time.Sleep(3 * time.Second)
-	list.Remove("Hello")
-
-	// Wait for more time and check the list
-	time.Sleep(4 * time.Second)
-
-	// Output current list items
-	fmt.Println("List after 7 seconds:")
-	for _, item := range list.items {
-		fmt.Println(item.Value)
-	}
 }
