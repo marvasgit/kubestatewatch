@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"context"
+	"fmt"
 	"strings"
 	"sync"
 	"time"
@@ -42,19 +44,20 @@ func NewTTLList() *TTLList {
 }
 
 // Add adds a new item to the list with a specified TTL.
-func (l *TTLList) Add(value string, ttl time.Duration) {
+func (l *TTLList) Add(value string, ttl time.Duration) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	lowercaseValue := strings.ToLower(value)
 	// Check if value already exists in the list
 	if l.items.ExtendIfExists(lowercaseValue, ttl) {
-		return
+		return nil
 	}
 
 	l.items = append(l.items, Item{
 		Value:     lowercaseValue,
 		ExpiresAt: time.Now().Add(ttl),
 	})
+	return nil
 }
 
 // Contains checks if a value exists in the list.
@@ -97,4 +100,25 @@ func (l *TTLList) removeExpired() {
 		}
 	}
 	l.items = validItems
+}
+
+type httpInput struct {
+	Namespace    string `json:"namespace"`
+	ExpiresAfter int8   `json:"expires_after_minutes"`
+}
+
+func StartUpdateRoutine(ctx context.Context, resource *TTLList, updateCh <-chan httpInput) {
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case value := <-updateCh:
+
+				if err := resource.Add(value.Namespace, time.Duration(value.ExpiresAfter)*time.Minute); err != nil {
+					fmt.Printf("Error setting value: %v\n", err)
+				}
+			}
+		}
+	}()
 }
