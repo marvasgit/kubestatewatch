@@ -138,7 +138,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, allCoreEventsInformer, objName(api_v1.Event{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, allCoreEventsInformer, objName(api_v1.Event{}), V1, conf.Diff.CoreEvent)
 
 		go c.Run(stopCh)
 	}
@@ -161,19 +161,22 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, allEventsInformer, objName(events_v1.Event{}), EVENTS_V1)
+		c := newResourceController(kubeClient, eventHandlers, allEventsInformer, objName(events_v1.Event{}), EVENTS_V1, conf.Diff.Event)
 
 		go c.Run(stopCh)
 	}
 
 	if conf.Resource.Pod {
+		pods := kubeClient.CoreV1().Pods(ns)
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.CoreV1().Pods(ns).List(context.Background(), options)
+					ll, err := pods.List(context.Background(), options)
+					return ll, err
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.CoreV1().Pods(ns).Watch(context.Background(), options)
+					ww, err := pods.Watch(context.Background(), options)
+					return ww, err
 				},
 			},
 			&api_v1.Pod{},
@@ -181,7 +184,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Pod{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Pod{}), V1, conf.Diff.Pod)
 
 		go c.Run(stopCh)
 	}
@@ -201,7 +204,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(autoscaling_v1.HorizontalPodAutoscaler{}), AUTOSCALING_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(autoscaling_v1.HorizontalPodAutoscaler{}), AUTOSCALING_V1, conf.Diff.HPA)
 
 		go c.Run(stopCh)
 
@@ -222,7 +225,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.DaemonSet{}), APPS_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.DaemonSet{}), APPS_V1, conf.Diff.DaemonSet)
 
 		go c.Run(stopCh)
 	}
@@ -242,7 +245,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.StatefulSet{}), APPS_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.StatefulSet{}), APPS_V1, conf.Diff.StatefulSet)
 		go c.Run(stopCh)
 	}
 
@@ -261,7 +264,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.ReplicaSet{}), APPS_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.ReplicaSet{}), APPS_V1, conf.Diff.ReplicaSet)
 
 		go c.Run(stopCh)
 	}
@@ -281,7 +284,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Service{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Service{}), V1, conf.Diff.Services)
 
 		go c.Run(stopCh)
 	}
@@ -301,7 +304,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.Deployment{}), APPS_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.Deployment{}), APPS_V1, conf.Diff.Deployment)
 
 		go c.Run(stopCh)
 	}
@@ -321,7 +324,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Namespace{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Namespace{}), V1, conf.Diff.Namespace)
 
 		go c.Run(stopCh)
 	}
@@ -341,7 +344,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ReplicationController{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ReplicationController{}), V1, conf.Diff.ReplicationController)
 
 		go c.Run(stopCh)
 	}
@@ -361,7 +364,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(batch_v1.Job{}), BATCH_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(batch_v1.Job{}), BATCH_V1, conf.Diff.Job)
 
 		go c.Run(stopCh)
 	}
@@ -381,7 +384,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Node{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Node{}), V1, conf.Diff.Node)
 
 		go c.Run(stopCh)
 	}
@@ -401,7 +404,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ServiceAccount{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ServiceAccount{}), V1, conf.Diff.ServiceAccount)
 
 		go c.Run(stopCh)
 	}
@@ -421,7 +424,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(rbac_v1.ClusterRole{}), RBAC_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(rbac_v1.ClusterRole{}), RBAC_V1, conf.Diff.ClusterRole)
 
 		go c.Run(stopCh)
 	}
@@ -441,7 +444,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(rbac_v1.ClusterRoleBinding{}), RBAC_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(rbac_v1.ClusterRoleBinding{}), RBAC_V1, conf.Diff.ClusterRoleBinding)
 
 		go c.Run(stopCh)
 	}
@@ -461,7 +464,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.PersistentVolume{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.PersistentVolume{}), V1, conf.Diff.PersistentVolume)
 
 		go c.Run(stopCh)
 	}
@@ -481,7 +484,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Secret{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Secret{}), V1, conf.Diff.Secret)
 
 		go c.Run(stopCh)
 	}
@@ -501,7 +504,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ConfigMap{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ConfigMap{}), V1, conf.Diff.ConfigMap)
 
 		go c.Run(stopCh)
 	}
@@ -521,7 +524,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(networking_v1.Ingress{}), NETWORKING_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(networking_v1.Ingress{}), NETWORKING_V1, conf.Diff.Ingress)
 
 		go c.Run(stopCh)
 	}
@@ -532,7 +535,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 }
 
 // TODO: proper implementation of this function without the hack of multi ns
-func newResourceController(client kubernetes.Interface, eventHandlers []handlers.Handler, informer cache.SharedIndexInformer, resourceType string, apiVersion string) *Controller {
+func newResourceController(client kubernetes.Interface, eventHandlers []handlers.Handler, informer cache.SharedIndexInformer, resourceType string, apiVersion string, diffConfig diffConfig) *Controller {
 	queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
 	var newEvent Event
 	var err error

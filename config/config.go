@@ -44,8 +44,6 @@ type Config struct {
 	// Handlers know how to send notifications to specific services.
 	Handler Handler
 
-	//Reason   []string
-
 	// Resources to watch.
 	Resource Resource
 
@@ -65,8 +63,37 @@ type NamespacesConfig struct {
 	Exclude []string
 }
 
+type diffConfig struct {
+	Enabled bool
+	// process events based on its type
+	//create, update, delete
+	//if empty, all events will be processed
+	IncludeEvenTypes []string
+	IgnorePath       []string
+}
 type Diff struct {
-	IgnorePath []string
+	//IgnorePath for all resources
+	IgnorePath            []string
+	Deployment            diffConfig
+	ReplicationController diffConfig
+	ReplicaSet            diffConfig
+	DaemonSet             diffConfig
+	StatefulSet           diffConfig
+	Services              diffConfig
+	Pod                   diffConfig
+	Job                   diffConfig
+	Node                  diffConfig
+	ClusterRole           diffConfig
+	ClusterRoleBinding    diffConfig
+	ServiceAccount        diffConfig
+	PersistentVolume      diffConfig
+	Namespace             diffConfig
+	Secret                diffConfig
+	ConfigMap             diffConfig
+	Ingress               diffConfig
+	HPA                   diffConfig
+	Event                 diffConfig
+	CoreEvent             diffConfig
 }
 
 // Message contains message configuration.
