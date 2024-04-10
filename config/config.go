@@ -17,26 +17,26 @@ type Handler struct {
 
 // Resource contains resource configuration
 type Resource struct {
-	Deployment            bool
-	ReplicationController bool
-	ReplicaSet            bool
-	DaemonSet             bool
-	StatefulSet           bool
-	Services              bool
-	Pod                   bool
-	Job                   bool
-	Node                  bool
-	ClusterRole           bool
-	ClusterRoleBinding    bool
-	ServiceAccount        bool
-	PersistentVolume      bool
-	Namespace             bool
-	Secret                bool
-	ConfigMap             bool
-	Ingress               bool
-	HPA                   bool
-	Event                 bool
-	CoreEvent             bool
+	Deployment            ResourceConfig
+	ReplicationController ResourceConfig
+	ReplicaSet            ResourceConfig
+	DaemonSet             ResourceConfig
+	StatefulSet           ResourceConfig
+	Services              ResourceConfig
+	Pod                   ResourceConfig
+	Job                   ResourceConfig
+	Node                  ResourceConfig
+	ClusterRole           ResourceConfig
+	ClusterRoleBinding    ResourceConfig
+	ServiceAccount        ResourceConfig
+	PersistentVolume      ResourceConfig
+	Namespace             ResourceConfig
+	Secret                ResourceConfig
+	ConfigMap             ResourceConfig
+	Ingress               ResourceConfig
+	HPA                   ResourceConfig
+	Event                 ResourceConfig
+	CoreEvent             ResourceConfig
 }
 
 // Config struct contains statemonitor configuration
@@ -63,7 +63,7 @@ type NamespacesConfig struct {
 	Exclude []string
 }
 
-type diffConfig struct {
+type ResourceConfig struct {
 	Enabled bool
 	// process events based on its type
 	//create, update, delete
@@ -73,27 +73,7 @@ type diffConfig struct {
 }
 type Diff struct {
 	//IgnorePath for all resources
-	IgnorePath            []string
-	Deployment            diffConfig
-	ReplicationController diffConfig
-	ReplicaSet            diffConfig
-	DaemonSet             diffConfig
-	StatefulSet           diffConfig
-	Services              diffConfig
-	Pod                   diffConfig
-	Job                   diffConfig
-	Node                  diffConfig
-	ClusterRole           diffConfig
-	ClusterRoleBinding    diffConfig
-	ServiceAccount        diffConfig
-	PersistentVolume      diffConfig
-	Namespace             diffConfig
-	Secret                diffConfig
-	ConfigMap             diffConfig
-	Ingress               diffConfig
-	HPA                   diffConfig
-	Event                 diffConfig
-	CoreEvent             diffConfig
+	IgnorePath []string
 }
 
 // Message contains message configuration.
