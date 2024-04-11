@@ -99,20 +99,125 @@ namespacesconfig:
   exclude:
   #- "kube-system"
   #- "cattle-fleet-system"
+
 resourcesToWatch:
-  configmap: true
-  daemonset: true
-  deployment: true
-  event: false
-  coreevent: false
-  hpa: true
-  job: false
-  persistentvolume: false
-  pod: false
-  replicaset: true
-  replicationcontroller: false
-  node: false
-  services: false
+  configmap:
+    enabled: true
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  daemonset:
+    enabled: true
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  deployment:
+    enabled: true
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  event:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  coreevent:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  hpa:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  job:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  persistentvolume:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  pod:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  replicaset:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  replicationcontroller:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  node:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  services:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
 lifecycleHooks: {}
 extraEnvVars: []
 extraEnvVarsCM: ""
