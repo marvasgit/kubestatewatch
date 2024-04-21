@@ -1,21 +1,61 @@
 package main
 
 import (
+	"context"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
+	"github.com/julienschmidt/httprouter"
 	"github.com/marvasgit/kubernetes-statemonitor/pkg/client"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/utils"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
 
+var list = utils.NewTTLList()
+
 func main() {
+	// Create a context with cancellation
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	router := httprouter.New()
+
+	router.GET("/metrics", Metrics)
+	router.GET("/DeployNs", NamespaceDeployment)
 	go func() {
-		http.Handle("/metrics", promhttp.Handler())
-		http.ListenAndServe(":2112", nil)
+		http.ListenAndServe(":80", router)
 	}()
+
 	initLogger()
-	client.Start()
+	client.Start(ctx, list)
+}
+func Metrics(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	promhttp.Handler().ServeHTTP(w, r)
+}
+
+func NamespaceDeployment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	queryValues := r.URL.Query()
+	namespace := queryValues.Get("namespace")
+	timeInMinutesStr := queryValues.Get("time")
+
+	//set default time to 5 minutes if not provided
+	if timeInMinutesStr == "" {
+		timeInMinutesStr = "2"
+	}
+
+	// Parse JSON request body
+	// Parse timeInMinutes from string to int
+	timeInMinutes, err := strconv.Atoi(timeInMinutesStr)
+	if err != nil {
+		http.Error(w, "Invalid time value", http.StatusBadRequest)
+		return
+	}
+	list.Add(namespace, time.Duration(timeInMinutes)*time.Minute)
+
+	// Send response
+	w.WriteHeader(http.StatusCreated)
 }
 
 func initLogger() {

@@ -71,6 +71,7 @@ var confDiff config.Diff
 var namespaces []string
 var metric *prometheus.CounterVec
 var mu sync.Mutex
+var ttlList *utils.TTLList
 
 // Event indicate the informerEvent
 type EventWrapper struct {
@@ -111,7 +112,8 @@ func init() {
 
 // TODO: we don't need the informer to be indexed
 // Start prepares watchers and run their controllers, then waits for process termination signals
-func Start(conf *config.Config, eventHandlers []handlers.Handler) {
+func Start(conf *config.Config, eventHandlers []handlers.Handler, list *utils.TTLList) {
+	ttlList = list
 	//TODO remove imput of evenhandlers and decide here
 	var kubeClient kubernetes.Interface
 
@@ -743,7 +745,11 @@ func (c *Controller) processItem(eventWrapper EventWrapper) error {
 	} else {
 		newEvent.namespace = objectMeta.Namespace
 	}
-
+	//check if deployment is in process
+	if ttlList.Contains(newEvent.namespace) {
+		logrus.Warnf("Deployment is in process for %v timeleft %v", newEvent.namespace, ttlList.GetTTL(newEvent.namespace).String())
+		return nil
+	}
 	// process events based on its type
 	switch newEvent.eventType {
 	case "create":
@@ -920,6 +926,7 @@ func getNamespaces(clientset kubernetes.Interface, namespacesConfig *config.Name
 	logrus.Infof("Namespaces to watch %v", namespaces)
 	return namespaces
 }
+
 func handleMetric(newEvent Event) {
 	mu.Lock()
 	defer mu.Unlock()
