@@ -76,6 +76,13 @@ func (l *TTLList) Contains(value string) bool {
 	return l.items.ExtendIfExists(strings.ToLower(value), 0)
 }
 
+// REMOVE ALL
+func (l *TTLList) Reset() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.items = ItemSlice{}
+}
+
 // Remove removes items from the list based on a matching value.
 func (l *TTLList) Remove(value string) {
 	l.mu.Lock()
