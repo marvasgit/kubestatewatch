@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"os"
 
 	"github.com/knadh/koanf/parsers/json"
 	"github.com/knadh/koanf/providers/file"
@@ -35,7 +36,14 @@ var k = koanf.New(".")
 
 func loadConfig() config.Config {
 	// Load JSON config.
-	if err := k.Load(file.Provider("./appsettings.json"), json.Parser()); err != nil {
+	//read envVariable IsLOCAL
+	isLocal := os.Getenv("IsLOCAL")
+	configPath := "/config/appsettings.json"
+	if isLocal == "true" {
+		configPath = "appsettings.json"
+	}
+
+	if err := k.Load(file.Provider(configPath), json.Parser()); err != nil {
 		logrus.Fatalf("error loading config: %v", err)
 	}
 
