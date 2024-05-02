@@ -94,7 +94,7 @@ diff:
   # - "/status"
   # - "/metadata/replicas"
 namespacesconfig:
-  #include: []
+  include:
   exclude:
   #- "kube-system"
   #- "cattle-fleet-system"
