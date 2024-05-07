@@ -77,7 +77,7 @@ curl -X POST http://localhost:8080/reset
 # Latest image
 
 ```
-docmarr/kubestatewatch:1.0.2
+docmarr/kubestatewatch:2.0.0
 ```
 
 ## Installing the Chart
@@ -85,8 +85,8 @@ docmarr/kubestatewatch:1.0.2
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm repo add statemonitor https://marvasgit.github.io/kubernetes-statemonitor/
-$ helm install my-release statemonitor -n NS
+$ helm repo add kubestatewatch https://marvasgit.github.io/kubernetes-statemonitor/
+$ helm install my-release kubestatewatch -n NS
 ```
 
 The command deploys statemonitor on the Kubernetes cluster in the default configuration. With the default configuration, the chart monitors all namespaces. 
