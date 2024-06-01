@@ -1,6 +1,9 @@
 package client
 
 import (
+	"context"
+	"os"
+
 	"github.com/knadh/koanf/parsers/json"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
@@ -17,14 +20,15 @@ import (
 	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/slackwebhook"
 	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/smtpClient"
 	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/webhook"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
-func Start() {
+func Start(ctx context.Context, list *utils.TTLList) {
 
 	conf := loadConfig()
 	handlers := parseEventHandler(&conf)
-	controller.Start(&conf, handlers)
+	controller.Start(&conf, handlers, list)
 }
 
 // Global koanf instance. Use "." as the key path delimiter. This can be "/" or any character.
@@ -32,7 +36,14 @@ var k = koanf.New(".")
 
 func loadConfig() config.Config {
 	// Load JSON config.
-	if err := k.Load(file.Provider("/config/appsettings.json"), json.Parser()); err != nil {
+	//read envVariable IsLOCAL
+	isLocal := os.Getenv("IsLOCAL")
+	configPath := "/config/appsettings.json"
+	if isLocal == "true" {
+		configPath = "appsettings.json"
+	}
+
+	if err := k.Load(file.Provider(configPath), json.Parser()); err != nil {
 		logrus.Fatalf("error loading config: %v", err)
 	}
 

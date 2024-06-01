@@ -71,6 +71,13 @@ var confDiff config.Diff
 var namespaces []string
 var metric *prometheus.CounterVec
 var mu sync.Mutex
+var ttlList *utils.TTLList
+
+// Event indicate the informerEvent
+type EventWrapper struct {
+	Event          Event
+	ResourceConfig *config.ResourceConfig
+}
 
 // Event indicate the informerEvent
 type Event struct {
@@ -105,7 +112,8 @@ func init() {
 
 // TODO: we don't need the informer to be indexed
 // Start prepares watchers and run their controllers, then waits for process termination signals
-func Start(conf *config.Config, eventHandlers []handlers.Handler) {
+func Start(conf *config.Config, eventHandlers []handlers.Handler, list *utils.TTLList) {
+	ttlList = list
 	//TODO remove imput of evenhandlers and decide here
 	var kubeClient kubernetes.Interface
 
@@ -121,7 +129,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 	ns := ""
 	defer close(stopCh)
 
-	if conf.Resource.CoreEvent {
+	if conf.Resource.CoreEvent.Enabled {
 		allCoreEventsInformer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -138,12 +146,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, allCoreEventsInformer, objName(api_v1.Event{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, allCoreEventsInformer, objName(api_v1.Event{}), V1, conf.Resource.CoreEvent)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Event {
+	if conf.Resource.Event.Enabled {
 
 		allEventsInformer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
@@ -161,19 +169,22 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, allEventsInformer, objName(events_v1.Event{}), EVENTS_V1)
+		c := newResourceController(kubeClient, eventHandlers, allEventsInformer, objName(events_v1.Event{}), EVENTS_V1, conf.Resource.Event)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Pod {
+	if conf.Resource.Pod.Enabled {
+		pods := kubeClient.CoreV1().Pods(ns)
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-					return kubeClient.CoreV1().Pods(ns).List(context.Background(), options)
+					ll, err := pods.List(context.Background(), options)
+					return ll, err
 				},
 				WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-					return kubeClient.CoreV1().Pods(ns).Watch(context.Background(), options)
+					ww, err := pods.Watch(context.Background(), options)
+					return ww, err
 				},
 			},
 			&api_v1.Pod{},
@@ -181,12 +192,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Pod{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Pod{}), V1, conf.Resource.Pod)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.HPA {
+	if conf.Resource.HPA.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -201,13 +212,13 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(autoscaling_v1.HorizontalPodAutoscaler{}), AUTOSCALING_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(autoscaling_v1.HorizontalPodAutoscaler{}), AUTOSCALING_V1, conf.Resource.HPA)
 
 		go c.Run(stopCh)
 
 	}
 
-	if conf.Resource.DaemonSet {
+	if conf.Resource.DaemonSet.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -222,12 +233,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.DaemonSet{}), APPS_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.DaemonSet{}), APPS_V1, conf.Resource.DaemonSet)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.StatefulSet {
+	if conf.Resource.StatefulSet.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -242,11 +253,11 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.StatefulSet{}), APPS_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.StatefulSet{}), APPS_V1, conf.Resource.StatefulSet)
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.ReplicaSet {
+	if conf.Resource.ReplicaSet.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -261,12 +272,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.ReplicaSet{}), APPS_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.ReplicaSet{}), APPS_V1, conf.Resource.ReplicaSet)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Services {
+	if conf.Resource.Services.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -281,12 +292,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Service{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Service{}), V1, conf.Resource.Services)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Deployment {
+	if conf.Resource.Deployment.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -301,12 +312,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.Deployment{}), APPS_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(apps_v1.Deployment{}), APPS_V1, conf.Resource.Deployment)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Namespace {
+	if conf.Resource.Namespace.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -321,12 +332,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Namespace{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Namespace{}), V1, conf.Resource.Namespace)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.ReplicationController {
+	if conf.Resource.ReplicationController.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -341,12 +352,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ReplicationController{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ReplicationController{}), V1, conf.Resource.ReplicationController)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Job {
+	if conf.Resource.Job.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -361,12 +372,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(batch_v1.Job{}), BATCH_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(batch_v1.Job{}), BATCH_V1, conf.Resource.Job)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Node {
+	if conf.Resource.Node.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -381,12 +392,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Node{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Node{}), V1, conf.Resource.Node)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.ServiceAccount {
+	if conf.Resource.ServiceAccount.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -401,12 +412,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ServiceAccount{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ServiceAccount{}), V1, conf.Resource.ServiceAccount)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.ClusterRole {
+	if conf.Resource.ClusterRole.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -421,12 +432,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(rbac_v1.ClusterRole{}), RBAC_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(rbac_v1.ClusterRole{}), RBAC_V1, conf.Resource.ClusterRole)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.ClusterRoleBinding {
+	if conf.Resource.ClusterRoleBinding.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -441,12 +452,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(rbac_v1.ClusterRoleBinding{}), RBAC_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(rbac_v1.ClusterRoleBinding{}), RBAC_V1, conf.Resource.ClusterRoleBinding)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.PersistentVolume {
+	if conf.Resource.PersistentVolume.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -461,12 +472,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.PersistentVolume{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.PersistentVolume{}), V1, conf.Resource.PersistentVolume)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Secret {
+	if conf.Resource.Secret.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -481,12 +492,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Secret{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.Secret{}), V1, conf.Resource.Secret)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.ConfigMap {
+	if conf.Resource.ConfigMap.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -501,12 +512,12 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ConfigMap{}), V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(api_v1.ConfigMap{}), V1, conf.Resource.ConfigMap)
 
 		go c.Run(stopCh)
 	}
 
-	if conf.Resource.Ingress {
+	if conf.Resource.Ingress.Enabled {
 		informer := cache.NewSharedIndexInformer(
 			&cache.ListWatch{
 				ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
@@ -521,7 +532,7 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 			cache.Indexers{},
 		)
 
-		c := newResourceController(kubeClient, eventHandlers, informer, objName(networking_v1.Ingress{}), NETWORKING_V1)
+		c := newResourceController(kubeClient, eventHandlers, informer, objName(networking_v1.Ingress{}), NETWORKING_V1, conf.Resource.Ingress)
 
 		go c.Run(stopCh)
 	}
@@ -532,93 +543,113 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler) {
 }
 
 // TODO: proper implementation of this function without the hack of multi ns
-func newResourceController(client kubernetes.Interface, eventHandlers []handlers.Handler, informer cache.SharedIndexInformer, resourceType string, apiVersion string) *Controller {
+func newResourceController(client kubernetes.Interface, eventHandlers []handlers.Handler, informer cache.SharedIndexInformer, resourceType string, apiVersion string, resourceConfig config.ResourceConfig) *Controller {
 	queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
 	var newEvent Event
+	var eventWrapper EventWrapper
+	eventWrapper.ResourceConfig = &resourceConfig
+
 	var err error
 	informer.AddEventHandler(cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {
-			var ok bool
-			newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
-			newEvent.key, err = cache.MetaNamespaceKeyFunc(obj)
-			newEvent.eventType = "create"
-			newEvent.resourceType = resourceType
-			newEvent.apiVersion = apiVersion
-			newEvent.obj, ok = obj.(runtime.Object)
-			if !ok {
-				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for add on %v", obj)
-			}
-			if err != nil {
-				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for add on %v", obj)
-				return
-			}
+			if resourceConfig.Enabled && (len(resourceConfig.IncludeEvenTypes) == 0 || slices.Contains(resourceConfig.IncludeEvenTypes, "add")) {
+				var ok bool
+				newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
+				newEvent.key, err = cache.MetaNamespaceKeyFunc(obj)
+				newEvent.eventType = "create"
+				newEvent.resourceType = resourceType
+				newEvent.apiVersion = apiVersion
+				newEvent.obj, ok = obj.(runtime.Object)
+				if !ok {
+					logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for add on %v", obj)
+				}
+				if err != nil {
+					logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for add on %v", obj)
+					return
+				}
 
-			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
-				logrus.Debugf("Skipping adding (namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
-				return
-			}
+				if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
+					logrus.Debugf("Skipping adding (namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
+					return
+				}
 
-			logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
-			queue.Add(newEvent)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing add to %v: %s", resourceType, newEvent.key)
+
+				eventWrapper.Event = newEvent
+				queue.Add(eventWrapper)
+			} else {
+				logrus.Debugf("Skipping ADD (resource not enabled) %v for %s and is enabled - %t", resourceType, newEvent.key, resourceConfig.Enabled)
+			}
 		},
 		UpdateFunc: func(old, new interface{}) {
-			var ok bool
-			newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
-			newEvent.key, err = cache.MetaNamespaceKeyFunc(old)
-			newEvent.eventType = "update"
-			newEvent.resourceType = resourceType
-			newEvent.apiVersion = apiVersion
-			newEvent.obj, ok = new.(runtime.Object)
-			if !ok {
-				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for update on %v", new)
-			}
-			newEvent.oldObj, ok = old.(runtime.Object)
-			if !ok {
-				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert old to runtime.Object for update on %v", old)
-			}
+			if resourceConfig.Enabled && (len(resourceConfig.IncludeEvenTypes) == 0 || slices.Contains(resourceConfig.IncludeEvenTypes, "update")) {
+				var ok bool
+				newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
+				newEvent.key, err = cache.MetaNamespaceKeyFunc(old)
+				newEvent.eventType = "update"
+				newEvent.resourceType = resourceType
+				newEvent.apiVersion = apiVersion
+				newEvent.obj, ok = new.(runtime.Object)
+				if !ok {
+					logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for update on %v", new)
+				}
+				newEvent.oldObj, ok = old.(runtime.Object)
+				if !ok {
+					logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert old to runtime.Object for update on %v", old)
+				}
 
-			if err != nil {
-				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for update on %v", old)
-				return
-			}
+				if err != nil {
+					logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for update on %v", old)
+					return
+				}
 
-			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
-				logrus.Debugf("Skipping updating(namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
-				return
-			}
+				if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
+					logrus.Debugf("Skipping updating(namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
+					return
+				}
 
-			logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
-			queue.Add(newEvent)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing update to %v: %s", resourceType, newEvent.key)
+
+				eventWrapper.Event = newEvent
+				queue.Add(eventWrapper)
+			} else {
+				logrus.Debugf("Skipping UPDATE (resource not enabled) %v for %s and is enabled - %t", resourceType, newEvent.key, resourceConfig.Enabled)
+			}
 		},
 		DeleteFunc: func(obj interface{}) {
-			var ok bool
-			newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
-			newEvent.key, err = cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
-			newEvent.eventType = "delete"
-			newEvent.resourceType = resourceType
-			newEvent.apiVersion = apiVersion
-			newEvent.obj, ok = obj.(runtime.Object)
-			if !ok {
-				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for delete on %v", obj)
-			}
+			if resourceConfig.Enabled && (len(resourceConfig.IncludeEvenTypes) == 0 || slices.Contains(resourceConfig.IncludeEvenTypes, "delete")) {
+				var ok bool
+				newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
+				newEvent.key, err = cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
+				newEvent.eventType = "delete"
+				newEvent.resourceType = resourceType
+				newEvent.apiVersion = apiVersion
+				newEvent.obj, ok = obj.(runtime.Object)
+				if !ok {
+					logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot convert to runtime.Object for delete on %v", obj)
+				}
 
-			if err != nil {
-				logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for delete on %v", obj)
-				return
-			}
+				if err != nil {
+					logrus.WithField("pkg", "statemonitor-"+resourceType).Errorf("cannot get key for delete on %v", obj)
+					return
+				}
 
-			if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
-				logrus.Debugf("Skipping deletion (namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
-				return
-			}
+				if !slices.Contains(namespaces, strings.Split(newEvent.key, "/")[0]) {
+					logrus.Debugf("Skipping deletion (namespaceconfig.ignore contains it) %v for %s", resourceType, newEvent.key)
+					return
+				}
 
-			logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
-			queue.Add(newEvent)
+				logrus.WithField("pkg", "statemonitor-"+resourceType).Infof("Processing delete to %v: %s", resourceType, newEvent.key)
+				eventWrapper.Event = newEvent
+				queue.Add(eventWrapper)
+			} else {
+				logrus.Debugf("Skipping deletion (resource not enabled) %v for %s and is enabled - %t", resourceType, newEvent.key, resourceConfig.Enabled)
+			}
 		},
 	})
 
 	return &Controller{
-		logger:        logrus.WithField("pkg", "statemonitor-"+resourceType),
+		logger:        logrus.WithField("pkg", resourceType+"-statemonitor"),
 		clientset:     client,
 		informer:      informer,
 		queue:         queue,
@@ -669,7 +700,7 @@ func (c *Controller) processNextItem() bool {
 		return false
 	}
 	defer c.queue.Done(newEvent)
-	err := c.processItem(newEvent.(Event))
+	err := c.processItem(newEvent.(EventWrapper))
 	if err == nil {
 		// No error, reset the ratelimit counters
 		c.queue.Forget(newEvent)
@@ -692,8 +723,9 @@ func (c *Controller) processNextItem() bool {
 - Send alerts correspoding to events - done
 */
 
-func (c *Controller) processItem(newEvent Event) error {
+func (c *Controller) processItem(eventWrapper EventWrapper) error {
 	// NOTE that obj will be nil on deletes!
+	newEvent := eventWrapper.Event
 	obj, _, err := c.informer.GetIndexer().GetByKey(newEvent.key)
 
 	if err != nil {
@@ -713,7 +745,11 @@ func (c *Controller) processItem(newEvent Event) error {
 	} else {
 		newEvent.namespace = objectMeta.Namespace
 	}
-
+	//check if deployment is in process
+	if ttlList.Contains(newEvent.namespace) {
+		logrus.Warnf("Deployment is in process for %v timeleft %v", newEvent.namespace, ttlList.GetTTL(newEvent.namespace).String())
+		return nil
+	}
 	// process events based on its type
 	switch newEvent.eventType {
 	case "create":
@@ -763,7 +799,7 @@ func (c *Controller) processItem(newEvent Event) error {
 			ApiVersion: newEvent.apiVersion,
 			Status:     status,
 			Reason:     "Updated",
-			Diff:       compareObjects(newEvent),
+			Diff:       compareObjects(eventWrapper),
 		}
 
 		if kbEvent.Diff == "" {
@@ -797,9 +833,11 @@ func (c *Controller) processItem(newEvent Event) error {
 }
 
 // compareObjects compares two objects and returns the diff
-func compareObjects(e Event) string {
+func compareObjects(ew EventWrapper) string {
 	var patch jsondiff.Patch
 	var err error
+	ignorePath := append(confDiff.IgnorePath, ew.ResourceConfig.IgnorePath...)
+	e := ew.Event
 	oldObjj := e.oldObj
 	objj := e.obj
 
@@ -808,7 +846,7 @@ func compareObjects(e Event) string {
 	}
 
 	if patch == nil || err != nil {
-		patch, err = jsondiff.Compare(oldObjj, objj, jsondiff.Ignores(confDiff.IgnorePath...))
+		patch, err = jsondiff.Compare(oldObjj, objj, jsondiff.Ignores(ignorePath...))
 	}
 
 	//jsondiff.CompareJSON(source, target)
@@ -888,6 +926,7 @@ func getNamespaces(clientset kubernetes.Interface, namespacesConfig *config.Name
 	logrus.Infof("Namespaces to watch %v", namespaces)
 	return namespaces
 }
+
 func handleMetric(newEvent Event) {
 	mu.Lock()
 	defer mu.Unlock()

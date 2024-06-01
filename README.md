@@ -8,7 +8,7 @@ It can be used standalone or deployed in Kubernetes. But its main purpose is to 
 
 KubeStateWatch is an extended and simplified version of [kubewatch](https://github.com/robusta-dev/kubewatch) to meet the needs of our team
 ####Whats the difference between kubewatch and KubeStateWatch?
-  It has been extended to support more the one connector, better support on multiple namespaces, visiblity to what was changed,simplified configuration, removed  added metrics and few other small stuff.
+  It has been extended to support more the one connector, better support on multiple namespaces, visiblity to what was changed,simplified configuration, extended resource specific configura, added metrics and few other small stuff.
 
 ##UseCase
 <i>Imagine you're managing a large Kubernetes cluster that has many different areas (namespaces) used by various people or teams. You need a way to keep an eye on any changes that happen in these areas that were made without the use  of CI/CD pipelines ( for example using kubectl, lens, k9s etc.). In such cases you want to get notified about such changes,you also want to see what exactly was changed. This is what **KubeStateWatch** is for.</i>
@@ -29,6 +29,45 @@ There are basically two kind of notifications:
 
 Although this aspect is important, our primary focus is on the first scenario: tracking modifications to the items we are monitoring, such as deployments, replica sets (rs), horizontal pod autoscalers (hpa), and configmaps. We aim to be promptly informed about any and all changes occurring within these elements.
 
+## Version 2.0.0 Changes
+- Added support for configuration per resource (**breaking change in the configuration file**)
+> This gives you the ability to configure each resource separately. For example, you can configure monitoring only the UPDATES on deployments, while monitoring ADD and DELETE on replica sets and DELETE on pods and etc.Also, now you can ignore specific paths in the diff per resource. Which gives you more control over what you want to monitor.
+``` yaml
+#OLD
+resourcesToWatch:
+  configmap: true
+#NEW
+  configmap:
+    enabled: true
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+```
+- Added support for muting notifications during deployment.
+> This feature allows you to mute notifications during deployment. This is useful when you have a deployment ongoing and you don't want to be notified about every change that happens during the deployment. You can mute notifications for a specific time period. This keeps the notifications clean and relevant. Also this keeps your webhook from being overloaded.Some webhooks have a rate [limit](https://docs.microsoft.com/en-us/microsoftteams/platform/webhooks-and-connectors/how-to/add-incoming-webhook#rate-limits) per minute, so this feature can help you avoid hitting the rate limit and missing important notifications after the deployment.
+
+It accepts two parameters:
+- namespace: the namespace you want to mute notifications for
+- duration: the duration you want to mute notifications for in minutes
+The path looks like this:
+PUT url/deploy/**namespace**/**duration**
+PUT url/deploy/**namespace** - uses default duration of 2 minutes
+POST url/reset - clears all muted namespaces
+```sh
+#Examples:
+curl -X PUT http://localhost:8080/deploy/default/5
+#Mutes notifications for the default namespace for 5 minutes
+curl -x Delete http://localhost:8080/deploy/default
+#Clears the default namespace from the muted list
+curl -X PUT http://localhost:8080/deploy/default
+#Mutes notifications for the default namespace for 2 minutes
+curl -X POST http://localhost:8080/reset
+#Clears all muted namespaces
+```
+
 ### How it looks like
 
 <div align="center">
@@ -38,7 +77,7 @@ Although this aspect is important, our primary focus is on the first scenario: t
 # Latest image
 
 ```
-docmarr/kubestatewatch:1.0.2
+docmarr/kubestatewatch:2.0.0
 ```
 
 ## Installing the Chart
@@ -46,8 +85,8 @@ docmarr/kubestatewatch:1.0.2
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm repo add statemonitor https://marvasgit.github.io/kubernetes-statemonitor/
-$ helm install my-release statemonitor -n NS
+$ helm repo add kubestatewatch https://marvasgit.github.io/kubernetes-statemonitor/
+$ helm install my-release kubestatewatch -n NS
 ```
 
 The command deploys statemonitor on the Kubernetes cluster in the default configuration. With the default configuration, the chart monitors all namespaces. 
@@ -57,6 +96,7 @@ $ helm install my-release -f values.yaml statemonitor
 ```
 
 > **Tip**: You can use the default [values.yaml](/charts/kubestatewatch/values.yaml)
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
@@ -91,7 +131,7 @@ Based on the desired communication channel, you need to configure the following 
 - `namespaceconfig.include & namespaceconfig.exclude` - the namespaces you want to monitor, By default you monitor everything. If you want to monitor only specific namespaces, you can use the include and exclude options. If you use both, the exclude option will be ignored. You probably want to exclude the kube-system namespace.
 - `resources` - the resources you want to monitor
 - `ignore` - the resources you want to ignore
-- `diff.ignorePath` - the paths you want to ignore in the diff ( Usually /metadata, /status, and everything that is not relevant to you)
+- `diff.ignorePath` -  this configuration affects all components that you watch. the paths you want to ignore in the diff ( Usually /metadata, /status, and everything that is not relevant to you)
 
 ``` yaml
 message:
@@ -114,20 +154,125 @@ namespacesconfig:
   exclude:
   #- "kube-system"
   #- "cattle-fleet-system"
+# changed on V2.0.0
 resourcesToWatch:
-  configmap: true
-  daemonset: true
-  deployment: true
-  event: false
-  coreevent: false
-  hpa: true
-  job: false
-  persistentvolume: false
-  pod: false
-  replicaset: true
-  replicationcontroller: false
-  node: false
-  services: false
+  configmap:
+    enabled: true
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  daemonset:
+    enabled: true
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  deployment:
+    enabled: true
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  event:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  coreevent:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  hpa:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  job:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  persistentvolume:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  pod:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  replicaset:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  replicationcontroller:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  node:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
+  services:
+    enabled: false
+    includeEvenTypes:
+    #- "add"
+    #- "update"
+    #- "delete"
+    ignorePath:
+    # - "/status"
+
   ```
 > #### Configure connectors 
 
@@ -242,9 +387,7 @@ statemonitor           latest              919896d3cd90        3 minutes ago    
 - you need to have [docker](https://docs.docker.com/) installed.
 
 # Things for future version
-
-- Dissable notification - regular during deployment 
-
+None at the moment. But if you have any suggestions, please create an issue.
 
 # Contribution
 

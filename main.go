@@ -1,21 +1,80 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
+	"github.com/julienschmidt/httprouter"
 	"github.com/marvasgit/kubernetes-statemonitor/pkg/client"
+	"github.com/marvasgit/kubernetes-statemonitor/pkg/utils"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
 
+var list = utils.NewTTLList()
+
 func main() {
+	// Create a context with cancellation
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	router := httprouter.New()
+
+	router.GET("/metrics", Metrics)
+	router.PUT("/deploy/:namespace/:duration", namespaceDeployment)
+	router.PUT("/deploy/:namespace", namespaceDeployment)
+	router.DELETE("/deploy/:namespace", deletenamespaceDeployment)
+	router.POST("/reset", reset)
 	go func() {
-		http.Handle("/metrics", promhttp.Handler())
-		http.ListenAndServe(":2112", nil)
+		http.ListenAndServe(":80", router)
 	}()
+
 	initLogger()
-	client.Start()
+	client.Start(ctx, list)
+}
+func Metrics(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	promhttp.Handler().ServeHTTP(w, r)
+}
+func deletenamespaceDeployment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	namespace := ps.ByName("namespace")
+
+	list.Remove(namespace)
+	response := fmt.Sprintf("Namespace -%s was removed ", namespace)
+	w.Write([]byte(response))
+}
+func reset(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	list.Reset()
+	w.Write([]byte("Deployment List was reset "))
+}
+
+func namespaceDeployment(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	namespace := ps.ByName("namespace")
+	durationString := ps.ByName("duration")
+
+	//set default time to 5 minutes if not provided
+	if durationString == "" {
+		durationString = "2"
+	}
+
+	// Parse JSON request body
+	// Parse durationInMinutes from string to int
+	durationInMinutes, err := strconv.Atoi(durationString)
+	if err != nil {
+		http.Error(w, "Invalid time value", http.StatusBadRequest)
+		return
+	}
+	er := list.Add(namespace, time.Duration(durationInMinutes)*time.Minute)
+	if er != nil {
+		http.Error(w, er.Error(), http.StatusBadRequest)
+		return
+	}
+	response := fmt.Sprintf("Namespace -%s added to deployment list", namespace)
+	// change status code to 201
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(response))
 }
 
 func initLogger() {

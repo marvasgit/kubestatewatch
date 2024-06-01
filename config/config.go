@@ -17,34 +17,32 @@ type Handler struct {
 
 // Resource contains resource configuration
 type Resource struct {
-	Deployment            bool
-	ReplicationController bool
-	ReplicaSet            bool
-	DaemonSet             bool
-	StatefulSet           bool
-	Services              bool
-	Pod                   bool
-	Job                   bool
-	Node                  bool
-	ClusterRole           bool
-	ClusterRoleBinding    bool
-	ServiceAccount        bool
-	PersistentVolume      bool
-	Namespace             bool
-	Secret                bool
-	ConfigMap             bool
-	Ingress               bool
-	HPA                   bool
-	Event                 bool
-	CoreEvent             bool
+	Deployment            ResourceConfig
+	ReplicationController ResourceConfig
+	ReplicaSet            ResourceConfig
+	DaemonSet             ResourceConfig
+	StatefulSet           ResourceConfig
+	Services              ResourceConfig
+	Pod                   ResourceConfig
+	Job                   ResourceConfig
+	Node                  ResourceConfig
+	ClusterRole           ResourceConfig
+	ClusterRoleBinding    ResourceConfig
+	ServiceAccount        ResourceConfig
+	PersistentVolume      ResourceConfig
+	Namespace             ResourceConfig
+	Secret                ResourceConfig
+	ConfigMap             ResourceConfig
+	Ingress               ResourceConfig
+	HPA                   ResourceConfig
+	Event                 ResourceConfig
+	CoreEvent             ResourceConfig
 }
 
 // Config struct contains statemonitor configuration
 type Config struct {
 	// Handlers know how to send notifications to specific services.
 	Handler Handler
-
-	//Reason   []string
 
 	// Resources to watch.
 	Resource Resource
@@ -65,7 +63,16 @@ type NamespacesConfig struct {
 	Exclude []string
 }
 
+type ResourceConfig struct {
+	Enabled bool
+	// process events based on its type
+	//create, update, delete
+	//if empty, all events will be processed
+	IncludeEvenTypes []string
+	IgnorePath       []string
+}
 type Diff struct {
+	//IgnorePath for all resources
 	IgnorePath []string
 }
 
