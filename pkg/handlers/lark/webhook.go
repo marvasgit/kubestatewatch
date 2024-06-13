@@ -27,8 +27,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/marvasgit/kubernetes-statemonitor/config"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
+	"github.com/marvasgit/KubeStateWatch/config"
+	"github.com/marvasgit/KubeStateWatch/pkg/event"
 )
 
 var webhookErrMsg = `

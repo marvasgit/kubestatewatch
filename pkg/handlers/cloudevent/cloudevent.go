@@ -23,8 +23,8 @@ import (
 	"time"
 
 	cloudevents "github.com/cloudevents/sdk-go/v2"
-	"github.com/marvasgit/kubernetes-statemonitor/config"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
+	"github.com/marvasgit/KubeStateWatch/config"
+	"github.com/marvasgit/KubeStateWatch/pkg/event"
 	"github.com/sirupsen/logrus"
 )
 
@@ -86,7 +86,7 @@ func (m *CloudEvent) Handle(e event.StatemonitorEvent) {
 	m.Counter++ // TODO: do we have to worry about threadsafety here?
 
 	event := cloudevents.NewEvent()
-	event.SetSource("github.com/marvasgit/kubernetes-statemonitor")
+	event.SetSource("github.com/marvasgit/KubeStateWatch")
 	event.SetType("KUBERNETES_TOPOLOGY_CHANGE")
 	event.SetTime(time.Now())
 	event.SetID(fmt.Sprintf("%v-%v", m.StartTime, m.Counter))

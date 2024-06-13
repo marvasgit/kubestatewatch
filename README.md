@@ -16,11 +16,11 @@ KubeStateWatch is an extended and simplified version of [kubewatch](https://gith
 <div align="center">
 <img src="./docs/kubestatewatch-logo-240.png">
 
-[![Build Status](https://travis-ci.org/marvasgit/kubernetes-statemonitor.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-statemonitor) 
-[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubernetes-statemonitor)](https://goreportcard.com/report/github.com/marvasgit/kubernetes-statemonitor) 
-[![codecov](https://codecov.io/gh/marvasgit/kubernetes-statemonitor/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubernetes-statemonitor)
-[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-statemonitor.svg)](https://hub.docker.com/repository/docker/docmarr/kubestatewatch) 
-![GitHub release](https://img.shields.io/github/release/marvasgit/kubernetes-statemonitor.svg)
+[![Build Status](https://travis-ci.org/marvasgit/KubeStateWatch.svg?branch=master)](https://travis-ci.org/marvasgit/KubeStateWatch) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/KubeStateWatch)](https://goreportcard.com/report/github.com/marvasgit/KubeStateWatch) 
+[![codecov](https://codecov.io/gh/marvasgit/KubeStateWatch/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/KubeStateWatch)
+[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/KubeStateWatch.svg)](https://hub.docker.com/repository/docker/docmarr/kubestatewatch) 
+![GitHub release](https://img.shields.io/github/release/marvasgit/KubeStateWatch.svg)
 </div>
 
 There are basically two kind of notifications:
@@ -341,7 +341,7 @@ docker run --rm -it --network host -v /path/to/your/appsettings.json:/config/app
 If you want to build the docker image locally, you can use the following commands:
 > clone repo 
 ```sh
-git clone github.com/marvasgit/kubernetes-statemonitor.git
+git clone github.com/marvasgit/KubeStateWatch.git
 ```
 > build docker image and run it 
 ```sh
@@ -357,7 +357,7 @@ docker run --rm -it --network host -v /path/to/your/appsettings.json:/config/app
 
 Clone the repository anywhere:
 ```console
-$ git clone https://github.com/marvasgit/kubernetes-statemonitor.git
+$ git clone https://github.com/marvasgit/KubeStateWatch.git
 $ cd statemonitor
 $ go build
 ```

@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/client"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/utils"
+	"github.com/marvasgit/KubeStateWatch/pkg/client"
+	"github.com/marvasgit/KubeStateWatch/pkg/utils"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )

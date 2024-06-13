@@ -5,7 +5,7 @@ BINARY = statemonitor
 VERSION=
 BUILD=
 
-PKG            = github.com/marvasgit/kubernetes-statemonitor
+PKG            = github.com/marvasgit/KubeStateWatch
 TRAVIS_COMMIT ?= `git describe --tags`
 GOCMD          = go
 BUILD_DATE     = `date +%FT%T%z`

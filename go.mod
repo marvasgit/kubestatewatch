@@ -1,4 +1,4 @@
-module github.com/marvasgit/kubernetes-statemonitor
+module github.com/marvasgit/KubeStateWatch
 
 go 1.21
 

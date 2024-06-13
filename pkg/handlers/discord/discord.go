@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/marvasgit/kubernetes-statemonitor/config"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers"
+	"github.com/marvasgit/KubeStateWatch/config"
+	"github.com/marvasgit/KubeStateWatch/pkg/event"
+	"github.com/marvasgit/KubeStateWatch/pkg/handlers"
 	"github.com/sirupsen/logrus"
 )
 
