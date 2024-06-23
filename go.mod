@@ -1,4 +1,4 @@
-module github.com/marvasgit/KubeStateWatch
+module github.com/marvasgit/kubestatewatch
 
 go 1.21
 

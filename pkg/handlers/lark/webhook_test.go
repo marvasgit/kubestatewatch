@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/marvasgit/KubeStateWatch/config"
+	"github.com/marvasgit/kubestatewatch/config"
 )
 
 func TestWebhookInit(t *testing.T) {

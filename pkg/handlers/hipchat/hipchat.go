@@ -26,8 +26,8 @@ import (
 
 	"net/url"
 
-	"github.com/marvasgit/KubeStateWatch/config"
-	"github.com/marvasgit/KubeStateWatch/pkg/event"
+	"github.com/marvasgit/kubestatewatch/config"
+	"github.com/marvasgit/kubestatewatch/pkg/event"
 )
 
 var hipchatColors = map[string]hipchat.Color{

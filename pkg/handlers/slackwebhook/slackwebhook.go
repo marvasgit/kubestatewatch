@@ -46,8 +46,8 @@ import (
 
 	"github.com/slack-go/slack"
 
-	"github.com/marvasgit/KubeStateWatch/config"
-	"github.com/marvasgit/KubeStateWatch/pkg/event"
+	"github.com/marvasgit/kubestatewatch/config"
+	"github.com/marvasgit/kubestatewatch/pkg/event"
 )
 
 var webhookErrMsg = `

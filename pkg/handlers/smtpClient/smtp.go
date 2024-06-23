@@ -25,8 +25,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/marvasgit/KubeStateWatch/config"
-	"github.com/marvasgit/KubeStateWatch/pkg/event"
+	"github.com/marvasgit/kubestatewatch/config"
+	"github.com/marvasgit/kubestatewatch/pkg/event"
 	"github.com/sirupsen/logrus"
 )
 
