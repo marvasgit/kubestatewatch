@@ -6,7 +6,8 @@
 It can be used standalone or deployed in Kubernetes. But its main purpose is to be deployed in Kubernetes.
 
 
-kubestatewatch is an extended and simplified version of [kubewatch](https://github.com/robusta-dev/kubewatch) to meet the needs of our team
+
+KubeStateWatch is an extended and simplified version of [kubewatch](https://github.com/robusta-dev/kubewatch) to meet the needs of our team
 ####Whats the difference between kubewatch and kubestatewatch?
   It has been extended to support more the one connector, better support on multiple namespaces, visiblity to what was changed,simplified configuration, extended resource specific configura, added metrics and few other small stuff.
 
