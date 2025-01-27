@@ -1,10 +1,10 @@
 annotations:
   category: Infrastructure
 apiVersion: v2
-appVersion: 1.0.1
+appVersion: 2.0.0
 description: statemonitor is a Kubernetes Difference watcher that currently publishes notification to needed channels. Run it in your k8s cluster, and you will get event notifications in a configured channels.
-home: https://github.com/marvasgit/kubernetes-statemonitor
-icon: https://github.com/marvasgit/kubernetes-statemonitor/docs/statemonitor-logo-240.png
+home: https://github.com/marvasgit/kubestatewatch
+icon: https://github.com/marvasgit/kubestatewatch/docs/statemonitor-logo-240.png
 keywords:
 - kubernetes
 - slack
@@ -15,5 +15,5 @@ keywords:
 maintainers: []
 name: statemonitor
 sources:
-- https://github.com/marvasgit/kubernetes-statemonitor
-version: 1.0.1
+- https://github.com/marvasgit/kubestatewatch
+version: 1.0.2

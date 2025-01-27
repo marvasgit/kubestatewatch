@@ -1,26 +1,27 @@
 
-# KubeStateWatch is a State Monitor for k8s 
+# kubestatewatch is a State Monitor for k8s 
 
-**KubeStateWatch** functions as a surveillance system for Kubernetes. Tracking different resources for any changes and letting users know exactly what has been changed.
+**kubestatewatch** functions as a surveillance system for Kubernetes. Tracking different resources for any changes and letting users know exactly what has been changed.
 
 It can be used standalone or deployed in Kubernetes. But its main purpose is to be deployed in Kubernetes.
 
 
+
 KubeStateWatch is an extended and simplified version of [kubewatch](https://github.com/robusta-dev/kubewatch) to meet the needs of our team
-####Whats the difference between kubewatch and KubeStateWatch?
+####Whats the difference between kubewatch and kubestatewatch?
   It has been extended to support more the one connector, better support on multiple namespaces, visiblity to what was changed,simplified configuration, extended resource specific configura, added metrics and few other small stuff.
 
 ##UseCase
-<i>Imagine you're managing a large Kubernetes cluster that has many different areas (namespaces) used by various people or teams. You need a way to keep an eye on any changes that happen in these areas that were made without the use  of CI/CD pipelines ( for example using kubectl, lens, k9s etc.). In such cases you want to get notified about such changes,you also want to see what exactly was changed. This is what **KubeStateWatch** is for.</i>
+<i>Imagine you're managing a large Kubernetes cluster that has many different areas (namespaces) used by various people or teams. You need a way to keep an eye on any changes that happen in these areas that were made without the use  of CI/CD pipelines ( for example using kubectl, lens, k9s etc.). In such cases you want to get notified about such changes,you also want to see what exactly was changed. This is what **kubestatewatch** is for.</i>
 
 <div align="center">
 <img src="./docs/kubestatewatch-logo-240.png">
 
-[![Build Status](https://travis-ci.org/marvasgit/kubernetes-statemonitor.svg?branch=master)](https://travis-ci.org/marvasgit/kubernetes-statemonitor) 
-[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubernetes-statemonitor)](https://goreportcard.com/report/github.com/marvasgit/kubernetes-statemonitor) 
-[![codecov](https://codecov.io/gh/marvasgit/kubernetes-statemonitor/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubernetes-statemonitor)
-[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubernetes-statemonitor.svg)](https://hub.docker.com/repository/docker/docmarr/kubestatewatch) 
-![GitHub release](https://img.shields.io/github/release/marvasgit/kubernetes-statemonitor.svg)
+[![Build Status](https://travis-ci.org/marvasgit/kubestatewatch.svg?branch=master)](https://travis-ci.org/marvasgit/kubestatewatch) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/marvasgit/kubestatewatch)](https://goreportcard.com/report/github.com/marvasgit/kubestatewatch) 
+[![codecov](https://codecov.io/gh/marvasgit/kubestatewatch/branch/master/graph/badge.svg)](https://codecov.io/gh/marvasgit/kubestatewatch)
+[![Docker Pulls](https://img.shields.io/docker/pulls/marvasgit/kubestatewatch.svg)](https://hub.docker.com/repository/docker/docmarr/kubestatewatch) 
+![GitHub release](https://img.shields.io/github/release/marvasgit/kubestatewatch.svg)
 </div>
 
 There are basically two kind of notifications:
@@ -85,7 +86,7 @@ docmarr/kubestatewatch:2.0.0
 To install the chart with the release name `my-release`:
 
 ```console
-$ helm repo add kubestatewatch https://marvasgit.github.io/kubernetes-statemonitor/
+$ helm repo add kubestatewatch https://marvasgit.github.io/kubestatewatch/
 $ helm install my-release kubestatewatch -n NS
 ```
 
@@ -341,7 +342,7 @@ docker run --rm -it --network host -v /path/to/your/appsettings.json:/config/app
 If you want to build the docker image locally, you can use the following commands:
 > clone repo 
 ```sh
-git clone github.com/marvasgit/kubernetes-statemonitor.git
+git clone github.com/marvasgit/kubestatewatch.git
 ```
 > build docker image and run it 
 ```sh
@@ -357,7 +358,7 @@ docker run --rm -it --network host -v /path/to/your/appsettings.json:/config/app
 
 Clone the repository anywhere:
 ```console
-$ git clone https://github.com/marvasgit/kubernetes-statemonitor.git
+$ git clone https://github.com/marvasgit/kubestatewatch.git
 $ cd statemonitor
 $ go build
 ```

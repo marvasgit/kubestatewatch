@@ -27,8 +27,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/marvasgit/kubernetes-statemonitor/config"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
+	"github.com/marvasgit/kubestatewatch/config"
+	"github.com/marvasgit/kubestatewatch/pkg/event"
 )
 
 var mattermostColors = map[string]string{

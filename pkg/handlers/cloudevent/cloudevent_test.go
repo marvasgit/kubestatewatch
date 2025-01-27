@@ -21,7 +21,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/marvasgit/kubernetes-statemonitor/config"
+	"github.com/marvasgit/kubestatewatch/config"
 )
 
 func TestCloudEventInit(t *testing.T) {

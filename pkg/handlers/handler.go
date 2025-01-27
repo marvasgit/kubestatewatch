@@ -17,17 +17,17 @@ limitations under the License.
 package handlers
 
 import (
-	"github.com/marvasgit/kubernetes-statemonitor/config"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/flock"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/hipchat"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/lark"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/mattermost"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/msteam"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/slack"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/slackwebhook"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/smtpClient"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/handlers/webhook"
+	"github.com/marvasgit/kubestatewatch/config"
+	"github.com/marvasgit/kubestatewatch/pkg/event"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/flock"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/hipchat"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/lark"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/mattermost"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/msteam"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/slack"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/slackwebhook"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/smtpClient"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/webhook"
 )
 
 // Handler is implemented by any handler.

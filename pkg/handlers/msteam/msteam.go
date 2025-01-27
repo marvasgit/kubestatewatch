@@ -23,9 +23,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/marvasgit/kubernetes-statemonitor/config"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/message"
+	"github.com/marvasgit/kubestatewatch/config"
+	"github.com/marvasgit/kubestatewatch/pkg/event"
+	"github.com/marvasgit/kubestatewatch/pkg/message"
 	"github.com/sirupsen/logrus"
 )
 

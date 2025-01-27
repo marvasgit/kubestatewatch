@@ -21,7 +21,7 @@ volumes:
 image:
   registry: docker.io
   repository: docmarr/kubestatewatch
-  tag: 1.0.2
+  tag: 2.0.0
   pullPolicy: IfNotPresent
   pullSecrets: []
 hostAliases: []

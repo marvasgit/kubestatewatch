@@ -1,9 +1,10 @@
-module github.com/marvasgit/kubernetes-statemonitor
+module github.com/marvasgit/kubestatewatch
 
 go 1.21
 
 require (
 	github.com/cloudevents/sdk-go/v2 v2.14.0
+	github.com/julienschmidt/httprouter v1.3.0
 	github.com/knadh/koanf/parsers/json v0.1.0
 	github.com/knadh/koanf/providers/file v0.1.0
 	github.com/knadh/koanf/v2 v2.0.1

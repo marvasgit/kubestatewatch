@@ -24,9 +24,9 @@ import (
 
 	"github.com/slack-go/slack"
 
-	"github.com/marvasgit/kubernetes-statemonitor/config"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/event"
-	"github.com/marvasgit/kubernetes-statemonitor/pkg/message"
+	"github.com/marvasgit/kubestatewatch/config"
+	"github.com/marvasgit/kubestatewatch/pkg/event"
+	"github.com/marvasgit/kubestatewatch/pkg/message"
 )
 
 var slackColors = map[string]string{
