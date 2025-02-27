@@ -93,7 +93,7 @@ func (f *Flock) Handle(e event.StatemonitorEvent) {
 
 	err := postMessage(f.Url, flockMessage)
 	if err != nil {
-		logrus.Printf("%s\n", err)
+		logrus.Errorf("Failed to send flock message: %v\n", err)
 		return
 	}
 

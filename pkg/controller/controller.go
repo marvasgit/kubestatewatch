@@ -903,7 +903,7 @@ func getNamespaces(clientset kubernetes.Interface, namespacesConfig *config.Name
 	var namespaces []string
 	nsList, err := clientset.CoreV1().Namespaces().List(context.Background(), meta_v1.ListOptions{})
 	if err != nil {
-		logrus.Errorf("Error in getting namespaces %s", err)
+		logrus.Errorf("Error in getting namespaces: %v", err)
 	}
 
 	for _, ns := range nsList.Items {

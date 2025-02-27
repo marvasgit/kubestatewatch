@@ -85,7 +85,7 @@ func (s *Slack) Handle(e event.StatemonitorEvent) {
 		slack.MsgOptionAttachments(attachment),
 		slack.MsgOptionAsUser(true))
 	if err != nil {
-		logrus.Printf("%s\n", err)
+		logrus.Errorf("failed to send slack message %s\n", err)
 		return
 	}
 
