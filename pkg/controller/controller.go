@@ -799,11 +799,11 @@ func (c *Controller) processItem(eventWrapper EventWrapper) error {
 			ApiVersion: newEvent.apiVersion,
 			Status:     status,
 			Reason:     "Updated",
-			Diff:       compareObjects(eventWrapper),
 		}
+		kbEvent.Diff, kbEvent.DiffMarshalled = compareObjects(eventWrapper)
 
-		if kbEvent.Diff == "" {
-			logrus.Printf("No diff( or ingored paths) found for %s", newEvent.key)
+		if kbEvent.DiffMarshalled == "" {
+			logrus.Printf("No diff (or ingored paths) found for %s", newEvent.key)
 			//skipping metrics here as there is no valuable diff
 			return nil
 		}
@@ -833,7 +833,7 @@ func (c *Controller) processItem(eventWrapper EventWrapper) error {
 }
 
 // compareObjects compares two objects and returns the diff
-func compareObjects(ew EventWrapper) string {
+func compareObjects(ew EventWrapper) (jsondiff.Patch, string) {
 	var patch jsondiff.Patch
 	var err error
 	ignorePath := append(confDiff.IgnorePath, ew.ResourceConfig.IgnorePath...)
@@ -858,16 +858,16 @@ func compareObjects(ew EventWrapper) string {
 		logrus.Printf("Error in marshalling patch %s", err)
 	}
 	if b == nil || string(b) == "null" {
-		return ""
+		return nil, ""
 	}
-	return string(b)
+	return patch, string(b)
 }
 
 func compareConfigMaps(old runtime.Object, new runtime.Object) (jsondiff.Patch, error) {
 
 	//Dynamic extraction of data from configmap
 	keys := make([]string, 0)
-	for k, _ := range old.(*api_v1.ConfigMap).Data {
+	for k := range old.(*api_v1.ConfigMap).Data {
 		keys = append(keys, k)
 	}
 

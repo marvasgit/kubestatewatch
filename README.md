@@ -328,7 +328,11 @@ smtp:
     secret: ""
     identity: ""
   requireTLS: ""
-
+telegram:
+  enabled: false
+  token: ""
+  chatID: 0
+  messageThreadID: 0
 ```
 #### Using Docker:
 

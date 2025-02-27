@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/telegram"
 	"os"
 
 	"github.com/knadh/koanf/parsers/json"
@@ -79,6 +80,8 @@ func parseEventHandler(conf *config.Config) []handlers.Handler {
 		eventHandlers = append(eventHandlers, new(smtpClient.SMTP))
 	case conf.Handler.Lark.Enabled && len(conf.Handler.Lark.WebhookURL) > 0:
 		eventHandlers = append(eventHandlers, new(lark.Webhook))
+	case conf.Handler.Telegram.Enabled && len(conf.Handler.Telegram.Token) > 0:
+		eventHandlers = append(eventHandlers, new(telegram.Telegram))
 	default:
 		eventHandlers = append(eventHandlers, new(handlers.Default))
 	}

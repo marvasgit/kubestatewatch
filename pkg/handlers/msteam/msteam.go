@@ -157,7 +157,7 @@ func (ms *MSTeams) Handle(e event.StatemonitorEvent) {
 		Value: e.Status,
 	})
 	s.Markdown = true
-	card.Text = e.Diff
+	card.Text = e.DiffMarshalled
 
 	//TODO: Ignore metadata & status changes
 	card.Sections = append(card.Sections, s)
