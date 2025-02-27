@@ -85,8 +85,18 @@ func makeMessageText(e event.StatemonitorEvent) string {
 	diffs := ""
 	if len(e.Diff) != 0 {
 		var diffsValues = make([]string, 0)
-		for _, op := range e.Diff {
-			diffsValues = append(diffsValues, fmt.Sprintf("<b>%s</b> in %s:\n    <code>%s</code>", op.Type, op.Path, op.Value))
+		for idx, op := range e.Diff {
+			if op.Value == nil {
+				diffsValues = append(diffsValues, fmt.Sprintf("<b>%s</b> in %s\n", op.Type, op.Path))
+			} else {
+				diffsValues = append(diffsValues, fmt.Sprintf("<b>%s</b> in %s:\n    <code>%v</code>\n", op.Type, op.Path, op.Value))
+			}
+
+			// Pass only 3 diffs, cause telegram blocks too big messages
+			if idx >= 3 {
+				diffsValues = append(diffsValues, "<diff trimmed>")
+				break
+			}
 		}
 
 		diffs = fmt.Sprintf("<blockquote>%s</blockquote>", strings.Join(diffsValues, "\n"))
