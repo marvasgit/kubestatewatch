@@ -5,13 +5,12 @@
 
 It can be used standalone or deployed in Kubernetes. But its main purpose is to be deployed in Kubernetes.
 
-
-
 KubeStateWatch is an extended and simplified version of [kubewatch](https://github.com/robusta-dev/kubewatch) to meet the needs of our team
-####Whats the difference between kubewatch and kubestatewatch?
-  It has been extended to support more the one connector, better support on multiple namespaces, visiblity to what was changed,simplified configuration, extended resource specific configura, added metrics and few other small stuff.
 
-##UseCase
+#### Whats the difference between kubewatch and kubestatewatch?
+It has been extended to support more the one connector, better support on multiple namespaces, visiblity to what was changed,simplified configuration, extended resource specific configura, added metrics and few other small stuff.
+
+## UseCase
 <i>Imagine you're managing a large Kubernetes cluster that has many different areas (namespaces) used by various people or teams. You need a way to keep an eye on any changes that happen in these areas that were made without the use  of CI/CD pipelines ( for example using kubectl, lens, k9s etc.). In such cases you want to get notified about such changes,you also want to see what exactly was changed. This is what **kubestatewatch** is for.</i>
 
 <div align="center">
