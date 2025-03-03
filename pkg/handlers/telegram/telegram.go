@@ -7,6 +7,7 @@ import (
 	"github.com/marvasgit/kubestatewatch/config"
 	"github.com/marvasgit/kubestatewatch/pkg/event"
 	"github.com/sirupsen/logrus"
+	"html"
 	"net/http"
 	"os"
 	"strconv"
@@ -94,7 +95,7 @@ func makeMessageText(e event.StatemonitorEvent) string {
 
 			// Pass only 3 diffs, cause telegram blocks too big messages
 			if idx >= 3 {
-				diffsValues = append(diffsValues, "<diff trimmed>")
+				diffsValues = append(diffsValues, html.EscapeString("<diff trimmed>"))
 				break
 			}
 		}
