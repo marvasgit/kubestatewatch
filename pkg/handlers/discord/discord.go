@@ -73,7 +73,7 @@ func (dc *Discord) Handle(e event.StatemonitorEvent) {
 
 	_, err := sendMessage(dc, msg)
 	if err != nil {
-		logrus.Printf("%s\n", err)
+		logrus.Errorf("Failed to send discord message: %v\n", err)
 		return
 	}
 

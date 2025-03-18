@@ -13,6 +13,7 @@ type Handler struct {
 	SMTP         SMTP
 	Lark         Lark
 	Discord      Discord
+	Telegram     Telegram
 }
 
 // Resource contains resource configuration
@@ -198,4 +199,13 @@ type SMTPAuth struct {
 	Identity string
 	// Secret for CRAM-MD5 auth mechanism
 	Secret string
+}
+
+// Telegram contains telegram bot configuration
+type Telegram struct {
+	Enabled bool
+
+	Token           string
+	ChatID          int64
+	MessageThreadID int64
 }

@@ -27,6 +27,7 @@ import (
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/slack"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/slackwebhook"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/smtpClient"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/telegram"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/webhook"
 )
 
@@ -49,6 +50,7 @@ var Map = map[string]interface{}{
 	"ms-teams":     &msteam.MSTeams{},
 	"smtp":         &smtpClient.SMTP{},
 	"lark":         &lark.Webhook{},
+	"telegram":     &telegram.Telegram{},
 }
 
 // Default handler implements Handler interface,

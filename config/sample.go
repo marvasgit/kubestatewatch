@@ -61,6 +61,10 @@ handler:
     requireTLS: false
     # SMTP hello field (optional)
     hello: ""
+telegram:
+  token: ""
+  chatID: 0
+  messageThreadID: 0
 # Resources to watch.
 resource:
   deployment: false

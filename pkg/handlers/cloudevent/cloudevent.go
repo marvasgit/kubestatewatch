@@ -111,7 +111,7 @@ func (m *CloudEvent) prepareMessage(e event.StatemonitorEvent) *CloudEventMessag
 		ApiVersion:  e.ApiVersion,
 		ClusterUid:  "TODO",
 		Description: e.Message(),
-		Diff:        e.Diff,
+		Diff:        e.DiffMarshalled,
 	}
 }
 

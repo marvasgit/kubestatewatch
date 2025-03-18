@@ -15,6 +15,7 @@ package event
 
 import (
 	"fmt"
+	"github.com/wI2L/jsondiff"
 	"strings"
 )
 
@@ -22,15 +23,16 @@ import (
 // Events from different endpoints need to be casted to StatemonitorEvent
 // before being able to be handled by handler
 type StatemonitorEvent struct {
-	Namespace  string
-	Kind       string
-	ApiVersion string
-	Component  string
-	Host       string
-	Reason     string
-	Status     string
-	Name       string
-	Diff       string
+	Namespace      string
+	Kind           string
+	ApiVersion     string
+	Component      string
+	Host           string
+	Reason         string
+	Status         string
+	Name           string
+	Diff           jsondiff.Patch
+	DiffMarshalled string
 }
 
 // Message returns event message in standard format.
@@ -94,7 +96,7 @@ func createBoxlikeOutput(e *StatemonitorEvent) string {
 	if len(e.Name) > col2Width {
 		col2Width = len(e.Name) + 2
 	}
-	sb.WriteString(e.Diff + "\n")
+	sb.WriteString(e.DiffMarshalled + "\n")
 
 	dataRow(&sb, col1Width, col2Width, "Type", e.Kind)
 	dataRow(&sb, col1Width, col2Width, "Name", e.Name)

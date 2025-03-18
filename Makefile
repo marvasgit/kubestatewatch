@@ -1,6 +1,6 @@
 .PHONY: default build docker-image test stop clean-images clean
 
-BINARY = statemonitor
+BINARY = kubestatewatch
 
 VERSION= $(shell git describe --tags --always --dirty)
 BUILD= $(shell date +%FT%T%z)
@@ -12,6 +12,8 @@ BUILD_DATE     = `date +%FT%T%z`
 GOFLAGS       ?= $(GOFLAGS:)
 LDFLAGS       := "-X '$(PKG)/cmd.gitCommit=$(TRAVIS_COMMIT)' \
 		          -X '$(PKG)/cmd.buildDate=$(BUILD_DATE)'"
+BUILD_VERSION ?= $(shell cat VERSION)
+DOCKER_IMAGE ?= docker.io/teadove/${BINARY}:$(BUILD_VERSION)
 
 default: build test
 
@@ -19,7 +21,7 @@ build:
 	"$(GOCMD)" build ${GOFLAGS} -ldflags ${LDFLAGS} -o "${BINARY}"
 
 docker-image:
-	@docker build -t "${BINARY}" .
+	@docker buildx build --platform linux/amd64 . --tag "${DOCKER_IMAGE}" --push
 
 test:
 	"$(GOCMD)" test -race -v ./...

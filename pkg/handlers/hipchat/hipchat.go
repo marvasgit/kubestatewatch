@@ -98,7 +98,7 @@ func (s *Hipchat) Handle(e event.StatemonitorEvent) {
 	_, err := client.Room.Notification(s.Room, &notificationRequest)
 
 	if err != nil {
-		logrus.Printf("%s\n", err)
+		logrus.Errorf("Failed to send hipchat notification: %v\n", err)
 		return
 	}
 

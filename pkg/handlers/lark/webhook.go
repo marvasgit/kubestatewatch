@@ -75,7 +75,7 @@ func (m *Webhook) Handle(e event.StatemonitorEvent) {
 
 	err := postMessage(m.Url, webhookMessage)
 	if err != nil {
-		logrus.Printf("%s\n", err)
+		logrus.Errorf("Failed to send webhook: %v\n", err)
 		return
 	}
 	logrus.Printf("Message successfully sent to lark webhook: %s at %s ", m.Url, time.Now())
