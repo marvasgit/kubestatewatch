@@ -49,6 +49,32 @@ entries:
     urls:
     - https://github.com/marvasgit/kubernetes-diffwatcher/releases/download/diffwatcher-1.0.0/diffwatcher-1.0.0.tgz
     version: 1.0.0
+  kubestatewatch:
+  - annotations:
+      category: Infrastructure
+    apiVersion: v2
+    appVersion: 2.1.0
+    created: "2025-03-19T11:44:44.275826469Z"
+    description: kubestatewatch is a Kubernetes Difference watcher that currently
+      publishes notification to needed channels. Run it in your k8s cluster, and you
+      will get event notifications in a configured channels.
+    digest: fe509a19e85856b4e65e602726a3db7e99273db9aa6131530d29a71b9f5ff39e
+    home: https://github.com/marvasgit/kubestatewatch
+    icon: https://github.com/marvasgit/kubestatewatch/docs/statemonitor-logo-240.png
+    keywords:
+    - kubernetes
+    - slack
+    - hipchat
+    - mattermost
+    - flock
+    - msteams
+    - telegram
+    name: kubestatewatch
+    sources:
+    - https://github.com/marvasgit/kubestatewatch
+    urls:
+    - https://github.com/marvasgit/kubestatewatch/releases/download/kubestatewatch-1.0.3/kubestatewatch-1.0.3.tgz
+    version: 1.0.3
   statemonitor:
   - annotations:
       category: Infrastructure
@@ -98,4 +124,4 @@ entries:
     urls:
     - https://github.com/marvasgit/kubernetes-statemonitor/releases/download/statemonitor-1.0.1/statemonitor-1.0.1.tgz
     version: 1.0.1
-generated: "2025-01-27T15:20:27.308745777Z"
+generated: "2025-03-19T11:44:44.27584292Z"
