@@ -81,6 +81,10 @@ telegram:
   token: ""
   chatID: 0
   messageThreadID: 0
+victorialogs:
+  enabled: false
+  url: ""
+  cluster: ""
 
 extraHandlers: {}
 message:
