@@ -28,6 +28,7 @@ import (
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/slackwebhook"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/smtpClient"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/telegram"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/victorialogs"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/webhook"
 )
 
@@ -40,17 +41,18 @@ type Handler interface {
 
 // Map maps each event handler function to a name for easily lookup
 var Map = map[string]interface{}{
-	"default":      &Default{},
-	"slack":        &slack.Slack{},
-	"slackwebhook": &slackwebhook.SlackWebhook{},
-	"hipchat":      &hipchat.Hipchat{},
-	"mattermost":   &mattermost.Mattermost{},
-	"flock":        &flock.Flock{},
-	"webhook":      &webhook.Webhook{},
-	"ms-teams":     &msteam.MSTeams{},
-	"smtp":         &smtpClient.SMTP{},
-	"lark":         &lark.Webhook{},
-	"telegram":     &telegram.Telegram{},
+	"default":       &Default{},
+	"slack":         &slack.Slack{},
+	"slackwebhook":  &slackwebhook.SlackWebhook{},
+	"hipchat":       &hipchat.Hipchat{},
+	"mattermost":    &mattermost.Mattermost{},
+	"flock":         &flock.Flock{},
+	"webhook":       &webhook.Webhook{},
+	"ms-teams":      &msteam.MSTeams{},
+	"smtp":          &smtpClient.SMTP{},
+	"lark":          &lark.Webhook{},
+	"telegram":      &telegram.Telegram{},
+	"victorialogs":  &victorialogs.VictoriaLogs{},
 }
 
 // Default handler implements Handler interface,

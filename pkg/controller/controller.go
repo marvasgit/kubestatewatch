@@ -545,7 +545,6 @@ func Start(conf *config.Config, eventHandlers []handlers.Handler, list *utils.TT
 // TODO: proper implementation of this function without the hack of multi ns
 func newResourceController(client kubernetes.Interface, eventHandlers []handlers.Handler, informer cache.SharedIndexInformer, resourceType string, apiVersion string, resourceConfig config.ResourceConfig) *Controller {
 	queue := workqueue.NewRateLimitingQueue(workqueue.DefaultControllerRateLimiter())
-	var newEvent Event
 	var eventWrapper EventWrapper
 	eventWrapper.ResourceConfig = &resourceConfig
 
@@ -554,6 +553,7 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 		AddFunc: func(obj interface{}) {
 			if resourceConfig.Enabled && (len(resourceConfig.IncludeEvenTypes) == 0 || slices.Contains(resourceConfig.IncludeEvenTypes, "add")) {
 				var ok bool
+				newEvent := Event{}
 				newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
 				newEvent.key, err = cache.MetaNamespaceKeyFunc(obj)
 				newEvent.eventType = "create"
@@ -578,12 +578,13 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 				eventWrapper.Event = newEvent
 				queue.Add(eventWrapper)
 			} else {
-				logrus.Debugf("Skipping ADD (resource not enabled) %v for %s and is enabled - %t", resourceType, newEvent.key, resourceConfig.Enabled)
+				logrus.Debugf("Skipping ADD (resource not enabled) %v and is enabled - %t", resourceType, resourceConfig.Enabled)
 			}
 		},
 		UpdateFunc: func(old, new interface{}) {
 			if resourceConfig.Enabled && (len(resourceConfig.IncludeEvenTypes) == 0 || slices.Contains(resourceConfig.IncludeEvenTypes, "update")) {
 				var ok bool
+				newEvent := Event{}
 				newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
 				newEvent.key, err = cache.MetaNamespaceKeyFunc(old)
 				newEvent.eventType = "update"
@@ -613,12 +614,13 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 				eventWrapper.Event = newEvent
 				queue.Add(eventWrapper)
 			} else {
-				logrus.Debugf("Skipping UPDATE (resource not enabled) %v for %s and is enabled - %t", resourceType, newEvent.key, resourceConfig.Enabled)
+				logrus.Debugf("Skipping UPDATE (resource not enabled) %v and is enabled - %t", resourceType, resourceConfig.Enabled)
 			}
 		},
 		DeleteFunc: func(obj interface{}) {
 			if resourceConfig.Enabled && (len(resourceConfig.IncludeEvenTypes) == 0 || slices.Contains(resourceConfig.IncludeEvenTypes, "delete")) {
 				var ok bool
+				newEvent := Event{}
 				newEvent.namespace = "" // namespace retrived in processItem incase namespace value is empty
 				newEvent.key, err = cache.DeletionHandlingMetaNamespaceKeyFunc(obj)
 				newEvent.eventType = "delete"
@@ -643,7 +645,7 @@ func newResourceController(client kubernetes.Interface, eventHandlers []handlers
 				eventWrapper.Event = newEvent
 				queue.Add(eventWrapper)
 			} else {
-				logrus.Debugf("Skipping deletion (resource not enabled) %v for %s and is enabled - %t", resourceType, newEvent.key, resourceConfig.Enabled)
+				logrus.Debugf("Skipping deletion (resource not enabled) %v and is enabled - %t", resourceType, resourceConfig.Enabled)
 			}
 		},
 	})
@@ -912,15 +914,19 @@ func getNamespaces(clientset kubernetes.Interface, namespacesConfig *config.Name
 
 	//Exclude namespaces from all namespaces
 	if namespacesConfig != nil && len(namespacesConfig.Exclude) > 0 {
+		excludeSet := make(map[string]struct{}, len(namespacesConfig.Exclude))
 		for _, ns := range namespacesConfig.Exclude {
-			for i, n := range namespaces {
-				if ns == n {
-					logrus.Infof("Removing namespace %s from watchlist", ns)
-					namespaces[i] = namespaces[len(namespaces)-1]
-					namespaces = namespaces[:len(namespaces)-1]
-				}
+			excludeSet[ns] = struct{}{}
+		}
+		var filtered []string
+		for _, ns := range namespaces {
+			if _, excluded := excludeSet[ns]; !excluded {
+				filtered = append(filtered, ns)
+			} else {
+				logrus.Infof("Removing namespace %s from watchlist", ns)
 			}
 		}
+		namespaces = filtered
 	}
 
 	logrus.Infof("Namespaces to watch %v", namespaces)

@@ -2,18 +2,19 @@ package config
 
 // Handler contains handler configuration
 type Handler struct {
-	Slack        Slack
-	SlackWebhook SlackWebhook
-	Hipchat      Hipchat
-	Mattermost   Mattermost
-	Flock        Flock
-	Webhook      Webhook
-	CloudEvent   CloudEvent
-	MSTeams      MSTeams
-	SMTP         SMTP
-	Lark         Lark
-	Discord      Discord
-	Telegram     Telegram
+	Slack         Slack
+	SlackWebhook  SlackWebhook
+	Hipchat       Hipchat
+	Mattermost    Mattermost
+	Flock         Flock
+	Webhook       Webhook
+	CloudEvent    CloudEvent
+	MSTeams       MSTeams
+	SMTP          SMTP
+	Lark          Lark
+	Discord       Discord
+	Telegram      Telegram
+	VictoriaLogs  VictoriaLogs
 }
 
 // Resource contains resource configuration
@@ -208,4 +209,11 @@ type Telegram struct {
 	Token           string
 	ChatID          int64
 	MessageThreadID int64
+}
+
+// VictoriaLogs contains VictoriaLogs configuration
+type VictoriaLogs struct {
+	Enabled  bool
+	Url      string
+	Cluster  string
 }

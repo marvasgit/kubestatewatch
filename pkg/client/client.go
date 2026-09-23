@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"github.com/marvasgit/kubestatewatch/pkg/handlers/telegram"
 	"os"
 	"reflect"
 
@@ -21,6 +20,8 @@ import (
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/slack"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/slackwebhook"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/smtpClient"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/telegram"
+	"github.com/marvasgit/kubestatewatch/pkg/handlers/victorialogs"
 	"github.com/marvasgit/kubestatewatch/pkg/handlers/webhook"
 	"github.com/marvasgit/kubestatewatch/pkg/utils"
 	"github.com/sirupsen/logrus"
@@ -60,30 +61,44 @@ func loadConfig() config.Config {
 func parseEventHandler(conf *config.Config) []handlers.Handler {
 
 	var eventHandlers []handlers.Handler
-	switch {
-	case conf.Handler.Slack.Enabled && len(conf.Handler.Slack.Channel) > 0 || len(conf.Handler.Slack.Token) > 0:
+	if conf.Handler.Slack.Enabled && (len(conf.Handler.Slack.Channel) > 0 || len(conf.Handler.Slack.Token) > 0) {
 		eventHandlers = append(eventHandlers, new(slack.Slack))
-	case conf.Handler.SlackWebhook.Enabled && len(conf.Handler.SlackWebhook.Channel) > 0 || len(conf.Handler.SlackWebhook.Username) > 0 || len(conf.Handler.SlackWebhook.Slackwebhookurl) > 0:
+	}
+	if conf.Handler.SlackWebhook.Enabled && (len(conf.Handler.SlackWebhook.Channel) > 0 || len(conf.Handler.SlackWebhook.Username) > 0 || len(conf.Handler.SlackWebhook.Slackwebhookurl) > 0) {
 		eventHandlers = append(eventHandlers, new(slackwebhook.SlackWebhook))
-	case conf.Handler.Hipchat.Enabled && len(conf.Handler.Hipchat.Room) > 0 || len(conf.Handler.Hipchat.Token) > 0:
+	}
+	if conf.Handler.Hipchat.Enabled && (len(conf.Handler.Hipchat.Room) > 0 || len(conf.Handler.Hipchat.Token) > 0) {
 		eventHandlers = append(eventHandlers, new(hipchat.Hipchat))
-	case conf.Handler.Mattermost.Enabled && len(conf.Handler.Mattermost.Channel) > 0 || len(conf.Handler.Mattermost.Url) > 0:
+	}
+	if conf.Handler.Mattermost.Enabled && (len(conf.Handler.Mattermost.Channel) > 0 || len(conf.Handler.Mattermost.Url) > 0) {
 		eventHandlers = append(eventHandlers, new(mattermost.Mattermost))
-	case conf.Handler.Flock.Enabled && len(conf.Handler.Flock.Url) > 0:
+	}
+	if conf.Handler.Flock.Enabled && len(conf.Handler.Flock.Url) > 0 {
 		eventHandlers = append(eventHandlers, new(flock.Flock))
-	case conf.Handler.Webhook.Enabled && len(conf.Handler.Webhook.Url) > 0:
+	}
+	if conf.Handler.Webhook.Enabled && len(conf.Handler.Webhook.Url) > 0 {
 		eventHandlers = append(eventHandlers, new(webhook.Webhook))
-	case conf.Handler.CloudEvent.Enabled && len(conf.Handler.CloudEvent.Url) > 0:
+	}
+	if conf.Handler.CloudEvent.Enabled && len(conf.Handler.CloudEvent.Url) > 0 {
 		eventHandlers = append(eventHandlers, new(cloudevent.CloudEvent))
-	case conf.Handler.MSTeams.Enabled && len(conf.Handler.MSTeams.WebhookURL) > 0:
+	}
+	if conf.Handler.MSTeams.Enabled && len(conf.Handler.MSTeams.WebhookURL) > 0 {
 		eventHandlers = append(eventHandlers, new(msteam.MSTeams))
-	case conf.Handler.SMTP.Enabled && len(conf.Handler.SMTP.Smarthost) > 0 || len(conf.Handler.SMTP.To) > 0:
+	}
+	if conf.Handler.SMTP.Enabled && (len(conf.Handler.SMTP.Smarthost) > 0 || len(conf.Handler.SMTP.To) > 0) {
 		eventHandlers = append(eventHandlers, new(smtpClient.SMTP))
-	case conf.Handler.Lark.Enabled && len(conf.Handler.Lark.WebhookURL) > 0:
+	}
+	if conf.Handler.Lark.Enabled && len(conf.Handler.Lark.WebhookURL) > 0 {
 		eventHandlers = append(eventHandlers, new(lark.Webhook))
-	case conf.Handler.Telegram.Enabled && len(conf.Handler.Telegram.Token) > 0:
+	}
+	if conf.Handler.Telegram.Enabled && len(conf.Handler.Telegram.Token) > 0 {
 		eventHandlers = append(eventHandlers, new(telegram.Telegram))
-	default:
+	}
+	if conf.Handler.VictoriaLogs.Enabled && len(conf.Handler.VictoriaLogs.Url) > 0 {
+		eventHandlers = append(eventHandlers, new(victorialogs.VictoriaLogs))
+	}
+
+	if len(eventHandlers) == 0 {
 		eventHandlers = append(eventHandlers, new(handlers.Default))
 	}
 	for _, eventHandler := range eventHandlers {
